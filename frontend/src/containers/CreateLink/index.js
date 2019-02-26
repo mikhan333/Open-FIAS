@@ -1,10 +1,13 @@
 import React from 'react'
 import SideMap from '../../components/SideMap'
+import SuggestBar from '../../components/SuggestBar'
+
+import './index.css'
 
 const CreateLink = () => (
     <div>
-        <h4>Create new link</h4>
-        <SideMap/>
+        <div className="addressBar"><SuggestBar/></div>
+        <div className="Map"><SideMap/></div>
     </div>
 );
 

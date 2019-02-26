@@ -5,6 +5,7 @@ import './index.css'
 
 class SideMap extends Component {
     state = {
+        place: 'Moscow',
         lat: 55.75222,
         lng: 37.61556,
         zoom: 10,

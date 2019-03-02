@@ -14,10 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-# from django.urls import path
-from django.conf.urls import include, url
+from django.urls import path
+from django.conf.urls import include
+from jsonrpc import jsonrpc_site
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'', include('social_auth.urls', namespace='social')),
+    path('admin/', admin.site.urls),
+    path('', include('maps.urls')),
+    # path('', include('users.urls')),
+
+    path('', include('social_django.urls', namespace='social')),
+
+    path('api/', jsonrpc_site.dispatch, name='api'),
 ]

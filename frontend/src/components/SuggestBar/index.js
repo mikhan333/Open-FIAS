@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { Form } from 'react-bootstrap'
 import { connect } from "react-redux";
-import { ListGroup } from "react-bootstrap";
-import * as actionCreators from "../../store/actions/suggestionCollector";
+import { ListGroup, Button } from "react-bootstrap";
+import * as actionCreatorsSuggest from "../../store/actions/suggestionCollector";
+import * as actionCreatorsCoords from "../../store/actions/coordinatesData";
 
 import './index.css'
 
@@ -15,44 +16,65 @@ class SuggestBar extends Component {
         };
 
         this.onChangeAddress = this.onChangeAddress.bind(this);
-        this.onChooseAddress = this.onChooseAddress.bind(this);
+        this.onClickAddress = this.onClickAddress.bind(this);
     }
 
-    onChangeAddress(event) {
-        this.props.sendAddress(event.target.value);
+    onChangeAddress(address) {
+        this.props.sendAddress(address);
         this.setState({
-            address: event.target.value
+            address: address
         })
     }
 
-    onChooseAddress(value) {
+    onClickAddress(address) {
+        this.props.sendAddress(address);
+        this.props.findPlace(address);
         this.setState({
-            address: value
+            address: `${ address }, `
+
         })
     }
 
     render() {
-        const suggestions = this.props.suggestions.map((address) =>
+        const suggestions = this.props.suggestions.map((address, index) =>
             <ListGroup.Item
                 className='address'
-                onClick={ () => this.onChooseAddress(address) }
+                onClick={ () => this.onClickAddress(address) }
+                key={ index }
             >
                 { address }
             </ListGroup.Item>
         );
 
+        let confirmButton;
+        if (this.props.linkData.address !== '' && this.props.linkData.coords.lat) {
+            confirmButton =
+                <Button
+                    variant="success"
+                    onClick={() => this.props.sendLink(
+                        this.props.linkData.address,
+                        this.props.linkData.coords
+                    )}
+                >Подтвердить</Button>;
+        } else {
+            confirmButton = <Button variant="success" disabled>Подтвердить</Button>
+        }
+
         return (
             <div>
                 <Form className="addressInput">
                     <Form.Control
+                        type='textarea'
                         placeholder="Введите адрес"
-                        onChange={ this.onChangeAddress }
+                        onChange={ (event) => this.onChangeAddress(event.target.value) }
                         value={ this.state.address }
                     />
                 </Form>
+
                 <ListGroup>
                     { suggestions }
                 </ListGroup>
+                { confirmButton }
             </div>
         )
     }
@@ -60,13 +82,19 @@ class SuggestBar extends Component {
 
 const mapStateToProps = state => {
     return {
-        suggestions: state.suggest.suggestions
+        suggestions: state.suggest.suggestions,
+        linkData: {
+            address: state.suggest.address,
+            coords: state.coordinatesData.markerCoords
+        }
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        sendAddress: (address) => dispatch(actionCreators.sendAddress(address)),
+        sendAddress: (address) => dispatch(actionCreatorsSuggest.sendAddress(address)),
+        findPlace: (address) => dispatch(actionCreatorsCoords.findPlace(address)),
+        sendLink: (address, coords) => dispatch(actionCreatorsCoords.sendLink(address, coords))
     }
 };
 

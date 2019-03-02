@@ -11,18 +11,19 @@ class SideMap extends Component {
 
         this.state = {
             coordinates: {
-                lat: this.props.lat || 55.75222,
-                lng: this.props.lng || 37.61556
+                lat: 55.75222,
+                lng: 37.61556
             },
             markerCoordinates: null,
             zoom: this.props.zoom || 10,
+            address: ''
         };
 
         this.handleClick = this.handleClick.bind(this);
     }
 
     handleClick(event) {
-        this.props.onSaveCoords(event.latlng);
+        this.props.askAddress(event.latlng);
         this.setState({
             markerCoordinates: event.latlng,
         })
@@ -33,13 +34,22 @@ class SideMap extends Component {
         if (this.state.markerCoordinates) {
             marker =
                 <Marker position={ this.state.markerCoordinates }>
-                    <Popup>Вы выбрали это место</Popup>
+                    <Popup>{ this.props.address || 'Неизвестный адрес'}</Popup>
                 </Marker>
+        }
+
+        let coords = {
+            lat: 55.75222,
+            lng: 37.61556
+        };
+
+        if (this.props.coords.lat) {
+            coords = this.props.coords
         }
 
         return (
             <Map
-                center={ this.state.coordinates }
+                center={ coords }
                 zoom={ this.state.zoom }
                 onClick={ this.handleClick }
             >
@@ -55,14 +65,17 @@ class SideMap extends Component {
 
 const mapStateToProps = state => {
     return {
-        lat: state.coords.latitude,
-        lng: state.coords.longitude
+        coords: {
+            lat: state.coordinatesData.coords.lat,
+            lng: state.coordinatesData.coords.lng
+        },
+        address: state.coordinatesData.markerCoords.address,
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSaveCoords: (coords) => dispatch(actionCreators.saveCoordinates(coords)),
+        askAddress: (coords) => dispatch(actionCreators.askAddress(coords)),
     }
 };
 

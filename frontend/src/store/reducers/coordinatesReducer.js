@@ -1,15 +1,46 @@
 import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
-    latitude: null,
-    longitude: null
+    coords: {
+        address: '',
+        lat: null,
+        lng: null
+    },
+    markerCoords: {
+        address: '',
+        lat: null,
+        lng: null
+    },
+    status: null
 };
 
 const reducer = ( state = initialState, action ) => {
-    if (action.type === actionTypes.SAVE_COORDINATES) {
+    if (action.type === actionTypes.ASK_ADDRESS) {
         return {
-            latitude: action.latitude,
-            longitude: action.longitude
+            ...state,
+            markerCoords: {
+                address: action.address,
+                lat: action.lat,
+                lng: action.lng
+            },
+        }
+    }
+
+    if (action.type === actionTypes.FIND_PLACE) {
+        return {
+            ...state,
+            coords: {
+                address: action.address,
+                lat: action.lat,
+                lng: action.lng
+            },
+        }
+    }
+
+    if (action.type === actionTypes.SEND_LINK) {
+        return {
+            ...state,
+            status: action.status
         }
     }
 

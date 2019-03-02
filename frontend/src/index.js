@@ -11,7 +11,7 @@ import coordinatesReducer from './store/reducers/coordinatesReducer';
 import suggestionsReducer from './store/reducers/suggestionsReducer';
 
 const rootReducer = combineReducers({
-    coords: coordinatesReducer,
+    coordinatesData: coordinatesReducer,
     suggest: suggestionsReducer
 });
 

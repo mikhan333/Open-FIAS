@@ -22,6 +22,7 @@ class Object(models.Model):
     name = models.CharField(
         max_length=255,
         verbose_name=u'имя объекта',
+        blank=True,
     )
 
     author = models.ManyToManyField(
@@ -63,40 +64,50 @@ class Object(models.Model):
     region = models.CharField(
         max_length=255,
         verbose_name=u'регион',
+        blank=True,
     )
 
     subregion = models.CharField(
         max_length=255,
         verbose_name=u'под-регион',
+        blank=True,
     )
 
     locality = models.CharField(
         max_length=255,
         verbose_name=u'населенный пункт',
+        blank=True,
     )
 
     suburb = models.CharField(
         max_length=255,
         verbose_name=u'район города',
+        blank=True,
     )
 
     street = models.CharField(
         max_length=255,
         verbose_name=u'название улицы',
+        blank=True,
     )
 
     building = models.CharField(
         max_length=255,
         verbose_name=u'номер дома',
+        blank=True,
     )
 
     """Additional information"""
     rank = models.IntegerField(
         verbose_name=u'уровень адресного объекта',
+        null=True,
+        blank=True,
     )
 
     postcode = models.IntegerField(
         verbose_name=u'почтовый индекс',
+        null=True,
+        blank=True,
     )
 
     objects = ObjectQuerySet.as_manager()

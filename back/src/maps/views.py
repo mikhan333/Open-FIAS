@@ -8,7 +8,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import JsonResponse, HttpResponseNotFound, HttpResponse
 from jsonrpc import jsonrpc_method
-from django.core.serializers import serialize
 
 import xml.etree.ElementTree as ET
 
@@ -20,20 +19,19 @@ import xml.etree.ElementTree as ET
 
 @csrf_exempt
 def create_note(request):
-    """Create new object; send to DB and OSM"""
     if request.method == 'GET':
         data = request.GET
 
-        if 'lat' and 'lon' and 'text' in data:
-            lat = data['lat']
-            lon = data['lon']
-            text = data['text']
+        if 'lat' and 'lon' and 'address' in data:
+            lat = float(data['lat'])
+            lon = float(data['lon'])
+            address = data['address']
         else:
             return HttpResponseNotFound('Wrong request method')
 
         url = 'https://api.openstreetmap.org/api/0.6/notes?' + \
               'lat={}&lon={}&'.format(lat, lon) + \
-              'text={}'.format(text)
+              'text={}'.format(address)
 
         response = requests.post(url)
         if response.status_code != 200:
@@ -48,6 +46,8 @@ def create_note(request):
                 if child.tag != 'comments':
                     data_json['%s' % child.tag] = child.text
 
+            data_json['status_db'] = send_db(data)
+
         return JsonResponse(data_json)
 
     else:
@@ -55,8 +55,7 @@ def create_note(request):
 
 
 @csrf_exempt
-def create_new_object(request):
-    """Create new note"""
+def create_object(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         data_json = suggester(data)
@@ -68,54 +67,64 @@ def create_new_object(request):
         form = ObjectForm(data=data)
         if form.is_valid():
             pass
-            # send_to_osm(form)
+            # send_osm(form)
 
     else:
         return HttpResponseNotFound('Wrong request method')
 
 
-def send_to_osm(form):
-    """Do request to OSM"""
-    url = 'https://www.openstreetmap.org/api/0.6/changeset/create'
-    headers = {
-        'Connection': 'close',
-        'Content-Type': 'text/xml',
-        'Authorization': 'OAuth oauth_token="GMoVMoGglKOeMdsjK3QZY1a6d285OvN4Q4kzX4xz"'
-    }
-    data = '<osm>' \
-           '<changeset version="0.6" generator="iD">' \
-           '<tag k="comment" v="newlol"/><tag k="created_by" v="iD 2.14.3"/>' \
-           '<tag k="host" v="https://www.openstreetmap.org/edit"/>' \
-           '<tag k="locale" v="en-GB"/>' \
-           '<tag k="imagery_used" v="Bing aerial imagery"/>' \
-           '<tag k="changesets_count" v="5"/>' \
-           '</changeset>' \
-           '</osm>'
-    res = requests.put(url, data=data, headers=headers)
-    print(res.text)
+@jsonrpc_method('api.send_osm')
+def send_osm(data):
+    pass
+
+
+@jsonrpc_method('api.send_db')
+def send_db(data):
+
+    data_json = suggester(data)
+    address = data_json['results'][0]['address_details']
+
+    # return new_addr
+    form = ObjectForm(data=address)
+
+    if form.is_valid():
+        object_new = form.save(commit=False)
+        object_new.latitude = float(data['lat'])
+        object_new.longitude = float(data['lon'])
+
+        if 'rank' in data_json['results'][0]:
+            object_new.rank = int(data_json['results'][0]['rank'])
+
+        if 'postalcode' in data_json['results'][0]:
+            object_new.postcode = int(data_json['results'][0]['postalcode'])
+
+        object_new.save()
+        return 'success'
+
+    return 'error'
 
 
 class ObjectForm(forms.ModelForm):
-    """Form for Object"""
 
     class Meta:
         """Settings"""
         model = Object
-        fields = (
+        fields = [
+            'name',
             'country',
             'region',
             'subregion',
             'locality',
             'suburb',
             'street',
-            'building'
-        )
+            'building',
+            'rank',
+            'postcode',
+        ]
 
 
-@jsonrpc_method('api.get_suggest')
 @csrf_exempt
 def get_suggest(request):
-    """Do request to suggest"""
     if request.method == 'GET':
         data_json = suggester(request.GET)
 
@@ -153,10 +162,8 @@ def suggester(data):
     return data_json
 
 
-@jsonrpc_method('api.get_geocoder')
 @csrf_exempt
 def get_geocoder(request):
-    """Do request to suggest"""
     if request.method == 'GET':
         data_json = geocoder(request.GET)
 
@@ -188,10 +195,8 @@ def geocoder(data):
     return data_json
 
 
-@jsonrpc_method('api.get_rev_geocoder')
 @csrf_exempt
 def get_rev_geocoder(request):
-    """Do request to suggest"""
     if request.method == 'GET':
         data_json = rev_geocoder(request.GET)
 

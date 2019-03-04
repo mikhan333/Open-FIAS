@@ -1,20 +1,15 @@
 import json
 import requests
 import re
+import xml.etree.ElementTree as ET
+from urllib import parse
+from jsonrpc import jsonrpc_method
 
 from .models import Object
 from django import forms
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import JsonResponse, HttpResponseNotFound, HttpResponse
-from jsonrpc import jsonrpc_method
-
-import xml.etree.ElementTree as ET
-
-
-# Authorization on front
-# <a href="{% url "social:begin" "google-oauth2" %}">Google+</a>
-# <a href="/login/vk-oauth2"><img src="/static/lvk.png" class="avatar-3" data-toggle="tooltip" title="{% trans 'Login via VKontakte' %}"></a>
 
 
 @csrf_exempt
@@ -25,17 +20,28 @@ def create_note(request):
         if 'lat' and 'lon' and 'address' in data:
             lat = float(data['lat'])
             lon = float(data['lon'])
-            address = data['address']
         else:
             return HttpResponseNotFound('Wrong request method')
 
-        url = 'https://api.openstreetmap.org/api/0.6/notes?' + \
-              'lat={}&lon={}&'.format(lat, lon) + \
-              'text={}'.format(address)
+        address_obj = check_addr(data)
+        if address_obj is None:
+            return JsonResponse({'error': 'wrong address'})
+
+        url = build_url(
+            getattr(settings, 'OSM_URL'),
+            getattr(settings, 'OSM_URL_CREATE_NOTE'),
+            {
+                'lat': lat,
+                'lon': lon,
+                'text': address_obj['address'],
+            }
+        )
 
         response = requests.post(url)
-        if response.status_code != 200:
-            data_json = {'error': response.status_code}
+        if not response.ok:
+            data_json = {
+                'error': response.status_code
+            }
         else:
             root = ET.fromstring(response.content)
             data_json = {
@@ -44,9 +50,9 @@ def create_note(request):
 
             for child in root[0]:
                 if child.tag != 'comments':
-                    data_json['%s' % child.tag] = child.text
+                    data_json[str(child.tag)] = child.text
 
-            data_json['status_db'] = send_db(data)
+            data_json['status_db'] = send_db(lat, lon, address_obj)
 
         return JsonResponse(data_json)
 
@@ -55,22 +61,8 @@ def create_note(request):
 
 
 @csrf_exempt
-def create_object(request): # TODO for auth users also
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        data_json = suggester(data)
-
-        if data_json['features'][1]:
-            return HttpResponseNotFound('Wrong request method')
-
-        data = data_json['features'][0]
-        form = ObjectForm(data=data)
-        if form.is_valid():
-            pass
-            # send_osm(form)
-
-    else:
-        return HttpResponseNotFound('Wrong request method')
+def create_object(request):  # TODO for auth users
+    pass
 
 
 @jsonrpc_method('api.send_osm')
@@ -79,28 +71,33 @@ def send_osm(data):
 
 
 @jsonrpc_method('api.send_db')
-def send_db(data):  # TODO for auth users
+def send_db(lat, lon, address_obj):  # TODO for auth users
+    address_details = address_obj['address_details']
 
-    data_json = suggester(data)
-    address = data_json['results'][0]['address_details']
-
-    form = ObjectForm(data=address)
+    form = ObjectForm(data=address_details)
 
     if form.is_valid():
         object_new = form.save(commit=False)
-        object_new.latitude = float(data['lat'])
-        object_new.longitude = float(data['lon'])
+        object_new.latitude = float(lat)
+        object_new.longitude = float(lon)
 
-        if 'rank' in data_json['results'][0]:
-            object_new.rank = int(data_json['results'][0]['rank'])
+        if 'rank' in address_obj:
+            object_new.rank = int(address_obj['rank'])
 
-        if 'postalcode' in data_json['results'][0]:
-            object_new.postcode = int(data_json['results'][0]['postalcode'])
+        if 'postalcode' in address_obj:
+            object_new.postcode = int(address_obj['postalcode'])
 
         object_new.save()
         return 'success'
 
     return 'error'
+
+
+def check_addr(data):  # TODO check addresses via local DB FIAS
+    data_json = suggester(data)
+    addresses = data_json['results']
+
+    return addresses[0]
 
 
 class ObjectForm(forms.ModelForm):
@@ -141,19 +138,18 @@ def suggester(data):
         address = data['address']
     mas = re.findall(r"[\w']+", address.lower())
 
-    # rank = 4
-    # if 'rank' in data:
-    #     rank = data['rank']
-
-    url = '{}?'.format(getattr(settings, 'FIAS_URL_SUGGEST')) + \
-          'api_key={}'.format(getattr(settings, 'FIAS_API_KEY')) + \
-          '&format=json' + \
-          '&q=' + \
-          '%20'.join(mas)
-    # '&rank={}&q='.format(rank) + \
+    url = build_url(
+        getattr(settings, 'FIAS_URL'),
+        getattr(settings, 'FIAS_URL_SUGGEST'),
+        {
+            'api_key': getattr(settings, 'FIAS_API_KEY'),
+            'format': 'json',
+            'q': ' '.join(mas),
+        }
+    )
 
     response = requests.get(url)
-    if response.status_code != 200:
+    if not response.ok:
         return {'error': response.status_code}
 
     data_json = response.json()
@@ -180,13 +176,17 @@ def geocoder(data):
         address = data['address']
     mas = re.findall(r"[\w']+", address)
 
-    url = '{}?'.format(getattr(settings, 'FIAS_URL_GEOCODER')) + \
-          'api_key={}'.format(getattr(settings, 'FIAS_API_KEY')) + \
-          '&q=' + \
-          '%20'.join(mas)
+    url = build_url(
+        getattr(settings, 'FIAS_URL'),
+        getattr(settings, 'FIAS_URL_GEOCODER'),
+        {
+            'api_key': getattr(settings, 'FIAS_API_KEY'),
+            'q': ' '.join(mas),
+        }
+    )
 
     response = requests.get(url)
-    if response.status_code != 200:
+    if not response.ok:
         return {'error': response.status_code}
 
     data_json = response.json()
@@ -214,12 +214,17 @@ def rev_geocoder(data):
         lat = data['lat']
         lon = data['lon']
 
-    url = '{}?'.format(getattr(settings, 'FIAS_URL_REV_GEOCODER')) + \
-          'api_key={}'.format(getattr(settings, 'FIAS_API_KEY')) + \
-          '&q={},{}'.format(lat, lon)
+    url = build_url(
+        getattr(settings, 'FIAS_URL'),
+        getattr(settings, 'FIAS_URL_REV_GEOCODER'),
+        {
+            'api_key': getattr(settings, 'FIAS_API_KEY'),
+            'q': f'{lat},{lon}',
+        }
+    )
 
     response = requests.get(url)
-    if response.status_code != 200:
+    if not response.ok:
         return {'error': response.status_code}
 
     data_json = response.json()
@@ -227,6 +232,10 @@ def rev_geocoder(data):
     return data_json
 
 
-@jsonrpc_method('api.hello')
-def hello(request, name='Sam'):
-    return "Hello %s" % name
+@jsonrpc_method('api.build_url')
+def build_url(baseurl, path, args_dict=None):
+    dirty_url = parse.urljoin(baseurl + "/", path)
+    url_parts = list(parse.urlparse(dirty_url))
+    if args_dict:
+        url_parts[4] = parse.urlencode(args_dict)
+    return parse.urlunparse(url_parts)

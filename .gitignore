@@ -5,7 +5,6 @@
 # data
 *.sqlite3
 *.sql_data
-*/migrations
 
 # testing
 */coverage

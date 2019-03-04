@@ -19,8 +19,8 @@ import xml.etree.ElementTree as ET
 
 @csrf_exempt
 def create_note(request):
-    if request.method == 'GET':
-        data = request.GET
+    if request.method == 'POST':
+        data = request.POST
 
         if 'lat' and 'lon' and 'address' in data:
             lat = float(data['lat'])
@@ -55,7 +55,7 @@ def create_note(request):
 
 
 @csrf_exempt
-def create_object(request):
+def create_object(request): # TODO for auth users also
     if request.method == 'POST':
         data = json.loads(request.body)
         data_json = suggester(data)
@@ -79,12 +79,11 @@ def send_osm(data):
 
 
 @jsonrpc_method('api.send_db')
-def send_db(data):
+def send_db(data):  # TODO for auth users
 
     data_json = suggester(data)
     address = data_json['results'][0]['address_details']
 
-    # return new_addr
     form = ObjectForm(data=address)
 
     if form.is_valid():

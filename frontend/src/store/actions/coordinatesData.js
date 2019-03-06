@@ -1,15 +1,15 @@
 import * as actionTypes from './actionTypes';
 import axios from "axios";
-import { notesServer, geocoderServer, revGeocoderServer } from "./actionTypes";
+import { notesServer, geocoderServer, revGeocoderServer } from "../serverURLs";
 
-function saveData(actionType, latitude, longitude, address) {
+const saveData = (actionType, latitude, longitude, address) => {
     return {
         type: actionType,
         address,
         lat: latitude,
         lng: longitude
     }
-}
+};
 
 function saveStatus(status) {
     return {
@@ -19,23 +19,31 @@ function saveStatus(status) {
 }
 
 export const askAddress = (coords) => {
+    if (coords === null || coords.lat === null || coords.lng ===  null) {
+        return saveData(actionTypes.ASK_ADDRESS, coords.lat, coords.lng, '')
+    }
     return function (dispatch) {
-        return axios.get(`${ revGeocoderServer }?lat=${ coords.lat }&lon=${ coords.lng }`)
-            .then( resp => {
-                const addressDetials = resp.data.results[0].address_details;
+        return axios.get(revGeocoderServer,
+            {
+                params: {
+                    lat: coords.lat,
+                    lon: coords.lng
+                }
+            }).then(resp => {
+                const addressDetails = resp.data.results[0].address_details;
 
                 let address = '';
-                if (addressDetials.region) {
-                    address = `${ addressDetials.region }`
+                if (addressDetails.region) {
+                    address = `${addressDetails.region}`
                 }
-                if (addressDetials.locality && addressDetials.region !== addressDetials.locality) {
-                    address = `${address}, ${ addressDetials.locality }`
+                if (addressDetails.locality && addressDetails.region !== addressDetails.locality) {
+                    address = `${address}, ${addressDetails.locality}`
                 }
-                if (addressDetials.street && addressDetials.street !== 'Unnamed Road') {
-                    address = `${address}, ${ addressDetials.street }`
+                if (addressDetails.street && addressDetails.street !== 'Unnamed Road') {
+                    address = `${address}, ${addressDetails.street}`
                 }
-                if (addressDetials.building) {
-                    address = `${address}, ${ addressDetials.building }`
+                if (addressDetails.building) {
+                    address = `${address}, ${addressDetails.building}`
                 }
 
                 dispatch(saveData(actionTypes.ASK_ADDRESS, coords.lat, coords.lng, address))
@@ -45,19 +53,50 @@ export const askAddress = (coords) => {
 
 export const findPlace = (address) => {
     return function (dispatch) {
-        return axios.get(`${ geocoderServer }?address=${ address }`)
-            .then( resp => {
-                const coords = resp.data.features[0].geometry.coordinates;
-                dispatch(saveData(actionTypes.FIND_PLACE, coords[0], coords[1], address))
-            });
+        return axios.get(geocoderServer, {
+            params: {
+                address
+            }
+        }).then( resp => {
+            let coords;
+            if (resp.data.features && resp.data.features[0].geometry) {
+                coords = resp.data.features[0].geometry.coordinates;
+            } else {
+                coords = [null, null]
+            }
+            dispatch(saveData(actionTypes.FIND_PLACE, coords[0], coords[1], address))
+        });
     }
 };
 
 export const sendLink = (address, coords) => {
     return function (dispatch) {
-        return axios.get(`${ notesServer }?address=${ address }&lat=${ coords.lat }&lon=${ coords.lng }`)
-            .then( resp => {
-                dispatch(saveStatus(resp.status))
-            });
+        return axios.post(notesServer, {
+            address,
+            lat: coords.lat,
+            lon: coords.lng
+        }).then( resp => {
+            dispatch(saveStatus(resp.status))
+        });
+    }
+};
+
+export const clearData = () => {
+    return {
+        type: actionTypes.CLEAR_DATA
+    }
+};
+
+export const setAddress = (address) => {
+    return {
+        type: actionTypes.SET_ADDRESS,
+        address
+    }
+};
+
+export const setMarkerCoords = (coords) => {
+    return {
+        type: actionTypes.SET_MARKER_COORDS,
+        coords
     }
 };

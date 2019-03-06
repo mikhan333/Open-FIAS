@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from "axios";
-import { suggestServer } from "./actionTypes";
+import { suggestServer } from "../serverURLs";
 
 function saveData(address, suggestions) {
     return {
@@ -9,14 +9,17 @@ function saveData(address, suggestions) {
         suggestions
     }
 }
-
+//TODO handle errors
 export const sendAddress = (address) => {
     return function (dispatch) {
-        return axios.get(`${ suggestServer }?address=${ address }`)
-            .then( resp => { //TODO handle errors
-                const suggestions = resp.data.results.map((obj) => (obj.address));
+        return axios.get(suggestServer, {
+            params: {
+                address
+            }
+        }).then(resp => {
+            const suggestions = resp.data.results.map((obj) => (obj.address));
 
-                dispatch(saveData(address, suggestions));
-            });
+            dispatch(saveData(address, suggestions));
+        });
     }
 };

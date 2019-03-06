@@ -6,6 +6,7 @@ const initialState = {
 };
 
 const reducer = ( state = initialState, action ) => {
+
     if (action.type === actionTypes.SEND_ADDRESS) {
         return {
             address: action.address,

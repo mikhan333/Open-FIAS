@@ -1,0 +1,12 @@
+.CreateLinkContainer {
+    display: flex;
+}
+
+.SuggestBar {
+    overflow: hidden;
+    flex: 1;
+}
+
+.Map {
+    flex: 3;
+}

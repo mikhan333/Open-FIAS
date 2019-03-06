@@ -10,46 +10,57 @@ class SideMap extends Component {
         super(props);
 
         this.state = {
-            coordinates: {
-                lat: 55.75222,
-                lng: 37.61556
+            currentMarkerCoords: {
+                lat: null,
+                lng: null
             },
-            markerCoordinates: null,
             zoom: this.props.zoom || 10,
-            address: ''
         };
 
         this.handleClick = this.handleClick.bind(this);
+
+        setInterval(() => {
+            if (JSON.stringify(this.props.markerCoordinates) !== JSON.stringify(this.state.currentMarkerCoords)) {
+                this.props.askAddress(this.props.markerCoordinates);
+                this.setState({
+                    currentMarkerCoords: this.props.markerCoordinates,
+                })
+            }
+        }, 200);
     }
 
     handleClick(event) {
-        this.props.askAddress(event.latlng);
-        this.setState({
-            markerCoordinates: event.latlng,
-        })
+        this.props.setMarkerCoords({
+            lat: event.latlng.lat,
+            lng: event.latlng.lng
+        });
     }
 
     render() {
         let marker;
-        if (this.state.markerCoordinates) {
+        if (this.props.markerCoordinates.lat && this.props.markerCoordinates.lng) {
+            let popup;
+            if (this.props.address) {
+                if (this.props.address !== 'Подождите...') {
+                    popup =
+                        <Popup
+                            onOpen={ () => this.props.setAddress(this.props.address) }
+                        >{ this.props.address }</Popup>
+                } else {
+                    popup = <Popup>{ 'Подождите...' }</Popup>
+                }
+            } else {
+                popup = <Popup>{ 'Неизвестный адрес' }</Popup>
+            }
             marker =
-                <Marker position={ this.state.markerCoordinates }>
-                    <Popup>{ this.props.address || 'Неизвестный адрес'}</Popup>
+                <Marker position={ this.props.markerCoordinates }>
+                    { popup }
                 </Marker>
-        }
-
-        let coords = {
-            lat: 55.75222,
-            lng: 37.61556
-        };
-
-        if (this.props.coords.lat) {
-            coords = this.props.coords
         }
 
         return (
             <Map
-                center={ coords }
+                center={ this.props.coords }
                 zoom={ this.state.zoom }
                 onClick={ this.handleClick }
             >
@@ -70,12 +81,18 @@ const mapStateToProps = state => {
             lng: state.coordinatesData.coords.lng
         },
         address: state.coordinatesData.markerCoords.address,
+        markerCoordinates: {
+            lat: state.coordinatesData.markerCoords.lat,
+            lng: state.coordinatesData.markerCoords.lng
+        }
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         askAddress: (coords) => dispatch(actionCreators.askAddress(coords)),
+        setAddress: (address) => dispatch(actionCreators.setAddress(address)),
+        setMarkerCoords: (coords) => dispatch(actionCreators.setMarkerCoords(coords))
     }
 };
 

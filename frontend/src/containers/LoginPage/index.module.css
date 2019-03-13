@@ -1,0 +1,21 @@
+.CardHolder {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+}
+
+.LoginCard {
+    cursor: pointer;
+    margin: 10px;
+    flex: 1;
+    background: #00ff00;
+    border-radius: 10px;
+}
+
+.AnonCard {
+    cursor: pointer;
+    margin: 10px;
+    flex: 1;
+    background: #f1ff40;
+    border-radius: 10px;
+}

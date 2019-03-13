@@ -102,6 +102,7 @@ class SuggestBar extends Component {
                         onClick={ this.props.clearData }
                     >Очистить</Button>
 
+
                     { confirmButton }
                 </ButtonGroup>
             </div>

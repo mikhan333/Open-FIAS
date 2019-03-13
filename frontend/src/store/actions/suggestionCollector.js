@@ -11,6 +11,13 @@ function saveData(address, suggestions) {
 }
 //TODO handle errors
 export const sendAddress = (address) => {
+    if(address.length <= 1) {
+        return {
+            type: actionTypes.SEND_ADDRESS,
+            address,
+            suggestions: []
+        }
+    }
     return function (dispatch) {
         return axios.get(suggestServer, {
             params: {

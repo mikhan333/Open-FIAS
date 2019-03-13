@@ -17,7 +17,7 @@ function saveStatus(status) {
         status
     }
 }
-
+//TODO handle errors
 export const askAddress = (coords) => {
     if (coords === null || coords.lat === null || coords.lng ===  null) {
         return saveData(actionTypes.ASK_ADDRESS, coords.lat, coords.lng, '')

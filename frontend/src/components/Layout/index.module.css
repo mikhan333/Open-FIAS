@@ -1,0 +1,14 @@
+.Layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.Header {
+    background: lime;
+    width: 100%;
+}
+
+.Content {
+    flex: 1;
+}

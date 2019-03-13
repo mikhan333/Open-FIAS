@@ -6,3 +6,7 @@ export const CLEAR_DATA = 'CLEAR_DATA';
 
 export const SET_ADDRESS = 'SET_ADDRESS';
 export const SET_MARKER_COORDS = 'SET_MARKER_COORDS';
+
+export const AUTH_START = 'AUTH_START';
+export const AUTH_SUCCESS = 'AUTH_SUCCESS';
+export const AUTH_FAILED = 'AUTH_FAILED';

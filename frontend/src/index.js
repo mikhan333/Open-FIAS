@@ -9,8 +9,10 @@ import thunk from 'redux-thunk';
 
 import coordinatesReducer from './store/reducers/coordinatesReducer';
 import suggestionsReducer from './store/reducers/suggestionsReducer';
+import authReducer from './store/reducers/authReducer'
 
 const rootReducer = combineReducers({
+    auth: authReducer,
     coordinatesData: coordinatesReducer,
     suggest: suggestionsReducer
 });

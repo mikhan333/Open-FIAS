@@ -6,4 +6,5 @@ export const notesServer = `${ backendURL }/create_note`;
 export const revGeocoderServer = `${ backendURL }/rev_geocoder`;
 
 export const authServer = `${ backendURL }/login/openstreetmap/`;
+export const logoutServer = `${ backendURL }/logout`;
 export const infoServer = `${ backendURL }/get`;

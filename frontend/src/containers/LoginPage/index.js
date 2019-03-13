@@ -6,21 +6,45 @@ import { authServer } from '../../store/serverURLs'
 
 import classes from './index.module.css'
 
-class LoginPage extends Component {
-    render() {
-        if (this.props.redirect) {
-            window.location.href = authServer;
-        }
 
+class LoginPage extends Component {
+    authRedirect (event){
+        window.location.replace(authServer)
+    }
+
+    componentDidMount() {
+        this.props.auth();
+    }
+
+    render() {
+        // if (this.props.redirect) {
+        //     window.location.href = authServer;
+        // }
+
+        
         return (
             <div className={ classes.CardHolder }>
                 <Card
                     style={{ width: '18rem' }}
-                    onClick={ this.props.auth }
+                    onClick={ this.authRedirect }//this.props.auth
                     className={ classes.LoginCard }
                 >
                     <Card.Body>
                         <Card.Title>Войти</Card.Title>
+                        <Card.Subtitle className="mb-2 text-muted">используя аккаунт OpenStreetMaps</Card.Subtitle>
+                        <Card.Text>
+                            блаблабла
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
+
+                <Card
+                    style={{ width: '18rem' }}
+                    onClick={ this.props.logout }
+                    className={ classes.LoginCard }
+                >
+                    <Card.Body>
+                        <Card.Title>Выйти</Card.Title>
                         <Card.Subtitle className="mb-2 text-muted">используя аккаунт OpenStreetMaps</Card.Subtitle>
                         <Card.Text>
                             блаблабла
@@ -55,6 +79,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         auth: () => dispatch(actionCreators.auth()),
+        logout: () => dispatch(actionCreators.logout()),
     }
 };
 

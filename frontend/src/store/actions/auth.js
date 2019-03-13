@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from "axios";
-import { infoServer } from "../serverURLs";
+import { infoServer, logoutServer } from "../serverURLs";
 
 export const authStart = () => {
     return {
@@ -8,7 +8,7 @@ export const authStart = () => {
     }
 };
 
-export const authSuccess = (token, username) => {
+export const authSuccess = (username) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
         username
@@ -22,11 +22,18 @@ export const authFailed = (err) => {
     }
 };
 
+export const logoutSuccess = (error) => {
+    return {
+        type: actionTypes.USER_LOGOUT,
+    }
+};
+
 export const auth = () => {
     return dispatch => {
-        axios.get(infoServer)
+        axios.get(infoServer, {withCredentials: true })
             .then(resp => {
-                console.log(document.cookie);
+                console.log(resp.data);
+                localStorage.setItem('username', resp.data.name);
 
                 if (!resp.data || resp.data.name === '') {
                     dispatch(authStart());
@@ -35,8 +42,24 @@ export const auth = () => {
                 dispatch(authSuccess(resp.data.name));
             })
             .catch(error => {
+                console.log(error);
                 dispatch(authFailed(error));
             });
     }
 };
 
+export const logout = () => {
+    return dispatch => {
+        axios.get(logoutServer, {withCredentials: true})
+            .then(resp => {
+                console.log(resp.data);
+
+                localStorage.clear();
+                dispatch(logoutSuccess());
+            })
+            .catch(error => {
+                // dispatch(authFailed(error));
+            });
+        
+    }
+};

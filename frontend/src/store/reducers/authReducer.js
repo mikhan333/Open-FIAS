@@ -1,7 +1,7 @@
 import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
-    username: null,
+    username: '',
     error: null,
     loading: false,
 };
@@ -25,6 +25,12 @@ const reducer = ( state = initialState, action ) => {
         return {
             ...initialState,
             error: action.error
+        }
+    }
+
+    if (action.type === action.USER_LOGOUT) {
+        return {
+            ...initialState,
         }
     }
 

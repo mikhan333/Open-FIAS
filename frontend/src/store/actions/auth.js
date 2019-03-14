@@ -22,7 +22,7 @@ export const authFailed = (err) => {
     }
 };
 
-export const logoutSuccess = (error) => {
+export const logoutSuccess = () => {
     return {
         type: actionTypes.USER_LOGOUT,
     }
@@ -30,7 +30,7 @@ export const logoutSuccess = (error) => {
 
 export const auth = () => {
     return dispatch => {
-        axios.get(infoServer, {withCredentials: true })
+        axios.get(infoServer, { withCredentials: true })
             .then(resp => {
                 console.log(resp.data);
                 localStorage.setItem('username', resp.data.name);
@@ -50,7 +50,7 @@ export const auth = () => {
 
 export const logout = () => {
     return dispatch => {
-        axios.get(logoutServer, {withCredentials: true})
+        axios.get(logoutServer, { withCredentials: true })
             .then(resp => {
                 console.log(resp.data);
 
@@ -58,7 +58,7 @@ export const logout = () => {
                 dispatch(logoutSuccess());
             })
             .catch(error => {
-                // dispatch(authFailed(error));
+                dispatch(authFailed(error));
             });
         
     }

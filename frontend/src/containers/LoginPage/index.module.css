@@ -4,18 +4,26 @@
     text-align: center;
 }
 
-.LoginCard {
+.SuccessCard, .LogoutCard, .AnonCard {
     cursor: pointer;
     margin: 10px;
     flex: 1;
-    background: #00ff00;
     border-radius: 10px;
 }
 
+.SuccessCard {
+    background: #64ff64;
+}
+
+.LogoutCard {
+    background: #ff6464;
+}
+
 .AnonCard {
-    cursor: pointer;
+    background: #ffff64;
+}
+
+.Image {
+    width: 60%;
     margin: 10px;
-    flex: 1;
-    background: #f1ff40;
-    border-radius: 10px;
 }

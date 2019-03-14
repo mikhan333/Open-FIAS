@@ -6,10 +6,14 @@ import { authServer } from '../../store/serverURLs'
 
 import classes from './index.module.css'
 
+import OSMlogo from '../../static/Openstreetmap_logo.svg.png'
+import anonLogo from '../../static/anonim.png'
+import workLogo from '../../static/goWork.png'
+import logoutLogo from '../../static/logout.png'
 
 class LoginPage extends Component {
-    authRedirect (event){
-        window.location.replace(authServer)
+    static authRedirect () {
+        window.location.href = authServer;
     }
 
     componentDidMount() {
@@ -17,23 +21,65 @@ class LoginPage extends Component {
     }
 
     render() {
-        // if (this.props.redirect) {
-        //     window.location.href = authServer;
-        // }
+        if(!this.props.username) {
+            return (
+                <div className={ classes.CardHolder }>
+                    <Card
+                        onClick={ LoginPage.authRedirect }
+                        className={ classes.SuccessCard }
+                    >
+                        <Card.Body>
+                            <Card.Title>Войти</Card.Title>
+                            <Card.Subtitle className="mb-2 text-muted">используя аккаунт OpenStreetMaps</Card.Subtitle>
+                            <img
+                                src={ OSMlogo }
+                                className={ classes.Image }
+                                alt=''
+                            />
+                            <Card.Text>
+                                Авторизовавшись через OSM, вы сможете смотреть довабленные объекты в своем профиле #TODO
+                            </Card.Text>
+                        </Card.Body>
+                    </Card>
 
-        
+                    <Card
+                        style={{ width: '18rem' }}
+                        onClick={ () => this.props.history.push('/addlink') }
+                        className={ classes.AnonCard }
+                    >
+                        <Card.Body>
+                            <Card.Title>Остаться анонимным пользователем</Card.Title>
+                            <Card.Subtitle className="mb-2 text-muted">Ваш вклад останется без автора</Card.Subtitle>
+                            <img
+                                src={ anonLogo }
+                                className={ classes.Image }
+                                alt=''
+                            />
+                            <Card.Text>
+                                Ваши отметки также будут сохранены, но вы не сможете увидеть их в своем профиле
+                            </Card.Text>
+                        </Card.Body>
+                    </Card>
+                </div>
+            )
+        }
         return (
             <div className={ classes.CardHolder }>
                 <Card
                     style={{ width: '18rem' }}
-                    onClick={ this.authRedirect }//this.props.auth
-                    className={ classes.LoginCard }
+                    onClick={ () => this.props.history.push('/addlink') }
+                    className={ classes.SuccessCard }
                 >
                     <Card.Body>
-                        <Card.Title>Войти</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">используя аккаунт OpenStreetMaps</Card.Subtitle>
+                        <Card.Title>За работу</Card.Title>
+                        <Card.Subtitle className="mb-2 text-muted">Для геокодирования все готово</Card.Subtitle>
+                        <img
+                            src={ workLogo }
+                            className={ classes.Image }
+                            alt=''
+                        />
                         <Card.Text>
-                            блаблабла
+                            Добавляйте метку на карте, заполняйте адрес и отправляйте
                         </Card.Text>
                     </Card.Body>
                 </Card>
@@ -41,27 +87,18 @@ class LoginPage extends Component {
                 <Card
                     style={{ width: '18rem' }}
                     onClick={ this.props.logout }
-                    className={ classes.LoginCard }
+                    className={ classes.LogoutCard }
                 >
                     <Card.Body>
                         <Card.Title>Выйти</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">используя аккаунт OpenStreetMaps</Card.Subtitle>
+                        <Card.Subtitle className="mb-2 text-muted">из аккаунта OpenStreetMaps</Card.Subtitle>
+                        <img
+                            src={ logoutLogo }
+                            className={ classes.Image }
+                            alt=''
+                        />
                         <Card.Text>
-                            блаблабла
-                        </Card.Text>
-                    </Card.Body>
-                </Card>
-
-                <Card
-                    style={{ width: '18rem' }}
-                    onClick={ () => this.props.history.push('/addlink') }
-                    className={ classes.AnonCard }
-                >
-                    <Card.Body>
-                        <Card.Title>Остаться анонимным пользователем</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">Ваш вклад будет менее весомым</Card.Subtitle>
-                        <Card.Text>
-                            тут тоже важный текст
+                            Вы сможете сменить аккаунт или геокодировать анонимно
                         </Card.Text>
                     </Card.Body>
                 </Card>
@@ -72,7 +109,7 @@ class LoginPage extends Component {
 
 const mapStateToProps = state => {
     return {
-        redirect: state.auth.loading,
+        username: state.auth.username,
     }
 };
 

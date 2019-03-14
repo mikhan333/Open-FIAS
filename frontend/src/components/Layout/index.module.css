@@ -5,10 +5,11 @@
 }
 
 .Header {
-    background: lime;
+    background: #1f9952;
     width: 100%;
 }
 
 .Content {
     flex: 1;
+    background: #fafafa;
 }

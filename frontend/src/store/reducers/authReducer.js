@@ -23,14 +23,14 @@ const reducer = ( state = initialState, action ) => {
 
     if (action.type === actionTypes.AUTH_FAILED) {
         return {
-            ...initialState,
+            ...state,
             error: action.error
         }
     }
 
-    if (action.type === action.USER_LOGOUT) {
+    if (action.type === actionTypes.USER_LOGOUT) {
         return {
-            ...initialState,
+            ...initialState
         }
     }
 

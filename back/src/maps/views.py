@@ -7,49 +7,48 @@ from .models import Object
 from django import forms
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotAllowed
+from django.http import JsonResponse, HttpResponseBadRequest
+from django.views.decorators.http import require_http_methods
 
 
 @csrf_exempt
+@require_http_methods("POST")
 def create_note(request):
-    if request.method == 'POST':
-        data = request.POST
-        if 'lat' and 'lon' and 'address' in data:
-            lat = float(data['lat'])
-            lon = float(data['lon'])
-        else:
-            return HttpResponseBadRequest('Wrong request count of fields')
-
-        address_obj = check_addr(data)
-        if address_obj is None:
-            return HttpResponseBadRequest('Wrong request data')
-
-        url = build_url(
-            getattr(settings, 'OSM_URL'),
-            getattr(settings, 'OSM_URL_CREATE_NOTE'),
-            {
-                'lat': lat,
-                'lon': lon,
-                'text': address_obj['address'],
-            }
-        )
-        response = requests.post(url)
-        if not response.ok:
-            HttpResponseBadRequest(f'Wrong send data to OSM - {response.status_code}')
-        else:
-            data_json = {'status_osm': response.status_code}
-            root = ET.fromstring(response.content)
-            for child in root[0]:
-                if child.tag != 'comments':
-                    data_json[str(child.tag)] = child.text
-
-            if send_db(lat, lon, address_obj) is False:
-                HttpResponseBadRequest('Wrong send data to DB - 405')
-            else:
-                data_json = {'status_db': 200}
-                return JsonResponse(data_json)
+    data = request.POST
+    if 'lat' and 'lon' and 'address' in data:
+        lat = float(data['lat'])
+        lon = float(data['lon'])
     else:
-        return HttpResponseNotAllowed('Method not allowed')
+        return HttpResponseBadRequest('Wrong request count of fields')
+
+    address_obj = check_addr(data)
+    if address_obj is None:
+        return HttpResponseBadRequest('Wrong request data')
+
+    url = build_url(
+        getattr(settings, 'OSM_URL'),
+        getattr(settings, 'OSM_URL_CREATE_NOTE'),
+        {
+            'lat': lat,
+            'lon': lon,
+            'text': address_obj['address'],
+        }
+    )
+    response = requests.post(url)
+    if not response.ok:
+        HttpResponseBadRequest(f'Wrong send data to OSM - {response.status_code}')
+    else:
+        data_json = {'status_osm': response.status_code}
+        root = ET.fromstring(response.content)
+        for child in root[0]:
+            if child.tag != 'comments':
+                data_json[str(child.tag)] = child.text
+
+        if send_db(lat, lon, address_obj) is False:
+            HttpResponseBadRequest('Wrong send data to DB - 405')
+        else:
+            data_json = {'status_db': 200}
+            return JsonResponse(data_json)
 
 
 @csrf_exempt
@@ -84,7 +83,6 @@ def check_addr(data):  # TODO check addresses via local DB FIAS
 
 
 class ObjectForm(forms.ModelForm):
-
     class Meta:
         """Settings"""
         model = Object
@@ -103,12 +101,10 @@ class ObjectForm(forms.ModelForm):
 
 
 @csrf_exempt
+@require_http_methods("GET")
 def get_suggest(request):
-    if request.method == 'GET':
-        data_json = suggester(request.GET)
-        return JsonResponse(data_json)
-    else:
-        return HttpResponseNotAllowed('Method not allowed')
+    data_json = suggester(request.GET)
+    return JsonResponse(data_json)
 
 
 def suggester(data):
@@ -133,12 +129,10 @@ def suggester(data):
 
 
 @csrf_exempt
+@require_http_methods("GET")
 def get_geocoder(request):
-    if request.method == 'GET':
-        data_json = geocoder(request.GET)
-        return JsonResponse(data_json)
-    else:
-        return HttpResponseNotAllowed('Method not allowed')
+    data_json = geocoder(request.GET)
+    return JsonResponse(data_json)
 
 
 def geocoder(data):
@@ -162,12 +156,10 @@ def geocoder(data):
 
 
 @csrf_exempt
+@require_http_methods("GET")
 def get_rev_geocoder(request):
-    if request.method == 'GET':
-        data_json = rev_geocoder(request.GET)
-        return JsonResponse(data_json)
-    else:
-        return HttpResponseNotAllowed('Method not allowed')
+    data_json = rev_geocoder(request.GET)
+    return JsonResponse(data_json)
 
 
 def rev_geocoder(data):

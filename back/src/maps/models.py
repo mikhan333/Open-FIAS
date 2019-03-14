@@ -10,8 +10,7 @@ class ObjectQuerySet(models.QuerySet):
             return self.filter(
                 models.Q(author=user) | models.Q(is_archive=False)
             )
-        else:
-            return self.filter(models.Q(is_archive=False))
+        return self.filter(models.Q(is_archive=False))
 
 
 class Object(models.Model):

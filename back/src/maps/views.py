@@ -1,6 +1,7 @@
 import requests
 import re
 import xml.etree.ElementTree as ET
+import json
 from urllib import parse
 
 from .models import Object
@@ -14,16 +15,23 @@ from django.views.decorators.http import require_http_methods
 @csrf_exempt
 @require_http_methods("POST")
 def create_note(request):
-    data = request.POST
-    if 'lat' and 'lon' and 'address' in data:
+    try:
+        data = json.loads(request.body)
+    except json.decoder.JSONDecodeError:
+        return HttpResponseBadRequest('Wrong request count of fields - bad fields')
+    if data.get('address') is None:
+        return HttpResponseBadRequest('Wrong request count of fields - address')
+    try:
         lat = float(data['lat'])
         lon = float(data['lon'])
-    else:
-        return HttpResponseBadRequest('Wrong request count of fields')
+    except KeyError:
+        return HttpResponseBadRequest('Wrong request count of fields - lat, lon')
+    except ValueError:
+        return HttpResponseBadRequest('Wrong request types of data')
 
     address_obj = check_addr(data)
     if address_obj is None:
-        return HttpResponseBadRequest('Wrong request data')
+        return HttpResponseBadRequest('Wrong request address')
 
     url = build_url(
         getattr(settings, 'OSM_URL'),

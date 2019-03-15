@@ -44,27 +44,32 @@ class TestCreateNote(TestCase):
         response = self.client.post(self.create_note)
         self.assertEqual(response.status_code, 400)
 
-        response = self.client.post(self.create_note, {'something': 'need'})
+        response = self.client.post(self.create_note,
+                                    data=json.dumps({'something': 'need'}),
+                                    content_type="application/json")
         self.assertEqual(response.status_code, 400)
 
-        response = self.client.post(self.create_note, {'lat': 'need', 'lon': 'int', 'address': 'lol'})
+        response = self.client.post(self.create_note,
+                                    data=json.dumps({'lat': 'need', 'lon': 'int', 'address': 'lol'}),
+                                    content_type="application/json")
         self.assertEqual(response.status_code, 400)
 
-        response = self.client.post(self.create_note, {'lat': 54.3, 'lon': 'int', 'address': 'lol'})
+        response = self.client.post(self.create_note,
+                                    data=json.dumps({'lat': 54.3, 'lon': 'int', 'address': 'lol'}),
+                                    content_type="application/json")
         self.assertEqual(response.status_code, 400)
 
     def test_osm_db(self):
         lat = 34.54
         lon = 43.21
         address = 'воронеж'
+        data = {
+            'lat': lat,
+            'lon': lon,
+            'address': address
+        }
         response = self.client.post(
-            self.create_note,
-            {
-                'lat': lat,
-                'lon': lon,
-                'address': address
-            }
-        )
+            self.create_note, data=json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
 

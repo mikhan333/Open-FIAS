@@ -19,3 +19,6 @@ makemigrations: up
 
 run: migrate
 	docker-compose logs -f
+
+test: up
+	docker-compose exec fias-python python manage.py test

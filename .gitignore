@@ -1,0 +1,21 @@
+# dependencies
+*/node_modules
+*/env
+
+# data
+*.sqlite3
+*.sql_data
+
+# testing
+*/coverage
+*.coverage
+*.log*
+*/logs
+
+# production
+*/build
+
+# python
+*.pyc
+*.idea*
+*settings.py

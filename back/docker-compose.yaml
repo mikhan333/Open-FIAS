@@ -1,0 +1,57 @@
+version: '2'
+
+
+volumes:
+    pgdata:
+        driver: local
+
+services:
+
+    fias-nginx:
+        restart: always
+        image: nginx:latest
+        expose:
+            - 8080
+        ports:
+            - "80:8080"
+        volumes:
+            - ./src/static:/srv/www/fias_back/static
+            - ./src/media:/srv/www/fias_back/media
+            - ./src/logs:/srv/www/fias_back/logs
+            - ./docker/nginx:/etc/nginx/conf.d
+        depends_on:
+            - fias-python
+
+    fias-python:
+        restart: always
+        build:
+            context: .
+            dockerfile: docker/python/Dockerfile
+        volumes:
+            - ./src:/srv/www/fias_back
+        expose:
+            - 8000
+        ports:
+            - 8000:8000
+        command: "gunicorn -c gunicorn.py open_fias.wsgi"
+
+        environment:
+          DB_NAME: sql_db
+          DB_HOST: fias-postgres
+          DB_USER: sql_user
+          DB_PASSWORD: sql_pass
+
+        depends_on:
+            - fias-postgres
+
+    fias-postgres:
+        image: postgres:latest
+        ports:
+            - 6000:5432
+        environment:
+          POSTGRES_USER: sql_user
+          POSTGRES_PASSWORD: sql_pass
+          POSTGRES_DB: sql_db
+          PGDATA: /var/lib/postgresql/data
+        volumes:
+            - .sql_data:/var/lib/postgresql/data

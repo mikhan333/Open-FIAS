@@ -1,7 +1,7 @@
 import json
 import requests
 
-from .views import build_url
+from .validators import build_url
 from .models import Object
 from django.test import TestCase, Client
 from django.urls import reverse

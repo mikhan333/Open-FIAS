@@ -1,26 +1,39 @@
-import json
-
-
-from social_core.actions import do_auth, do_complete
-from django.conf import settings
 from django.http import JsonResponse
-from social_django.utils import load_strategy
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout as auth_logout, login
-from social_django.utils import psa, load_strategy
+from django.contrib.auth import logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
+from maps.models import Object
+from django.core.serializers import serialize
 
 
 @csrf_exempt
 def logout(request):
     auth_logout(request)
-    return JsonResponse({'ok': 123})
+    return JsonResponse({'status': 200})
 
 
 @csrf_exempt
-def info(request):
-    if request.user.is_authenticated:
-        data = {'name': request.user.username}
-    else:
-        data = {'error': 'anonymous'}
+@login_required
+def get_user_detail(request):
+    user = request.user
+    data = {'username': user.username}
+    extra_data = user.social_auth.get(provider='openstreetmap').extra_data
+    data['uid'] = extra_data['id']
+    if 'email' in extra_data:
+        data['email'] = extra_data['email']
+    user_obj = Object.objects.all().filter(author=user).order_by("-created")
+    data['points'] = serialize('json', user_obj)
     return JsonResponse(data)
+
+
+@csrf_exempt
+def check_auth(request):
+    if request.user.is_authenticated():
+        return JsonResponse({'authorization': True})
+    return JsonResponse({'authorization': False})
+
+
+@csrf_exempt
+def get_list_objects(request):
+    data = Object.objects.all().filt_del(request.user).filter(is_archive=False)
+    return JsonResponse(serialize('json', data))

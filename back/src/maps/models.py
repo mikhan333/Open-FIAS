@@ -22,10 +22,12 @@ class Object(models.Model):
         verbose_name=u'имя объекта',
         blank=True,
     )
-    author = models.ManyToManyField(
+    author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='maps',
         verbose_name=u'автор',
+        null=True,
+        on_delete=models.DO_NOTHING,
     )
     is_archive = models.BooleanField(
         default=False,

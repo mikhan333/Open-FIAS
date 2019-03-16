@@ -1,4 +1,4 @@
-.CardHolder {
+.ActionCards {
     display: flex;
     flex-direction: row;
     text-align: center;
@@ -23,7 +23,14 @@
     background: #ffff64;
 }
 
+.InfoCard {
+    text-align: justify;
+    background: #9bffd7;
+    margin: 0 10px 10px 10px;
+    border-radius: 10px;
+}
+
 .Image {
-    width: 60%;
+    width: 40%;
     margin: 10px;
 }

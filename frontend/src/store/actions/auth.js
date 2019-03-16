@@ -30,16 +30,13 @@ export const logoutSuccess = () => {
 
 export const auth = () => {
     return dispatch => {
-        axios.get(infoServer, { withCredentials: true })
+        axios.get(infoServer, {
+            withCredentials: true,
+            crossDomain: true
+        })
             .then(resp => {
                 console.log(resp.data);
-                localStorage.setItem('username', resp.data.name);
-
-                if (!resp.data || resp.data.name === '') {
-                    dispatch(authStart());
-                }
-
-                dispatch(authSuccess(resp.data.name));
+                dispatch(authSuccess(resp.data.username));
             })
             .catch(error => {
                 console.log(error);

@@ -1,7 +1,7 @@
 import re
 import requests
 
-from urllib import parse
+from .helpers import build_url
 from django.conf import settings
 
 
@@ -36,7 +36,10 @@ def geocoder(data):
     address = 'россия москва'
     if 'address' in data:
         address = data['address']
-    mas = re.findall(r"[\w']+", address)
+    if isinstance(data, list):
+        mas = data
+    else:
+        mas = re.findall(r"[\w']+", address)
 
     url = build_url(
         getattr(settings, 'FIAS_URL'),
@@ -49,6 +52,14 @@ def geocoder(data):
     response = requests.get(url)
     if not response.ok:
         return {'error': response.status_code}
+    data_json = response.json()
+    try:
+        elem = data_json['features'][0]
+    except IndexError or KeyError:
+        return {'error': 'nothing found'}
+    if 'geometry' not in elem:
+        mas.pop()
+        return geocoder(mas)
     return response.json()
 
 
@@ -71,11 +82,3 @@ def rev_geocoder(data):
     if not response.ok:
         return {'error': response.status_code}
     return response.json()
-
-
-def build_url(baseurl, path, args_dict=None):
-    dirty_url = parse.urljoin(baseurl + "/", path)
-    url_parts = list(parse.urlparse(dirty_url))
-    if args_dict:
-        url_parts[4] = parse.urlencode(args_dict)
-    return parse.urlunparse(url_parts)

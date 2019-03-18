@@ -1,7 +1,7 @@
 import json
 import requests
 
-from .validators import build_url
+from .helpers import build_url
 from .models import Object
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -32,29 +32,29 @@ class TestSuggestApi(TestCase):
 class TestCreateNote(TestCase):
     def setUp(self):
         self.client = Client()
-        self.create_note = reverse('create_note')
+        self.create_point = reverse('create_point')
 
     def test_errors(self):
-        response = self.client.get(self.create_note)
+        response = self.client.get(self.create_point)
         self.assertEqual(response.status_code, 405)
 
-        response = self.client.put(self.create_note)
+        response = self.client.put(self.create_point)
         self.assertEqual(response.status_code, 405)
 
-        response = self.client.post(self.create_note)
+        response = self.client.post(self.create_point)
         self.assertEqual(response.status_code, 400)
 
-        response = self.client.post(self.create_note,
+        response = self.client.post(self.create_point,
                                     data=json.dumps({'something': 'need'}),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 400)
 
-        response = self.client.post(self.create_note,
+        response = self.client.post(self.create_point,
                                     data=json.dumps({'lat': 'need', 'lon': 'int', 'address': 'lol'}),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 400)
 
-        response = self.client.post(self.create_note,
+        response = self.client.post(self.create_point,
                                     data=json.dumps({'lat': 54.3, 'lon': 'int', 'address': 'lol'}),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 400)
@@ -69,21 +69,21 @@ class TestCreateNote(TestCase):
             'address': address
         }
         response = self.client.post(
-            self.create_note, data=json.dumps(data), content_type="application/json")
+            self.create_point, data=json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
 
         '''Check OSM'''
-        self.assertEqual(data['status_osm'], 200)
+        self.assertEqual(data['status_osm'], True)
         url = build_url(
             getattr(settings, 'OSM_URL'),
-            f"{getattr(settings, 'OSM_URL_NOTE')}/{data['id']}",
+            f"{getattr(settings, 'OSM_URL_NOTE')}/{data['info']['id']}",
         )
         response = requests.get(url)
         self.assertEqual(response.status_code, 200)
 
         '''Check DB'''
-        self.assertEqual(data['status_db'], 200)
+        self.assertEqual(data['status_db'], True)
         obj = Object.objects.all().get(id=1)
         self.assertAlmostEqual(obj.latitude, lat)
         self.assertAlmostEqual(obj.longitude, lon)

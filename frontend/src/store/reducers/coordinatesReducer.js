@@ -1,25 +1,66 @@
 import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
-    coords: {
+    data: {
         address: '',
         lat: 55.75222,
-        lng: 37.61556
+        lng: 37.61556,
+        loading: false,
+        error: null,
     },
-    markerCoords: {
+    markerData: {
         address: '',
         lat: null,
         lng: null,
+        loading: false,
+        error: null
     },
-    status: null
+    isSent: false,
+    loading: false,
+    error: null,
+    isFocused: true
 };
 
 const reducer = ( state = initialState, action ) => {
 
-    if (action.type === actionTypes.ASK_ADDRESS) {
+    if (action.type === actionTypes.GET_ADDRESS_SUCCESS) {
         return {
             ...state,
-            markerCoords: {
+            markerData: {
+                ...initialState.markerData,
+                address: action.address,
+                lat: action.lat,
+                lng: action.lng,
+            },
+        }
+    }
+
+    if (action.type === actionTypes.GET_ADDRESS_START) {
+        return {
+            ...state,
+            markerData: {
+                ...state.markerData,
+                loading: true,
+            },
+        }
+    }
+
+    if (action.type === actionTypes.GET_ADDRESS_FAILED) {
+        return {
+            ...state,
+            markerData: {
+                ...state.markerData,
+                loading: false,
+                error: action.error
+            },
+        }
+    }
+
+    if (action.type === actionTypes.GET_COORDS_SUCCESS) {
+        return {
+            ...state,
+            data: {
+                ...initialState.data,
                 address: action.address,
                 lat: action.lat,
                 lng: action.lng
@@ -27,47 +68,87 @@ const reducer = ( state = initialState, action ) => {
         }
     }
 
-    if (action.type === actionTypes.FIND_PLACE) {
+    if (action.type === actionTypes.GET_COORDS_START) {
         return {
             ...state,
-            coords: {
+            data: {
+                ...initialState.data,
                 address: action.address,
-                lat: action.lat,
-                lng: action.lng
+                loading: true
             },
         }
     }
 
-    if (action.type === actionTypes.SEND_LINK) {
+    if (action.type === actionTypes.GET_COORDS_FAILED) {
         return {
             ...state,
-            status: action.status
+            data: {
+                ...state.data,
+                loading: false,
+                error: action.error
+            },
         }
     }
 
-    if (action.type === actionTypes.CLEAR_DATA) {
-        return initialState
+    if (action.type === actionTypes.SENDING_LINK_SUCCESS) {
+        return {
+            ...state,
+            isSent: true,
+            loading: false,
+            error: null
+        }
+    }
+
+    if (action.type === actionTypes.SENDING_LINK_START) {
+        return {
+            ...state,
+            isSent: false,
+            loading: true,
+            error: null
+        }
+    }
+
+    if (action.type === actionTypes.SENDING_LINK_FAILED) {
+        return {
+            ...state,
+            isSent: false,
+            loading: false,
+            error: action.error
+        }
     }
 
     if (action.type === actionTypes.SET_ADDRESS) {
         return {
             ...state,
-            coords: {
-                ...state.coords,
+            data: {
+                ...state.data,
                 address: action.address
-            }
+            },
+            isFocused: true
         }
     }
 
     if (action.type === actionTypes.SET_MARKER_COORDS) {
         return {
             ...state,
-            markerCoords: {
-                address: 'Подождите...',
+            markerData: {
+                ...initialState.markerData,
                 lat: action.coords.lat,
-                lng: action.coords.lng
+                lng: action.coords.lng,
+                loading: true
             }
         }
+    }
+
+    if (action.type === actionTypes.UNFOCUS_INPUT) {
+        return {
+            ...state,
+            isFocused: false
+        }
+    }
+
+    if (action.type === actionTypes.CLEAR_DATA) {
+        return initialState
     }
 
     return state;

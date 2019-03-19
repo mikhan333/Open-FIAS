@@ -16,10 +16,6 @@ class LoginPage extends Component {
         window.location.href = authServer;
     }
 
-    componentDidMount() {
-        this.props.auth();
-    }
-
     render() {
         let cards;
         if(!this.props.username) {
@@ -111,7 +107,6 @@ class LoginPage extends Component {
                 <Card
                     className={ classes.InfoCard }
                     key='Info'
-                    onClick={ () => this.props.auth() } //delete
                 >
                     <Card.Body>
                         <Card.Text>
@@ -137,7 +132,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        auth: () => dispatch(actionCreators.auth()),
         logout: () => dispatch(actionCreators.logout()),
     }
 };

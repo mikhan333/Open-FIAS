@@ -10,7 +10,10 @@ class Header extends Component {
         let name;
         if (this.props.username) {
             name =
-                <Navbar.Text>
+                <Navbar.Text
+                    onClick={ () => this.props.history.push('/profile') }
+                    className={ classes.UserInfo }
+                >
                     Вы вошли как: { this.props.username }
                 </Navbar.Text>
         } else {

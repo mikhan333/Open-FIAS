@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { Form } from 'react-bootstrap'
 import { connect } from "react-redux";
-import { ListGroup, Button, ButtonGroup } from "react-bootstrap";
+import { Form, Button, ButtonGroup } from "react-bootstrap";
 import * as actionCreatorsSuggest from "../../store/actions/suggestionCollector";
 import * as actionCreatorsCoords from "../../store/actions/coordinatesData";
 
+import SuggestionsList from './SuggestionsList'
 import classes from './index.module.css'
 
 class SuggestBar extends Component {
@@ -13,16 +13,13 @@ class SuggestBar extends Component {
 
         this.state = {
             currentAddress: '',
-            isFocused: false
         };
+    }
 
-        this.onChangeAddress = this.onChangeAddress.bind(this);
-        this.onClickAddress = this.onClickAddress.bind(this);
-        this.focusMe = this.focusMe.bind(this);
-
+    componentDidMount() {
         setInterval(() => {
             if (this.props.address !== this.state.currentAddress) {
-                this.props.sendAddress(this.props.address);
+                this.props.getSuggestions(this.props.address);
                 this.setState({
                     currentAddress: this.props.address
                 })
@@ -30,47 +27,24 @@ class SuggestBar extends Component {
         }, 200);
     }
 
-    onChangeAddress(address) {
-        this.props.setAddress(address)
-    }
-
-    onClickAddress(address) {
-        this.props.findPlace(address);
-        this.setState({
-            isFocused: true
-        })
-    }
-
-    focusMe(input) {
-        if (this.state.isFocused) {
+    focusInput(input) {
+        if (this.props.isFocused) {
             if (input) {
                 input.focus();
             }
-            this.setState({
-                isFocused: false
-            })
+            this.props.unfocus();
         }
     }
 
     render() {
-        const suggestions = this.props.suggestions.map((address, index) =>
-            <ListGroup.Item
-                className={ classes.SingleAddress }
-                onClick={ () => this.onClickAddress(address) }
-                key={ index }
-            >
-                { address }
-            </ListGroup.Item>
-        );
-
         let confirmButton;
-        if (this.props.linkData.address !== '' && this.props.linkData.coords.lat) {
+        if (this.props.address !== '' && this.props.markerCoords.lat) {
             confirmButton =
                 <Button
                     variant="success"
-                    onClick={() => this.props.sendLink(
-                        this.props.linkData.address,
-                        this.props.linkData.coords
+                    onClick={ () => this.props.sendLink(
+                        this.props.address,
+                        this.props.markerCoords
                     )}
                 >Подтвердить</Button>;
         } else {
@@ -79,30 +53,30 @@ class SuggestBar extends Component {
 
         return (
             <div className={ classes.SuggestBar }>
-                <div className={ classes.SuggestedList }>
+                <div className={ classes.Suggester }>
                     <Form className={ classes.AddressInput }>
-                        <Form.Control
-                            autoFocus
-                            ref={(input) => this.focusMe(input)}
-                            placeholder="Введите адрес"
-                            onChange={ (event) => this.onChangeAddress(event.target.value) }
-                            value={ this.props.address }
-                        />
+                        <Form.Group>
+                            <Form.Control
+                                as='textarea'
+                                rows='2'
+                                autoFocus
+                                ref={(input) => this.focusInput(input)}
+                                placeholder="Введите адрес"
+                                onChange={ (event) => this.props.setAddress(event.target.value) }
+                                value={ this.props.address }
+                            />
+                        </Form.Group>
                     </Form>
-
-                    <ListGroup>
-                        { suggestions }
-                    </ListGroup>
+                    <SuggestionsList/>
                 </div>
-
 
                 <ButtonGroup className={ classes.Buttons }>
                     <Button
                         variant="danger"
                         onClick={ this.props.clearData }
-                    >Очистить</Button>
-
-
+                    >
+                        Очистить
+                    </Button>
                     { confirmButton }
                 </ButtonGroup>
             </div>
@@ -112,22 +86,19 @@ class SuggestBar extends Component {
 
 const mapStateToProps = state => {
     return {
-        suggestions: state.suggest.suggestions,
-        linkData: {
-            address: state.suggest.address,
-            coords: state.coordinatesData.markerCoords
-        },
-        address: state.coordinatesData.coords.address
+        markerCoords: state.coordinatesData.markerData,
+        address: state.coordinatesData.data.address,
+        isFocused: state.coordinatesData.isFocused
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        sendAddress: (address) => dispatch(actionCreatorsSuggest.sendAddress(address)),
-        findPlace: (address) => dispatch(actionCreatorsCoords.findPlace(address)),
+        getSuggestions: (address) => dispatch(actionCreatorsSuggest.getSuggestions(address)),
+        setAddress: (address) => dispatch(actionCreatorsCoords.setAddress(address)),
         sendLink: (address, coords) => dispatch(actionCreatorsCoords.sendLink(address, coords)),
         clearData: () => dispatch(actionCreatorsCoords.clearData()),
-        setAddress: (address) => dispatch(actionCreatorsCoords.setAddress(address))
+        unfocus: () => dispatch(actionCreatorsCoords.unfocusInput())
     }
 };
 

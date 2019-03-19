@@ -2,8 +2,9 @@ import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
     username: '',
+    points: [],
     error: null,
-    loading: false,
+    loading: false
 };
 
 const reducer = ( state = initialState, action ) => {
@@ -18,6 +19,7 @@ const reducer = ( state = initialState, action ) => {
         return {
             ...initialState,
             username: action.username,
+            points: action.points
         }
     }
 

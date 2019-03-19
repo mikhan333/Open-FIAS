@@ -5,22 +5,29 @@
 }
 
 .SuggestedList {
-    overflow: auto;
-    flex: 1;
+    overflow: auto; /*TODO*/
 }
 
 .AddressInput {
     width: calc(100% - 6px);
-    margin: 3px
+    margin: 3px;
 }
 
 .SingleAddress {
     text-align: left;
-    margin: 3px;
+    margin: 0 3px 3px 3px;
     cursor: pointer;
+}
+
+.Suggester {
+    flex: 1;
 }
 
 .Buttons {
     width: calc(100% - 4px);
     margin: 2px;
+}
+
+.Warning {
+    margin: 0 3px 0 3px;
 }

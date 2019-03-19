@@ -8,7 +8,6 @@ import './index.css'
 class SideMap extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             currentMarkerCoords: {
                 lat: null,
@@ -16,44 +15,41 @@ class SideMap extends Component {
             },
             zoom: this.props.zoom || 10,
         };
+    }
 
-        this.handleClick = this.handleClick.bind(this);
-
+    componentDidMount() {
         setInterval(() => {
-            if (JSON.stringify(this.props.markerCoordinates) !== JSON.stringify(this.state.currentMarkerCoords)) {
-                this.props.askAddress(this.props.markerCoordinates);
+            if (JSON.stringify(this.props.markerCoords) !== JSON.stringify(this.state.currentMarkerCoords)) {
+                this.props.getAddress(this.props.markerCoords);
                 this.setState({
-                    currentMarkerCoords: this.props.markerCoordinates,
+                    currentMarkerCoords: this.props.markerCoords,
                 })
             }
         }, 200);
     }
 
-    handleClick(event) {
-        this.props.setMarkerCoords({
-            lat: event.latlng.lat,
-            lng: event.latlng.lng
-        });
-    }
-
     render() {
         let marker;
-        if (this.props.markerCoordinates.lat && this.props.markerCoordinates.lng) {
+        if (this.props.markerCoords.lat && this.props.markerCoords.lng) {
             let popup;
-            if (this.props.address) {
-                if (this.props.address !== 'Подождите...') {
+            if (this.props.loading) {
+                popup = <Popup>Подождите...</Popup>
+            } else if (this.props.error) {
+                popup = <Popup>Ошибка: { this.props.error.message || this.props.error }</Popup>
+            } else {
+                if (this.props.address) { //TODO set address after loading finished
                     popup =
                         <Popup
                             onOpen={ () => this.props.setAddress(this.props.address) }
-                        >{ this.props.address }</Popup>
+                        >
+                            { this.props.address }
+                        </Popup>
                 } else {
-                    popup = <Popup>{ 'Подождите...' }</Popup>
+                    popup = <Popup>Неизвестный адрес</Popup>
                 }
-            } else {
-                popup = <Popup>{ 'Неизвестный адрес' }</Popup>
             }
             marker =
-                <Marker position={ this.props.markerCoordinates }>
+                <Marker position={ this.props.markerCoords }>
                     { popup }
                 </Marker>
         }
@@ -62,7 +58,7 @@ class SideMap extends Component {
             <Map
                 center={ this.props.coords }
                 zoom={ this.state.zoom }
-                onClick={ this.handleClick }
+                onClick={ (event) => this.props.setMarkerCoords(event.latlng) }
             >
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -77,20 +73,22 @@ class SideMap extends Component {
 const mapStateToProps = state => {
     return {
         coords: {
-            lat: state.coordinatesData.coords.lat,
-            lng: state.coordinatesData.coords.lng
+            lat: state.coordinatesData.data.lat,
+            lng: state.coordinatesData.data.lng
         },
-        address: state.coordinatesData.markerCoords.address,
-        markerCoordinates: {
-            lat: state.coordinatesData.markerCoords.lat,
-            lng: state.coordinatesData.markerCoords.lng
+        address: state.coordinatesData.markerData.address,
+        loading: state.coordinatesData.markerData.loading,
+        error: state.coordinatesData.markerData.error,
+        markerCoords: {
+            lat: state.coordinatesData.markerData.lat,
+            lng: state.coordinatesData.markerData.lng
         }
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        askAddress: (coords) => dispatch(actionCreators.askAddress(coords)),
+        getAddress: (coords) => dispatch(actionCreators.getAddress(coords)),
         setAddress: (address) => dispatch(actionCreators.setAddress(address)),
         setMarkerCoords: (coords) => dispatch(actionCreators.setMarkerCoords(coords))
     }

@@ -8,10 +8,11 @@ export const authStart = () => {
     }
 };
 
-export const authSuccess = (username) => {
+export const authSuccess = (username, points) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
-        username
+        username,
+        points
     }
 };
 
@@ -30,16 +31,21 @@ export const logoutSuccess = () => {
 
 export const auth = () => {
     return dispatch => {
+        if (localStorage.getItem('username')) {
+            dispatch(authSuccess(localStorage.getItem('username')));
+        }
         axios.get(infoServer, {
             withCredentials: true,
             crossDomain: true
         })
             .then(resp => {
                 console.log(resp.data);
-                dispatch(authSuccess(resp.data.username));
+                localStorage.setItem('username', resp.data.username);
+                dispatch(authSuccess(resp.data.username,  JSON.parse(resp.data.points)));
             })
             .catch(error => {
                 console.log(error);
+                localStorage.setItem('username', '');
                 dispatch(authFailed(error));
             });
     }
@@ -50,13 +56,11 @@ export const logout = () => {
         axios.get(logoutServer, { withCredentials: true })
             .then(resp => {
                 console.log(resp.data);
-
                 localStorage.clear();
                 dispatch(logoutSuccess());
             })
             .catch(error => {
                 dispatch(authFailed(error));
             });
-        
     }
 };

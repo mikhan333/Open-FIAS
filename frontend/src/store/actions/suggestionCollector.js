@@ -2,23 +2,37 @@ import * as actionTypes from './actionTypes';
 import axios from "axios";
 import { suggestServer } from "../serverURLs";
 
-function saveData(address, suggestions) {
+function suggestSuccess(address, suggestions) {
     return {
-        type: actionTypes.SEND_ADDRESS,
+        type: actionTypes.SUGGEST_SUCCESS,
         address,
         suggestions
     }
 }
-//TODO handle errors
-export const sendAddress = (address) => {
+
+function suggestStart() {
+    return {
+        type: actionTypes.SUGGEST_START
+    }
+}
+
+function suggestError(error) {
+    return {
+        type: actionTypes.SUGGEST_FAILED,
+        error
+    }
+}
+
+export const getSuggestions = (address) => {
     if(address.length <= 1) {
         return {
-            type: actionTypes.SEND_ADDRESS,
+            type: actionTypes.SUGGEST_SUCCESS,
             address,
             suggestions: []
         }
     }
     return function (dispatch) {
+        dispatch(suggestStart());
         return axios.get(suggestServer, {
             params: {
                 address
@@ -26,7 +40,9 @@ export const sendAddress = (address) => {
         }).then(resp => {
             const suggestions = resp.data.results.map((obj) => (obj.address));
 
-            dispatch(saveData(address, suggestions));
+            dispatch(suggestSuccess(address, suggestions));
+        }).catch(error => {
+            dispatch(suggestError(error));
         });
     }
 };

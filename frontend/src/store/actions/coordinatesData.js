@@ -11,18 +11,28 @@ const saveData = (actionType, latitude, longitude, address) => {
     }
 };
 
-function saveStatus(status) {
+const start = (actionType) => {
     return {
-        type: actionTypes.SEND_LINK,
-        status
+        type: actionType
     }
-}
-//TODO handle errors
-export const askAddress = (coords) => {
-    if (coords === null || coords.lat === null || coords.lng ===  null) {
-        return saveData(actionTypes.ASK_ADDRESS, coords.lat, coords.lng, '')
+};
+
+const failed = (actionType, error) => {
+    return {
+        type: actionType,
+        error
+    }
+};
+
+export const getAddress = (coords) => {
+    if (!coords || !coords.lat || !coords.lng ) {
+        return {
+            type: actionTypes.GET_ADDRESS_FAILED,
+            error: 'неверные координаты'
+        }
     }
     return function (dispatch) {
+        dispatch(start(actionTypes.GET_ADDRESS_START));
         return axios.get(revGeocoderServer,
             {
                 params: {
@@ -30,6 +40,10 @@ export const askAddress = (coords) => {
                     lon: coords.lng
                 }
             }).then(resp => {
+                if (!resp.data.results[0]) {
+                    dispatch(failed(actionTypes.GET_ADDRESS_FAILED, 'результатов не найдень'));
+                    return;
+                }
                 const addressDetails = resp.data.results[0].address_details;
 
                 let address = '';
@@ -46,46 +60,61 @@ export const askAddress = (coords) => {
                     address = `${address}, ${addressDetails.building}`
                 }
 
-                dispatch(saveData(actionTypes.ASK_ADDRESS, coords.lat, coords.lng, address))
+                dispatch(saveData(actionTypes.GET_ADDRESS_SUCCESS, coords.lat, coords.lng, address))
+            }).catch(error => {
+                dispatch(failed(actionTypes.GET_ADDRESS_FAILED, error))
             });
     }
 };
 
-export const findPlace = (address) => {
+const getStart = (address) => {
+    return {
+        type: actionTypes.GET_COORDS_START,
+        address
+    }
+};
+
+export const getCoords = (address) => {
     return function (dispatch) {
+        dispatch(getStart(address));
         return axios.get(geocoderServer, {
-            params: {
-                address
-            }
-        }).then( resp => {
-            let coords;
-            if (resp.data.features && resp.data.features[0].geometry) {
-                coords = resp.data.features[0].geometry.coordinates;
-            } else {
-                coords = [null, null]
-            }
-            dispatch(saveData(actionTypes.FIND_PLACE, coords[0], coords[1], address))
-        });
+                params: {
+                    address
+                }
+            }).then( resp => {
+                if (resp.data.features && resp.data.features[0].geometry) {
+                    const coords = resp.data.features[0].geometry.coordinates;
+                    dispatch(saveData(actionTypes.GET_COORDS_SUCCESS, coords[0], coords[1], address))
+                } else {
+                    dispatch(failed(actionTypes.GET_COORDS_FAILED, 'места не найдены'))
+                }
+            }).catch(error => {
+                dispatch(failed(actionTypes.GET_COORDS_FAILED, error))
+            });
     }
 };
 
 export const sendLink = (address, coords) => {
     return function (dispatch) {
+        dispatch(start(actionTypes.SENDING_LINK_START));
         return axios.post(notesServer, {
             address,
             lat: coords.lat,
             lon: coords.lng
         }).then( resp => {
-            dispatch(saveStatus(resp.status))
+            if (resp.status === 200) {
+                dispatch(() => { return { type: actionTypes.SENDING_LINK_SUCCESS } })
+            } else {
+                dispatch(failed(actionTypes.SENDING_LINK_FAILED, 'плохой код ответа'))
+            }
+
+        }).catch(error => {
+            dispatch(failed(actionTypes.SENDING_LINK_FAILED, error))
         });
     }
 };
 
-export const clearData = () => {
-    return {
-        type: actionTypes.CLEAR_DATA
-    }
-};
+
 
 export const setAddress = (address) => {
     return {
@@ -98,5 +127,18 @@ export const setMarkerCoords = (coords) => {
     return {
         type: actionTypes.SET_MARKER_COORDS,
         coords
+    }
+};
+
+export const unfocusInput = (isFocused) => {
+    return {
+        type: actionTypes.UNFOCUS_INPUT,
+        isFocused
+    }
+};
+
+export const clearData = () => {
+    return {
+        type: actionTypes.CLEAR_DATA
     }
 };

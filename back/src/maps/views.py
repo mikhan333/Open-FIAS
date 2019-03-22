@@ -8,9 +8,10 @@ from .models import Object
 from django import forms
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from requests_oauthlib import OAuth1
+from django.core.serializers import serialize
 
 
 @csrf_exempt
@@ -35,15 +36,25 @@ def create_point(request):
         return HttpResponseBadRequest('Wrong request address')
 
     user = request.user
-    if user.is_authenticated:
-        data = create_object(lat, lon, address_obj, user)
-    else:
-        data = create_note(lat, lon, address_obj)
-    if not data['status_osm']:
-        return HttpResponseBadRequest('Wrong request data - osm')
-    data['status_db'] = send_db(lat, lon, address_obj, user)
-    if not data['status_db']:
+    point_db_id = send_db(lat, lon, address_obj, user)
+    if point_db_id is None:
         return HttpResponseBadRequest('Wrong request data - db')
+    data = {'status_db': True}
+    if user.is_authenticated:
+        data.update(create_object(lat, lon, address_obj, user))
+        if not data['status_osm']:
+            return HttpResponseBadRequest('Wrong request data - osm - can not create note')
+        obj_osm_id = int(data['node']['new_id'])
+    else:
+        data.update(create_note(lat, lon, address_obj))
+        if not data['status_osm']:
+            return HttpResponseBadRequest('Wrong request data - osm - can not create object')
+        note_osm_id = int(data['info']['id'])
+        if request.session.session_key is not None:
+            session = request.session
+            session['points'].append((point_db_id, note_osm_id))
+            session.save()
+    # TODO unite obj_osm_id with point_db_id
     return JsonResponse(data)
 
 
@@ -171,8 +182,8 @@ def send_db(lat, lon, address_obj, user):
         if user.is_authenticated:
             object_new.author = user
         object_new.save()
-        return True
-    return False
+        return object_new.id
+    return None
 
 
 class ObjectForm(forms.ModelForm):

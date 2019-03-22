@@ -12,29 +12,44 @@ def build_url(baseurl, path, args_dict=None):
     return parse.urlunparse(url_parts)
 
 
-def build_xml(data, root=None):
+def build_xml(data):
+    key = list(data.keys())[0]
+    root = Element(key)
+    arg = data[key]
+    if '_tags_' in arg:
+        tags = arg['_tags_']
+        build_xml_tags(root, tags)
+    build_xml_tree(arg, root)
+    return html.unescape(tostring(root).decode('utf-8'))
+
+
+def build_xml_tree(data, root):
     for key in data:
         if key is '_tags_':
             continue
         child = Element(key)
         keys = data[key]
+        # Get 'tags' from value called _tags_
         if '_tags_' in keys:
             tags = keys['_tags_']
+            # If there is an array with number tags
+            # like { tag: {'_tags_' : [{'tag1': 1}, {'tag2': 2}]} } is used another function
+            # to not use many times the same key name like
+            # { tag: {'_tags_' : {'tag1': 1}}, tag: {'_tags_' : {'tag2': 2}}}
             if isinstance(tags, list):
                 for elem in tags:
                     if build_xml_tags(child, elem):
                         root.append(child)
+                    # Create new elements because we have array of tags
                     child = Element(key)
-                return True
+                break
             else:
                 build_xml_tags(child, tags)
-        if root is not None:
-            root.append(child)
+        root.append(child)
+        # If there are other elements by key, it is necessary to convert them to 'xml' also
         if len(keys) > 1 or (len(keys) > 0 and '_tags_' not in keys):
-            build_xml(keys, child)
-        if root is None:
-            return html.unescape(tostring(child).decode('utf-8'))
-    return 0
+            build_xml_tree(keys, child)
+    return True
 
 
 def build_xml_tags(child, data):
@@ -43,9 +58,3 @@ def build_xml_tags(child, data):
             return False
         child.set(tag, str(data[tag]))
     return True
-
-
-def check_exist(mas, key):
-    if key in mas:
-        return mas[key]
-    return None

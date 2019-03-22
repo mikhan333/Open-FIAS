@@ -15,7 +15,7 @@ def suggester(data):
     address = 'россия москва'
     if 'address' in data:
         address = data['address']
-    mas = re.findall(r"[\w']+", address.lower())
+    address_parts = re.findall(r"[\w']+", address.lower())
 
     url = build_url(
         getattr(settings, 'FIAS_URL'),
@@ -23,7 +23,7 @@ def suggester(data):
         {
             'api_key': getattr(settings, 'FIAS_API_KEY'),
             'format': 'json',
-            'q': ' '.join(mas),
+            'q': ' '.join(address_parts),
         }
     )
     response = requests.get(url)
@@ -37,16 +37,16 @@ def geocoder(data):
     if 'address' in data:
         address = data['address']
     if isinstance(data, list):
-        mas = data
+        address_parts = data
     else:
-        mas = re.findall(r"[\w']+", address)
+        address_parts = re.findall(r"[\w']+", address)
 
     url = build_url(
         getattr(settings, 'FIAS_URL'),
         getattr(settings, 'FIAS_URL_GEOCODER'),
         {
             'api_key': getattr(settings, 'FIAS_API_KEY'),
-            'q': ' '.join(mas),
+            'q': ' '.join(address_parts),
         }
     )
     response = requests.get(url)
@@ -55,11 +55,11 @@ def geocoder(data):
     data_json = response.json()
     try:
         elem = data_json['features'][0]
-    except IndexError or KeyError:
+    except (IndexError, KeyError):
         return {'error': 'nothing found'}
     if 'geometry' not in elem:
-        mas.pop()
-        return geocoder(mas)
+        address_parts.pop()
+        return geocoder(address_parts)
     return response.json()
 
 

@@ -4,6 +4,8 @@ from django.contrib.auth import logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
 from maps.models import Object
 from django.core.serializers import serialize
+from django.contrib.sessions.backends.db import SessionStore
+from django.contrib.sessions.models import Session
 
 
 @csrf_exempt
@@ -14,7 +16,7 @@ def logout(request):
 
 @csrf_exempt
 @login_required
-def get_user_detail(request):
+def get_user_detail(request):  # TODO get info about points from OSM
     user = request.user
     data = {'username': user.username}
     extra_data = user.social_auth.get(provider='openstreetmap').extra_data
@@ -28,9 +30,15 @@ def get_user_detail(request):
 
 @csrf_exempt
 def check_auth(request):
+    response = JsonResponse({'authorization': False})
     if request.user.is_authenticated():
         return JsonResponse({'authorization': True})
-    return JsonResponse({'authorization': False})
+    elif request.session.__getitem__('sessionid') is None:
+        session = SessionStore()
+        session['points'] = []
+        session.save()
+        response.set_cookie('sessionid', session.session_key)
+    return response
 
 
 @csrf_exempt

@@ -2,7 +2,7 @@ import requests
 import xml.etree.ElementTree as xml
 import json
 
-from .helpers import build_url, build_xml, check_exist
+from .helpers import build_url, build_xml
 from .validators import suggester, rev_geocoder, geocoder, check_addr
 from .models import Object
 from django import forms
@@ -61,11 +61,14 @@ def create_note(lat, lon, address_obj):
     if not response.ok:
         return {'status_osm': False}
     data_json = {'status_osm': True}
-    root = xml.fromstring(response.content)
-    data_json['info'] = {}
-    for child in root[0]:
-        if child.tag != 'comments':
-            data_json['info'][str(child.tag)] = child.text
+    try:
+        root = xml.fromstring(response.content)
+        data_json['info'] = {}
+        for child in root[0]:
+            if child.tag != 'comments':
+                data_json['info'][str(child.tag)] = child.text
+    except (IndexError, xml.ParseError):
+        return {'status_osm': False}
     return data_json
 
 
@@ -114,15 +117,15 @@ def create_object(lat, lon, address_obj, user):
                 'node': {
                     '_tags_': {'id': -1, 'lon': lon, 'lat': lat, 'version': 0, 'changeset': commit_id},
                     'tag': {'_tags_': [
-                        {'k': 'name', 'v': check_exist(address_obj, 'name')},
-                        {'k': 'addr:country', 'v': check_exist(address, 'country')},
-                        {'k': 'addr:region', 'v': check_exist(address, 'region')},
-                        {'k': 'addr:subregion', 'v': check_exist(address, 'subregion')},
-                        {'k': 'addr:city', 'v': check_exist(address, 'locality')},
-                        {'k': 'addr:suburb', 'v': check_exist(address, 'suburb')},
-                        {'k': 'addr:street', 'v': check_exist(address, 'street')},
-                        {'k': 'addr:housenumber', 'v': check_exist(address, 'building')},
-                        {'k': 'addr:postcode', 'v': check_exist(address_obj, 'postalcode')}
+                        {'k': 'name', 'v': address_obj.get('name')},
+                        {'k': 'addr:country', 'v': address.get('country')},
+                        {'k': 'addr:region', 'v': address.get('region')},
+                        {'k': 'addr:subregion', 'v': address.get('subregion')},
+                        {'k': 'addr:city', 'v': address.get('locality')},
+                        {'k': 'addr:suburb', 'v': address.get('suburb')},
+                        {'k': 'addr:street', 'v': address.get('street')},
+                        {'k': 'addr:housenumber', 'v': address.get('building')},
+                        {'k': 'addr:postcode', 'v': address_obj.get('postalcode')}
                     ]}
                 }
             },
@@ -144,10 +147,13 @@ def create_object(lat, lon, address_obj, user):
     if not response.ok:
         return {'status_osm': False}
     data_json = {'status_osm': True}
-    root = xml.fromstring(response_info.content)
-    data_json['node'] = {}
-    for child in root[0].attrib.items():
-        data_json['node'][str(child[0])] = int(child[1])
+    try:
+        root = xml.fromstring(response_info.content)
+        data_json['node'] = {}
+        for child in root[0].attrib.items():
+            data_json['node'][str(child[0])] = int(child[1])
+    except (IndexError, xml.ParseError):
+        return {'status_osm': False}
     return data_json
 
 

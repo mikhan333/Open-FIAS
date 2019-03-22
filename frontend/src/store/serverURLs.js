@@ -2,11 +2,13 @@ const backendURL = '';
 
 export const suggestServer = `${ backendURL }/suggester`;
 export const geocoderServer = `${ backendURL }/geocoder`;
-export const notesServer = `${ backendURL }/create_note`;
+export const notesServer = `${ backendURL }/create_point`;
 export const revGeocoderServer = `${ backendURL }/rev_geocoder`;
 
-export const authServer = `${ backendURL }/login/openstreetmap/`;
+export const authServer = `${ backendURL }/login`;
 export const logoutServer = `${ backendURL }/logout`;
-export const infoServer = `${ backendURL }/get_user_detail`;
+
+export const checkAuthServer = `${ backendURL }/check_auth`;
 export const profileServer = `${ backendURL }/get_user_detail`;
+export const anonimPointsServer = `${ backendURL }/add_points_from_cookie`;
 

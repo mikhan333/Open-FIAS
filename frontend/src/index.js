@@ -7,13 +7,15 @@ import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 
-import coordinatesReducer from './store/reducers/coordinatesReducer';
+import mapReducer from './store/reducers/mapReducer';
+import markerReducer from './store/reducers/markerReducer';
 import suggestionsReducer from './store/reducers/suggestionsReducer';
 import authReducer from './store/reducers/authReducer'
 
 const rootReducer = combineReducers({
     auth: authReducer,
-    coordinatesData: coordinatesReducer,
+    map: mapReducer,
+    marker: markerReducer,
     suggest: suggestionsReducer
 });
 

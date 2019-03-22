@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
 import { ListGroup, Alert } from "react-bootstrap";
-import * as actionCreators from "../../store/actions/coordinatesData";
+import * as actionCreators from "../../store/actions/mapActions";
 
 import classes from './index.module.css'
 

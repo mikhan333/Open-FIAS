@@ -6,24 +6,24 @@ import Layout from './components/Layout'
 import CreateLink from './containers/CreateLink'
 import LoginPage from './containers/LoginPage'
 import Profile from './containers/ProfilePage'
-import './App.css';
 import * as actionCreators from "./store/actions/auth";
+import './App.css';
 
 class App extends Component {
     componentDidMount() {
-        this.props.auth();
+        this.props.checkAuthServer(localStorage.getItem('username'));
     }
 
     render() {
     return (
-      <div className="App">
-        <Router>
-            <Layout>
-              <Route exact path='/' component={ LoginPage } />
-              <Route exact path='/addlink' component={ CreateLink } />
-              <Route exact path='/profile' component={ Profile } />
-            </Layout>
-        </Router>
+        <div className="App">
+            <Router>
+                <Layout>
+                    <Route exact path='/' component={ LoginPage } />
+                    <Route exact path='/addlink' component={ CreateLink } />
+                    <Route exact path='/profile' component={ Profile } />
+                </Layout>
+            </Router>
       </div>
     );
   }
@@ -31,7 +31,7 @@ class App extends Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        auth: () => dispatch(actionCreators.auth())
+        checkAuthServer: () => dispatch(actionCreators.checkAuth())
     }
 };
 

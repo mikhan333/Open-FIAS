@@ -4,7 +4,7 @@ const initialState = {
     username: '',
     points: [],
     error: null,
-    loading: false
+    loading: false,
 };
 
 const reducer = ( state = initialState, action ) => {

@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
 import { Form, Button, ButtonGroup } from "react-bootstrap";
-import * as actionCreatorsSuggest from "../../store/actions/suggestionCollector";
-import * as actionCreatorsCoords from "../../store/actions/coordinatesData";
+import * as suggesterActionCreators from "../../store/actions/suggesterActions";
+import * as mapActionCreators from "../../store/actions/mapActions";
 
 import SuggestionsList from './SuggestionsList'
 import classes from './index.module.css'
+import ConfirmModal from './ConfirmModal'
 
 class SuggestBar extends Component {
     constructor(props) {
@@ -13,7 +14,11 @@ class SuggestBar extends Component {
 
         this.state = {
             currentAddress: '',
+            modalShow: false
         };
+
+        this.modalClose = this.modalClose.bind(this);
+        this.handleConfirm = this.handleConfirm.bind(this)
     }
 
     componentDidMount() {
@@ -27,6 +32,12 @@ class SuggestBar extends Component {
         }, 200);
     }
 
+    modalClose() {
+        this.setState({
+            modalShow: false
+        })
+    }
+
     focusInput(input) {
         if (this.props.isFocused) {
             if (input) {
@@ -36,20 +47,32 @@ class SuggestBar extends Component {
         }
     }
 
+    handleConfirm() {
+        this.setState({
+            modalShow: true
+        })
+    }
+
     render() {
         let confirmButton;
-        if (this.props.address !== '' && this.props.markerCoords.lat) {
+        if (this.props.address !== '' && this.props.markerCoords.lat && this.props.markerCoords.lng) {
             confirmButton =
                 <Button
                     variant="success"
-                    onClick={ () => this.props.sendLink(
-                        this.props.address,
-                        this.props.markerCoords
-                    )}
+                    onClick={ this.handleConfirm }
                 >Подтвердить</Button>;
         } else {
             confirmButton = <Button variant="success" disabled>Подтвердить</Button>
         }
+
+        let modal;
+        if (this.state.modalShow) {
+            modal =
+                <ConfirmModal
+                    onHide={ this.modalClose }
+                />
+        }
+
 
         return (
             <div className={ classes.SuggestBar }>
@@ -79,6 +102,8 @@ class SuggestBar extends Component {
                     </Button>
                     { confirmButton }
                 </ButtonGroup>
+
+                { modal }
             </div>
         )
     }
@@ -86,19 +111,18 @@ class SuggestBar extends Component {
 
 const mapStateToProps = state => {
     return {
-        markerCoords: state.coordinatesData.markerData,
-        address: state.coordinatesData.data.address,
-        isFocused: state.coordinatesData.isFocused
+        markerCoords: state.marker,
+        address: state.map.data.address,
+        isFocused: state.map.isFocused
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        getSuggestions: (address) => dispatch(actionCreatorsSuggest.getSuggestions(address)),
-        setAddress: (address) => dispatch(actionCreatorsCoords.setAddress(address)),
-        sendLink: (address, coords) => dispatch(actionCreatorsCoords.sendLink(address, coords)),
-        clearData: () => dispatch(actionCreatorsCoords.clearData()),
-        unfocus: () => dispatch(actionCreatorsCoords.unfocusInput())
+        getSuggestions: (address) => dispatch(suggesterActionCreators.getSuggestions(address)),
+        setAddress: (address) => dispatch(mapActionCreators.setAddress(address)),
+        clearData: () => dispatch(mapActionCreators.clearData()),
+        unfocus: () => dispatch(mapActionCreators.unfocusInput())
     }
 };
 

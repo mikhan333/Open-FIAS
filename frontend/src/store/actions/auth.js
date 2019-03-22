@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from "axios";
-import { infoServer, logoutServer } from "../serverURLs";
+import { profileServer, logoutServer, checkAuthServer, anonimPointsServer } from "../serverURLs";
 
 export const authStart = () => {
     return {
@@ -16,10 +16,10 @@ export const authSuccess = (username, points) => {
     }
 };
 
-export const authFailed = (err) => {
+export const authFailed = (error) => {
     return {
         type: actionTypes.AUTH_FAILED,
-        error: err,
+        error: error
     }
 };
 
@@ -29,24 +29,57 @@ export const logoutSuccess = () => {
     }
 };
 
-export const auth = () => {
+export const checkAuth = () => {
     return dispatch => {
         if (localStorage.getItem('username')) {
             dispatch(authSuccess(localStorage.getItem('username')));
         }
-        axios.get(infoServer, {
+        axios.get(checkAuthServer, {
             withCredentials: true,
-            crossDomain: true
         })
             .then(resp => {
-                console.log(resp.data);
-                localStorage.setItem('username', resp.data.username);
-                dispatch(authSuccess(resp.data.username,  JSON.parse(resp.data.points)));
+                if (resp.data.authorization) {
+                    if(!localStorage.getItem('username') || localStorage.getItem('username') === '') {
+                        dispatch(getProfileInfo());
+                        localStorage.setItem('justLogged', 'true')
+                    }
+                } else {
+                    dispatch(authFailed('User are not authorized'));
+                    if (resp.data.points) {
+                        localStorage.setItem('hasAddedPoints', 'true');
+                    }
+                }
             })
             .catch(error => {
                 console.log(error);
                 localStorage.setItem('username', '');
                 dispatch(authFailed(error));
+            });
+    }
+};
+
+export const getProfileInfo = () => {
+    return dispatch => {
+        dispatch(authStart());
+        axios.get(profileServer, {
+            withCredentials: true,
+        })
+            .then(resp => {
+                localStorage.setItem('username', resp.data.username);
+                dispatch(authSuccess(resp.data.username,  JSON.parse(resp.data.points)));
+            })
+            .catch(error => {
+                localStorage.setItem('username', '');
+                dispatch(authFailed(error));
+            });
+    }
+};
+
+export const setAnonimPoints = () => {
+    return () => {
+        axios.get(anonimPointsServer, { withCredentials: true })
+            .then(() => {
+                localStorage.setItem('hasAddedPoints', 'false')
             });
     }
 };
@@ -58,6 +91,7 @@ export const logout = () => {
                 console.log(resp.data);
                 localStorage.clear();
                 dispatch(logoutSuccess());
+                dispatch(checkAuth());
             })
             .catch(error => {
                 dispatch(authFailed(error));

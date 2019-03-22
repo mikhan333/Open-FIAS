@@ -8,54 +8,12 @@ const initialState = {
         loading: false,
         error: null,
     },
-    markerData: {
-        address: '',
-        lat: null,
-        lng: null,
-        loading: false,
-        error: null
-    },
-    isSent: false,
     loading: false,
     error: null,
     isFocused: true
 };
 
 const reducer = ( state = initialState, action ) => {
-
-    if (action.type === actionTypes.GET_ADDRESS_SUCCESS) {
-        return {
-            ...state,
-            markerData: {
-                ...initialState.markerData,
-                address: action.address,
-                lat: action.lat,
-                lng: action.lng,
-            },
-        }
-    }
-
-    if (action.type === actionTypes.GET_ADDRESS_START) {
-        return {
-            ...state,
-            markerData: {
-                ...state.markerData,
-                loading: true,
-            },
-        }
-    }
-
-    if (action.type === actionTypes.GET_ADDRESS_FAILED) {
-        return {
-            ...state,
-            markerData: {
-                ...state.markerData,
-                loading: false,
-                error: action.error
-            },
-        }
-    }
-
     if (action.type === actionTypes.GET_COORDS_SUCCESS) {
         return {
             ...state,
@@ -75,7 +33,7 @@ const reducer = ( state = initialState, action ) => {
                 ...initialState.data,
                 address: action.address,
                 loading: true
-            },
+            }
         }
     }
 
@@ -93,7 +51,6 @@ const reducer = ( state = initialState, action ) => {
     if (action.type === actionTypes.SENDING_LINK_SUCCESS) {
         return {
             ...state,
-            isSent: true,
             loading: false,
             error: null
         }
@@ -102,7 +59,6 @@ const reducer = ( state = initialState, action ) => {
     if (action.type === actionTypes.SENDING_LINK_START) {
         return {
             ...state,
-            isSent: false,
             loading: true,
             error: null
         }
@@ -111,7 +67,6 @@ const reducer = ( state = initialState, action ) => {
     if (action.type === actionTypes.SENDING_LINK_FAILED) {
         return {
             ...state,
-            isSent: false,
             loading: false,
             error: action.error
         }
@@ -125,18 +80,6 @@ const reducer = ( state = initialState, action ) => {
                 address: action.address
             },
             isFocused: true
-        }
-    }
-
-    if (action.type === actionTypes.SET_MARKER_COORDS) {
-        return {
-            ...state,
-            markerData: {
-                ...initialState.markerData,
-                lat: action.coords.lat,
-                lng: action.coords.lng,
-                loading: true
-            }
         }
     }
 

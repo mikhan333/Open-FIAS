@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet'
 import { connect } from "react-redux";
-import * as actionCreators from "../../store/actions/coordinatesData";
+import * as mapActionCreators from "../../store/actions/mapActions";
+import * as markerActionCreators from "../../store/actions/markerActions";
 
 import './index.css'
 
@@ -13,7 +14,7 @@ class SideMap extends Component {
                 lat: null,
                 lng: null
             },
-            zoom: this.props.zoom || 10,
+            zoom: this.props.zoom || 10, //TODO controlled zoom
         };
     }
 
@@ -73,24 +74,24 @@ class SideMap extends Component {
 const mapStateToProps = state => {
     return {
         coords: {
-            lat: state.coordinatesData.data.lat,
-            lng: state.coordinatesData.data.lng
+            lat: state.map.data.lat,
+            lng: state.map.data.lng
         },
-        address: state.coordinatesData.markerData.address,
-        loading: state.coordinatesData.markerData.loading,
-        error: state.coordinatesData.markerData.error,
+        address: state.marker.address,
+        loading: state.marker.loading,
+        error: state.marker.error,
         markerCoords: {
-            lat: state.coordinatesData.markerData.lat,
-            lng: state.coordinatesData.markerData.lng
+            lat: state.marker.lat,
+            lng: state.marker.lng
         }
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        getAddress: (coords) => dispatch(actionCreators.getAddress(coords)),
-        setAddress: (address) => dispatch(actionCreators.setAddress(address)),
-        setMarkerCoords: (coords) => dispatch(actionCreators.setMarkerCoords(coords))
+        getAddress: (coords) => dispatch(markerActionCreators.getAddress(coords)),
+        setAddress: (address) => dispatch(mapActionCreators.setAddress(address)),
+        setMarkerCoords: (coords) => dispatch(markerActionCreators.setMarkerCoords(coords))
     }
 };
 

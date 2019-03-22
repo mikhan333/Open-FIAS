@@ -28,6 +28,6 @@
     margin: 2px;
 }
 
-.Warning {
+.Warning, .ModelButtons {
     margin: 0 3px 0 3px;
 }

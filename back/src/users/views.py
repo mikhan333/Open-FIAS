@@ -7,6 +7,8 @@ from django.core.serializers import serialize
 from django.contrib.sessions.backends.db import SessionStore
 from django.shortcuts import get_object_or_404
 from maps.models import Object
+from django.views.decorators.http import require_http_methods
+import json
 
 
 @csrf_exempt
@@ -39,20 +41,21 @@ def get_user_detail(request):  # TODO get info about points from OSM
 def check_auth(request):
     response = JsonResponse({'authorization': False, 'points': False})
     if request.user.is_authenticated:
-        return JsonResponse({'authorization': True})
-    elif request.session.session_key is None:
+        session = request.session
+        if session.session_key is None:
+            return HttpResponseBadRequest('Wrong request data - should be session')
+        return JsonResponse({'authorization': True, 'points': session['points']})
+    if request.session.session_key is None:
         session = SessionStore()
         session['points'] = []
         session.save()
         response.set_cookie('sessionid', session.session_key, httponly=True)
-    else:
-        if len(request.session['points']) != 0:
-            response = JsonResponse({'authorization': False, 'points': True})
     return response
 
 
 @csrf_exempt
 @login_required
+@require_http_methods("POST")
 def add_points_from_cookie(request):
     if request.session.session_key is not None:
         session = request.session
@@ -60,7 +63,17 @@ def add_points_from_cookie(request):
             return HttpResponseBadRequest('Wrong request data - there are no points')
         if len(session['points']) == 0:
             return HttpResponseBadRequest('Wrong request data - there are no points')
-        for item in session['points']:
+        try:
+            data = json.loads(request.body)
+        except json.decoder.JSONDecodeError:
+            return HttpResponseBadRequest('Wrong request count of fields - bad fields')
+        points = data.get('points')
+        if points is None:
+            return HttpResponseBadRequest('Wrong request count of fields - bad fields')
+
+        for item in points:
+            if item not in session['points']:
+                return HttpResponseBadRequest('Wrong request data - not correct id')
             obj = get_object_or_404(Object, id=item[0])
             obj.author = request.user
             obj.save()

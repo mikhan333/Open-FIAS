@@ -27,6 +27,7 @@ def get_user_detail(request):  # TODO get info about points from OSM
     data = {'username': user.username}
     extra_data = user.social_auth.get(provider='openstreetmap').extra_data
     data['uid'] = extra_data['id']
+    data['avatar'] = extra_data['avatar']
     if 'email' in extra_data:
         data['email'] = extra_data['email']
     user_obj = Object.objects.all().filter(author=user).order_by("-created")
@@ -74,12 +75,12 @@ def clear_sessions():
 
 @csrf_exempt
 def get_list_last_points(request):
-    objects = Object.objects.all().filt_del(request.user).filter(is_archive=False).order_by("-created")[0:10]
+    objects = Object.objects.all().filt_del(request.user).order_by("-created")[:10]
     data = {'points': serialize('json', objects)}
     return JsonResponse(data)
 
 
 @csrf_exempt
 def get_list_points(request):
-    data = Object.objects.all().filt_del(request.user).filter(is_archive=False)
+    data = Object.objects.all().filt_del(request.user)
     return JsonResponse(serialize('json', data))

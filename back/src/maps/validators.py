@@ -7,8 +7,11 @@ from django.conf import settings
 
 def check_addr(data):  # TODO check addresses via local DB FIAS
     data_json = suggester(data)
-    addresses = data_json['results']
-    return addresses[0]
+    try:
+        addresses = data_json['results']
+        return addresses[0]
+    except (IndexError, KeyError):
+        return None
 
 
 def suggester(data):
@@ -26,7 +29,7 @@ def suggester(data):
             'q': ' '.join(address_parts),
         }
     )
-    response = requests.get(url)
+    response = requests.get(url, timeout=2000)
     if not response.ok:
         return {'error': response.status_code}
     return response.json()
@@ -41,6 +44,12 @@ def geocoder(data):
     else:
         address_parts = re.findall(r"[\w']+", address)
 
+    # If we have word 'Область' there are some problems in geocoder, so delete it
+    if 'Область' in address_parts:
+        index = address_parts.index('Область')
+        address_parts.pop(index)
+        address_parts.pop(index)
+
     url = build_url(
         getattr(settings, 'FIAS_URL'),
         getattr(settings, 'FIAS_URL_GEOCODER'),
@@ -49,10 +58,24 @@ def geocoder(data):
             'q': ' '.join(address_parts),
         }
     )
-    response = requests.get(url)
+    response = requests.get(url, timeout=2000)
     if not response.ok:
         return {'error': response.status_code}
     data_json = response.json()
+
+    # Return points with smaller rank firstly
+    def sort(obj):
+        value = obj.get('properties')
+        if value is None or 'geometry' not in obj or obj.get('weight') != 1:
+            return 15
+        value = value.get('rank')
+        if value is None:
+            return 15
+        return obj.get('properties').get('rank')
+
+    data_json['features'] = sorted(data_json['features'], key=sort)
+
+    # If we do not have coordinates for point, we call recursive with smaller address
     try:
         elem = data_json['features'][0]
     except (IndexError, KeyError):
@@ -60,7 +83,7 @@ def geocoder(data):
     if 'geometry' not in elem:
         address_parts.pop()
         return geocoder(address_parts)
-    return response.json()
+    return data_json
 
 
 def rev_geocoder(data):
@@ -78,7 +101,7 @@ def rev_geocoder(data):
             'q': f'{lat},{lon}',
         }
     )
-    response = requests.get(url)
+    response = requests.get(url, timeout=2000)
     if not response.ok:
         return {'error': response.status_code}
     return response.json()

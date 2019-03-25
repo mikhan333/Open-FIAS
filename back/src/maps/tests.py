@@ -6,12 +6,16 @@ from .models import Object
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.conf import settings
+from users.models import User
+from django.contrib.auth import authenticate
 
 
 class TestSuggestApi(TestCase):
     def setUp(self):
         self.client = Client()
         self.suggest = reverse('suggester')
+        self.geocoder = reverse('geocoder')
+        self.rev_geocoder = reverse('rev_geocoder')
 
     def test_suggester(self):
         response = self.client.post(self.suggest)
@@ -19,19 +23,68 @@ class TestSuggestApi(TestCase):
 
         response = self.client.get(self.suggest, {'address': '   россия% '})
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        element = data['results'][0]['address_details']
-        self.assertEqual(element['country'], 'Россия')
+        self.assertEqual(
+            json.loads(response.content)['results'][0]['address_details']['country'],
+            'Россия'
+        )
 
         response = self.client.get(self.suggest, {'address': ' $%$str '})
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertEqual(len(data['results']), 0)
+        self.assertEqual(len(json.loads(response.content)['results']), 0)
+
+    def test_rev_geocoder(self):
+        response = self.client.post(self.rev_geocoder)
+        self.assertEqual(response.status_code, 405)
+
+        response = self.client.get(self.rev_geocoder, {'lat': ' %65'})
+        self.assertEqual(response.status_code, 200)
+
+        # response = self.client.get(self.rev_geocoder, {'lon': 'asdg'})
+        # self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(self.rev_geocoder, {'address': ' $%$str '})
+        self.assertEqual(response.status_code, 200)
+
+    def test_geocoder(self):
+        response = self.client.post(self.geocoder)
+        self.assertEqual(response.status_code, 405)
+
+        response = self.client.get(self.geocoder, {'address': 'химки'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            json.loads(response.content)['features'][0]['properties']['address']['locality'],
+            'Химки'
+        )
+
+        response = self.client.get(self.geocoder, {'address': 'Область московская химки'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            json.loads(response.content)['features'][0]['properties']['address']['locality'],
+            'Химки'
+        )
+
+        response = self.client.get(self.geocoder, {'address': 'область химки'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            json.loads(response.content)['features'][0]['properties']['address']['locality'],
+            'Химки'
+        )
+
+        response = self.client.get(self.geocoder, {'address': ''})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('error', json.loads(response.content))
 
 
-class TestCreateNote(TestCase):
+class TestCreatePoint(TestCase):
+    fixtures = ['initial_data_user.json',
+                'initial_data_social.json']
+
     def setUp(self):
+        self.user = User.objects.get(pk=1)
+        self.user.set_password('test_password')
+        self.user.save()
         self.client = Client()
+
         self.create_point = reverse('create_point')
 
     def test_errors(self):
@@ -59,7 +112,7 @@ class TestCreateNote(TestCase):
                                     content_type="application/json")
         self.assertEqual(response.status_code, 400)
 
-    def test_osm_db(self):
+    def test_anonymous(self):
         lat = 34.54
         lon = 43.21
         address = 'воронеж'
@@ -88,3 +141,37 @@ class TestCreateNote(TestCase):
         self.assertAlmostEqual(obj.latitude, lat)
         self.assertAlmostEqual(obj.longitude, lon)
         self.assertEqual(obj.locality, 'Город Воронеж')
+
+    def test_auth(self):
+        log = self.client.login(username='user1', password='test_password')
+        self.assertEqual(log, True)
+        lat = 34.54
+        lon = 43.21
+        address = 'воронеж'
+        data = {
+            'lat': lat,
+            'lon': lon,
+            'address': address
+        }
+        response = self.client.post(
+            self.create_point, data=json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+
+        # '''Check OSM'''
+        # self.assertEqual(data['status_osm'], True)
+        # url = build_url(
+        #     getattr(settings, 'OSM_URL'),
+        #     f"{getattr(settings, 'OSM_URL_NOTE')}/{data['info']['id']}",
+        # )
+        # response = requests.get(url)
+        # self.assertEqual(response.status_code, 200)
+        #
+        # '''Check DB'''
+        # self.assertEqual(data['status_db'], True)
+        # obj = Object.objects.all().get(id=1)
+        # self.assertAlmostEqual(obj.latitude, lat)
+        # self.assertAlmostEqual(obj.longitude, lon)
+        # self.assertEqual(obj.locality, 'Город Воронеж')
+
+        self.client.logout()

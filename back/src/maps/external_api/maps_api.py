@@ -1,11 +1,11 @@
 import re
 import requests
 
-from .helpers import build_url
+from ..helpers import build_url
 from django.conf import settings
 
 
-def check_addr(data):  # TODO check addresses via local DB FIAS
+def check_addr(data):
     data_json = suggester(data)
     try:
         addresses = data_json['results']
@@ -47,8 +47,9 @@ def geocoder(data):
     # If we have word 'Область' there are some problems in geocoder, so delete it
     if 'Область' in address_parts:
         index = address_parts.index('Область')
-        address_parts.pop(index)
-        address_parts.pop(index)
+        if len(address_parts) > index + 2:
+            address_parts.pop(index)
+            address_parts.pop(index)
 
     url = build_url(
         getattr(settings, 'FIAS_URL'),
@@ -89,7 +90,7 @@ def geocoder(data):
 def rev_geocoder(data):
     lat = '55'
     lon = '37'
-    if 'lat' and 'lon' in data:
+    if 'lat' in data and 'lon' in data:
         lat = data['lat']
         lon = data['lon']
 

@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from social_django.views import auth as auth_login
@@ -7,8 +7,6 @@ from django.core.serializers import serialize
 from django.contrib.sessions.backends.db import SessionStore
 from django.shortcuts import get_object_or_404
 from maps.models import Object
-from django.views.decorators.http import require_http_methods
-import json
 
 
 @csrf_exempt
@@ -39,12 +37,23 @@ def get_user_detail(request):  # TODO get info about points from OSM
 
 @csrf_exempt
 def check_auth(request):
-    response = JsonResponse({'authorization': False, 'points': False})
+    response = JsonResponse({'authorization': False})
     if request.user.is_authenticated:
         session = request.session
         if session.session_key is None:
             return HttpResponseBadRequest('Wrong request data - should be session')
-        return JsonResponse({'authorization': True, 'points': session['points']})
+
+        data = {'authorization': True, 'points': False}
+        if 'points' in session:
+            session_points = session['points']
+            if len(session_points) == 0:
+                del session['points']
+            else:
+                mas_points = []
+                for item in session_points:
+                    mas_points.append(get_object_or_404(Object, id=item))
+                    data['points'] = serialize('json', mas_points)
+        return JsonResponse(data)
     if request.session.session_key is None:
         session = SessionStore()
         session['points'] = []
@@ -53,47 +62,5 @@ def check_auth(request):
     return response
 
 
-@csrf_exempt
-@login_required
-@require_http_methods("POST")
-def add_points_from_cookie(request):
-    if request.session.session_key is not None:
-        session = request.session
-        if 'points' not in session:
-            return HttpResponseBadRequest('Wrong request data - there are no points')
-        if len(session['points']) == 0:
-            return HttpResponseBadRequest('Wrong request data - there are no points')
-        try:
-            data = json.loads(request.body)
-        except json.decoder.JSONDecodeError:
-            return HttpResponseBadRequest('Wrong request count of fields - bad fields')
-        points = data.get('points')
-        if points is None:
-            return HttpResponseBadRequest('Wrong request count of fields - bad fields')
-
-        for item in points:
-            if item not in session['points']:
-                return HttpResponseBadRequest('Wrong request data - not correct id')
-            obj = get_object_or_404(Object, id=item[0])
-            obj.author = request.user
-            obj.save()
-        del session['points']
-        return HttpResponse(True)
-    return HttpResponseBadRequest('Wrong request data - should be session')
-
-
 def clear_sessions():
     SessionStore.clear_expired()
-
-
-@csrf_exempt
-def get_list_last_points(request):
-    objects = Object.objects.all().filt_del(request.user).order_by("-created")[:10]
-    data = {'points': serialize('json', objects)}
-    return JsonResponse(data)
-
-
-@csrf_exempt
-def get_list_points(request):
-    data = Object.objects.all().filt_del(request.user)
-    return JsonResponse(serialize('json', data))

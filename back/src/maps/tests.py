@@ -1,5 +1,6 @@
 import json
 import requests
+import yaml
 
 from .helpers import build_url
 from .models import Object
@@ -7,7 +8,6 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.conf import settings
 from users.models import User
-from django.contrib.auth import authenticate
 
 
 class TestSuggestApi(TestCase):
@@ -39,8 +39,8 @@ class TestSuggestApi(TestCase):
         response = self.client.get(self.rev_geocoder, {'lat': ' %65'})
         self.assertEqual(response.status_code, 200)
 
-        # response = self.client.get(self.rev_geocoder, {'lon': 'asdg'})
-        # self.assertEqual(response.status_code, 200)
+        response = self.client.get(self.rev_geocoder, {'lon': 'asdg'})
+        self.assertEqual(response.status_code, 200)
 
         response = self.client.get(self.rev_geocoder, {'address': ' $%$str '})
         self.assertEqual(response.status_code, 200)
@@ -77,7 +77,7 @@ class TestSuggestApi(TestCase):
 
 class TestCreatePoint(TestCase):
     fixtures = ['initial_data_user.json',
-                'initial_data_social.json']
+                'initial_data_usersocial.json']
 
     def setUp(self):
         self.user = User.objects.get(pk=1)
@@ -145,9 +145,9 @@ class TestCreatePoint(TestCase):
     def test_auth(self):
         log = self.client.login(username='user1', password='test_password')
         self.assertEqual(log, True)
-        lat = 34.54
-        lon = 43.21
-        address = 'воронеж'
+        lat = 36.27
+        lon = 85.11
+        address = 'химки'
         data = {
             'lat': lat,
             'lon': lon,
@@ -158,20 +158,42 @@ class TestCreatePoint(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
 
-        # '''Check OSM'''
-        # self.assertEqual(data['status_osm'], True)
-        # url = build_url(
-        #     getattr(settings, 'OSM_URL'),
-        #     f"{getattr(settings, 'OSM_URL_NOTE')}/{data['info']['id']}",
-        # )
-        # response = requests.get(url)
-        # self.assertEqual(response.status_code, 200)
-        #
-        # '''Check DB'''
-        # self.assertEqual(data['status_db'], True)
-        # obj = Object.objects.all().get(id=1)
-        # self.assertAlmostEqual(obj.latitude, lat)
-        # self.assertAlmostEqual(obj.longitude, lon)
-        # self.assertEqual(obj.locality, 'Город Воронеж')
+        '''Check OSM'''
+        self.assertEqual(data['status_osm'], True)
 
-        self.client.logout()
+        '''Check DB'''
+        self.assertEqual(data['status_db'], True)
+        obj = Object.objects.all().get(id=1)
+        self.assertAlmostEqual(obj.latitude, lat)
+        self.assertAlmostEqual(obj.longitude, lon)
+        self.assertEqual(obj.locality, 'Город Химки')
+        self.assertEqual(obj.author, self.user)
+
+
+class TestGetListPoints(TestCase):
+    fixtures = ['initial_data_user.json',
+                'initial_data_usersocial.json',
+                'initial_data_map.json']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=1)
+        self.user.set_password('test_password')
+        self.user.save()
+        self.client = Client()
+        log = self.client.login(username='user1', password='test_password')
+        self.assertEqual(log, True)
+
+        self.get_list_last_points = reverse('get_list_last_points')
+        self.get_list_points = reverse('get_list_points')
+
+    def test_list_points(self):
+        response = self.client.get(self.get_list_points)
+        self.assertEqual(response.status_code, 200)
+        points = yaml.load(json.loads(response.content)['points'], Loader=yaml.Loader)
+        self.assertEqual(len(points), 20)
+
+    def test_list_last_points(self):
+        response = self.client.get(self.get_list_last_points)
+        self.assertEqual(response.status_code, 200)
+        points = yaml.load(json.loads(response.content)['points'], Loader=yaml.Loader)
+        self.assertEqual(len(points), 10)

@@ -15,6 +15,7 @@ export const CLEAR_DATA = 'CLEAR_DATA';
 export const UNFOCUS_INPUT = 'UNFOCUS_INPUT';
 
 export const SET_ADDRESS = 'SET_ADDRESS';
+export const SET_MAP_COORDS = 'SET_MAP_COORDS';
 export const SET_MARKER_COORDS = 'SET_MARKER_COORDS';
 
 export const SUGGEST_START = 'SUGGEST_START';
@@ -25,3 +26,5 @@ export const AUTH_START = 'AUTH_START';
 export const AUTH_SUCCESS = 'AUTH_SUCCESS';
 export const AUTH_FAILED = 'AUTH_FAILED';
 export const USER_LOGOUT = 'USER_LOGOUT';
+
+export const SET_NEW_POINTS = 'SET_NEW_POINTS';

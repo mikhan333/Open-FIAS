@@ -1,6 +1,7 @@
 import * as actionTypes from './actionTypes';
 import axios from "axios";
 import { revGeocoderServer } from "../serverURLs";
+import generateAddress from '../generateAddress'
 
 const getAddressSuccess = (latitude, longitude, address) => {
     return {
@@ -44,23 +45,8 @@ export const getAddress = (coords) => {
                 dispatch(getAddressFailed('результатов не найдено'));
                 return;
             }
-            const addressDetails = resp.data.results[0].address_details;
 
-            let address = '';
-            if (addressDetails.region) {
-                address = `${addressDetails.region}`
-            }
-            if (addressDetails.locality && addressDetails.region !== addressDetails.locality) {
-                address = `${address}, ${addressDetails.locality}`
-            }
-            if (addressDetails.street && addressDetails.street !== 'Unnamed Road') {
-                address = `${address}, ${addressDetails.street}`
-            }
-            if (addressDetails.building) {
-                address = `${address}, ${addressDetails.building}`
-            }
-
-            dispatch(getAddressSuccess(coords.lat, coords.lng, address))
+            dispatch(getAddressSuccess(coords.lat, coords.lng, generateAddress(resp.data.results[0].address_details)))
         }).catch(error => {
             dispatch(getAddressFailed(error))
         });
@@ -71,11 +57,5 @@ export const setMarkerCoords = (coords) => {
     return {
         type: actionTypes.SET_MARKER_COORDS,
         coords
-    }
-};
-
-export const clearData = () => {
-    return {
-        type: actionTypes.CLEAR_DATA
     }
 };

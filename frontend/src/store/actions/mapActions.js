@@ -59,15 +59,14 @@ export const sendLink = (address, coords) => {
             lat: coords.lat,
             lon: coords.lng
         }).then( resp => {
-            if (resp.status === 200) {
-                dispatch(start(actionTypes.SENDING_LINK_SUCCESS))
-                localStorage.setItem('hasAddedPoints', 'true');
-            } else {
-                dispatch(failed(actionTypes.SENDING_LINK_FAILED, 'плохой код ответа'))
-            }
-
+            dispatch(start(actionTypes.SENDING_LINK_SUCCESS));
+            localStorage.setItem('hasAddedPoints', 'true');
         }).catch(error => {
-            dispatch(failed(actionTypes.SENDING_LINK_FAILED, error))
+            if (error.response && error.response.status === 400) {
+                dispatch(failed(actionTypes.SENDING_LINK_FAILED, { message: 'некорректный адрес' }))
+            } else {
+                dispatch(failed(actionTypes.SENDING_LINK_FAILED, error))
+            }
         });
     }
 };
@@ -78,6 +77,14 @@ export const setAddress = (address) => {
     return {
         type: actionTypes.SET_ADDRESS,
         address
+    }
+};
+
+export const setMapCoords = (coords) => {
+    return {
+        type: actionTypes.SET_MAP_COORDS,
+        lat: coords.lat,
+        lng: coords.lng
     }
 };
 

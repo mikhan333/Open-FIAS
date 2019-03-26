@@ -7,6 +7,6 @@
     font-size: 15mm;
 }
 
-.Point {
-
+.AddressRow {
+    cursor: pointer;
 }

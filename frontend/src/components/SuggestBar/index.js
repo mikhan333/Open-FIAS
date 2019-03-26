@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
-import { Form, Button, ButtonGroup } from "react-bootstrap";
+import {Form, Button, ButtonGroup, Tooltip, OverlayTrigger} from "react-bootstrap";
 import * as suggesterActionCreators from "../../store/actions/suggesterActions";
 import * as mapActionCreators from "../../store/actions/mapActions";
 
@@ -60,9 +60,19 @@ class SuggestBar extends Component {
                 <Button
                     variant="success"
                     onClick={ this.handleConfirm }
-                >Подтвердить</Button>;
+                >Продолжить</Button>;
         } else {
-            confirmButton = <Button variant="success" disabled>Подтвердить</Button>
+            confirmButton =
+                <OverlayTrigger
+                    placement='top'
+                    overlay={
+                        <Tooltip>
+                            Заполните адрес и поставьте метку, чтобы продолжить
+                        </Tooltip>
+                    }
+                >
+                    <Button variant="secondary">Продолжить</Button>
+                </OverlayTrigger>
         }
 
         let modal;
@@ -81,7 +91,6 @@ class SuggestBar extends Component {
                         <Form.Group>
                             <Form.Control
                                 as='textarea'
-                                rows='2'
                                 autoFocus
                                 ref={(input) => this.focusInput(input)}
                                 placeholder="Введите адрес"

@@ -1,27 +1,71 @@
 import React, { Component } from "react"
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import { connect } from "react-redux";
 
 import * as actionCreators from "../../store/actions/auth";
 import classes from "./index.module.css";
+import generateAddress from "../../store/generateAddress";
 
 class AddAnonimPointsModal extends Component {
     constructor(props) {
         super(props);
 
-        this.handleConfirm = this.handleConfirm.bind(this)
+        this.state = {
+            newPoints: [],
+            untouched: true
+        };
+
+        this.handleConfirm = this.handleConfirm.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleClose = this.handleClose.bind(this)
     }
 
     handleConfirm() {
-        this.props.onHide();
-        this.props.setAnonimPoints();
+        let savedPoints = this.props.newPoints.map((point) => (point.pk));
+        if (this.state.newPoints.length !== 0) {
+            savedPoints = savedPoints.filter((point, index) => (this.state.newPoints[index]))
+        }
+        this.props.setAnonimPoints(savedPoints);
+        this.props.clearNewPoints();
+    }
+
+    handleChange(index) {
+        let newPoints;
+        if (this.props.newPoints.length !== this.state.newPoints.length) {
+            newPoints = Array(this.props.newPoints.length).fill(true)
+        } else {
+            newPoints = this.state.newPoints;
+        }
+        newPoints[index] = !newPoints[index];
+        this.setState({
+            newPoints,
+            untouched: false
+        });
+    }
+
+    handleClose() {
+        this.props.clearNewPoints();
     }
 
     render() {
+        let newPoints;
+        if (this.props.newPoints) {
+            newPoints = this.props.newPoints.map((point, index) =>
+                <Form.Check
+                    type='checkbox'
+                    checked={ this.state.newPoints[index] || this.state.untouched }
+                    key={ index }
+                    id={ index + 1 }
+                    onChange={ () => this.handleChange(index) }
+                    label={ generateAddress(point.fields) }
+                />
+            )
+        }
+
         return (
             <Modal
-                show={ true }
-                { ...{ onHide: this.props.onHide } }
+                show={ this.props.newPoints.length !== 0 }
+                onHide={ this.handleClose }
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
@@ -33,15 +77,15 @@ class AddAnonimPointsModal extends Component {
                 </Modal.Header>
                 <Modal.Body>
                     <h4>Хотите сохранить поставленные ранее метки в вашем профиле?</h4>
-                    <p>
-                        Метки, которые вы создали ранее, находясь в режиме анонимного пользователя, можно сохранить от Вашего имени
-                    </p>
+                    <Form>
+                        { newPoints }
+                    </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <div>
                         <Button
                             variant="danger"
-                            onClick={ this.props.onHide }
+                            onClick={ this.handleClose }
                             className={ classes.ModelButtons }
                         >
                             Нет, спасибо
@@ -60,10 +104,17 @@ class AddAnonimPointsModal extends Component {
     }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapStateToProps = state => {
     return {
-        setAnonimPoints: () => dispatch(actionCreators.setAnonimPoints()),
+       newPoints: state.auth.newPoints
     }
 };
 
-export default connect(null, mapDispatchToProps)(AddAnonimPointsModal);
+const mapDispatchToProps = dispatch => {
+    return {
+        setAnonimPoints: (points) => dispatch(actionCreators.setAnonimPoints(points)),
+        clearNewPoints: () => dispatch(actionCreators.setNewPoints([]))
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddAnonimPointsModal);

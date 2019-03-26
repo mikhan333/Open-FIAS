@@ -7,15 +7,22 @@ import classes from './index.module.css'
 
 class Header extends Component {
     render() {
+        let avatar;
+        if(this.props.avatar) {
+            avatar = <img className={ classes.Avatar } src={ this.props.avatar } alt=''/>
+        }
         let name;
         if (this.props.username) {
             name =
-                <Navbar.Text
-                    onClick={ () => this.props.history.push('/profile') }
+                <div
                     className={ classes.UserInfo }
+                    onClick={ () => this.props.history.push('/profile') }
                 >
-                    Вы вошли как: { this.props.username }
-                </Navbar.Text>
+                    <Navbar.Text className={ classes.Name }>
+                        Вы вошли как: { this.props.username }
+                    </Navbar.Text>
+                    { avatar }
+                </div>
         } else {
             name =
                 <OverlayTrigger
@@ -27,13 +34,13 @@ class Header extends Component {
                     }
                 >
                     <Navbar.Text>
-                        Вы вошли как: АНОНИМ
+                        Вы не вошли
                     </Navbar.Text>
                 </OverlayTrigger>
         }
 
         return (
-            <Navbar variant='dark'>
+            <Navbar variant='dark' expand="lg">
                 <Navbar.Brand
                     onClick={ () => this.props.history.push('/') }
                     className={ classes.Header }
@@ -52,6 +59,7 @@ class Header extends Component {
 const mapStateToProps = state => {
     return {
         username: state.auth.username,
+        avatar: state.auth.avatar
     }
 };
 

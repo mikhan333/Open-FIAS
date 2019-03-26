@@ -2,6 +2,22 @@
     cursor: pointer;
 }
 
-.Logo {
-    height: 50px;
+.UserInfo {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    position: absolute;
+}
+
+.Name {
+    white-space: nowrap;
+}
+
+/*TODO opening navbar menu*/
+.Avatar {
+    height: calc(100% - 10px);
+    width: auto;
+    margin: 5px;
+    border-radius: 10%;
+    overflow: hidden;
 }

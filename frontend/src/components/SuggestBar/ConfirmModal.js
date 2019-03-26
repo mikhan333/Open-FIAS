@@ -82,7 +82,7 @@ class ConfirmModal extends Component {
         return (
             <Modal
                 show={ true }
-                { ...{ onHide: this.props.onHide } }
+                onHide={ this.props.onHide }
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered

@@ -13,41 +13,11 @@ import workLogo from '../../static/goWork.png'
 import logoutLogo from '../../static/logout.png'
 
 class LoginPage extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            modalShow: true
-        };
-
-        this.modalClose = this.modalClose.bind(this)
-    }
-
-
     static authRedirect () {
         window.location.href = authServer;
     }
 
-    modalClose() {
-        localStorage.setItem('justLogged', 'false');
-        this.setState({
-            modalShow: false
-        })
-    }
-
     render() {
-        let modal;
-        if (this.state.modalShow &&
-            localStorage.getItem('justLogged') &&
-            localStorage.getItem('justLogged') === 'true' &&
-            localStorage.getItem('hasAddedPoints') &&
-            localStorage.getItem('hasAddedPoints') === 'true') {
-            modal =
-                <AddAnonimPointsModal
-                    onHide={ this.modalClose }
-                />
-        }
-
         let cards;
         if(!this.props.username) {
             cards =
@@ -151,7 +121,7 @@ class LoginPage extends Component {
                     </Card.Body>
                 </Card>
 
-                { modal }
+                <AddAnonimPointsModal/>
             </div>
         )
     }

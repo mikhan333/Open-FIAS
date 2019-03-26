@@ -30,9 +30,10 @@ const reducer = ( state = initialState, action ) => {
         return {
             ...state,
             data: {
-                ...initialState.data,
+                ...state.data,
                 address: action.address,
-                loading: true
+                loading: true,
+                error: null
             }
         }
     }
@@ -78,6 +79,18 @@ const reducer = ( state = initialState, action ) => {
             data: {
                 ...state.data,
                 address: action.address
+            },
+            isFocused: true
+        }
+    }
+
+    if (action.type === actionTypes.SET_MAP_COORDS) {
+        return {
+            ...state,
+            data: {
+                ...state.data,
+                lat: action.lat,
+                lng: action.lng
             },
             isFocused: true
         }

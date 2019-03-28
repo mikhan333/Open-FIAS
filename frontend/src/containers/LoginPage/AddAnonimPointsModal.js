@@ -44,6 +44,7 @@ class AddAnonimPointsModal extends Component {
     }
 
     handleClose() {
+        this.props.setAnonimPoints([]);
         this.props.clearNewPoints();
     }
 

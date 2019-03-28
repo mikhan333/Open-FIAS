@@ -58,7 +58,7 @@ export const sendLink = (address, coords) => {
             address,
             lat: coords.lat,
             lon: coords.lng
-        }).then( resp => {
+        }, { withCredentials: true }).then( resp => {
             dispatch(start(actionTypes.SENDING_LINK_SUCCESS));
             localStorage.setItem('hasAddedPoints', 'true');
         }).catch(error => {

@@ -86,8 +86,7 @@ export const getProfileInfo = () => {
 
 export const setAnonimPoints = (points) => {
     return (dispatch) => {
-        console.log(points);
-        axios.post(anonimPointsServer, { points });
+        axios.post(anonimPointsServer, { points }, { withCredentials: true });
         dispatch(setNewPoints([]));
     }
 };

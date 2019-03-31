@@ -7,6 +7,7 @@ from django.core.serializers import serialize
 from django.contrib.sessions.backends.db import SessionStore
 from django.shortcuts import get_object_or_404
 from maps.models import Object
+import datetime
 
 
 @csrf_exempt
@@ -42,8 +43,7 @@ def check_auth(request):
         session = request.session
         if session.session_key is None:
             return HttpResponseBadRequest('Wrong request data - should be session')
-
-        data = {'authorization': True, 'points': False}
+        data = {'authorization': True, 'points': []}
         if 'points' in session:
             session_points = session['points']
             if len(session_points) == 0:

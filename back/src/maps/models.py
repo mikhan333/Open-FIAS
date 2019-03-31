@@ -6,7 +6,7 @@ from django.conf import settings
 class ObjectQuerySet(models.QuerySet):
     """Model for sorting objects of Map"""
     def filt_del(self, user):
-        if user.is_authenticated():
+        if user.is_authenticated:
             return self.filter(
                 models.Q(author=user) | models.Q(is_archive=False)
             )

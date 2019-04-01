@@ -45,11 +45,11 @@ def geocoder(data):
         address_parts = re.findall(r"[\w']+", address)
 
     # If we have word 'Область' there are some problems in geocoder, so delete it
-    if 'Область' in address_parts:
-        index = address_parts.index('Область')
-        if len(address_parts) > index + 2:
-            address_parts.pop(index)
-            address_parts.pop(index)
+    # if 'Область' in address_parts:
+    #     index = address_parts.index('Область')
+    #     if len(address_parts) > index + 2:
+    #         address_parts.pop(index)
+    #         address_parts.pop(index)
 
     url = build_url(
         getattr(settings, 'FIAS_URL'),
@@ -65,16 +65,16 @@ def geocoder(data):
     data_json = response.json()
 
     # Return points with smaller rank firstly
-    def sort(obj):
-        value = obj.get('properties')
-        if value is None or 'geometry' not in obj or obj.get('weight') != 1:
-            return 15
-        value = value.get('rank')
-        if value is None:
-            return 15
-        return obj.get('properties').get('rank')
+    # def sort(obj):
+    #     value = obj.get('properties')
+    #     if value is None or 'geometry' not in obj or obj.get('weight') != 1:
+    #         return 15
+    #     value = value.get('rank')
+    #     if value is None:
+    #         return 15
+    #     return obj.get('properties').get('rank')
 
-    data_json['features'] = sorted(data_json['features'], key=sort)
+    # data_json['features'] = sorted(data_json['features'], key=sort)
 
     # If we do not have coordinates for point, we call recursive with smaller address
     try:

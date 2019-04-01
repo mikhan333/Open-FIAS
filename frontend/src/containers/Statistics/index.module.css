@@ -1,0 +1,12 @@
+.Carousel {
+    height: 100%;
+    width: 100%;
+    background: #3C4044;
+}
+
+.Item {
+    width: 100%;
+    margin: 3% 10% 3% 10%;
+    color: #fafafa;
+    /*overflow: auto;*/
+}

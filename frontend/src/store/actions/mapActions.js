@@ -2,12 +2,13 @@ import * as actionTypes from './actionTypes';
 import axios from "axios";
 import { notesServer, geocoderServer } from "../serverURLs";
 
-const saveData = (actionType, latitude, longitude, address) => {
+const saveData = (actionType, latitude, longitude, address, zoom) => {
     return {
         type: actionType,
         address,
         lat: latitude,
-        lng: longitude
+        lng: longitude,
+        zoom
     }
 };
 
@@ -41,7 +42,9 @@ export const getCoords = (address) => {
             }).then( resp => {
                 if (resp.data.features && resp.data.features[0].geometry) {
                     const coords = resp.data.features[0].geometry.coordinates;
-                    dispatch(saveData(actionTypes.GET_COORDS_SUCCESS, coords[0], coords[1], address))
+                    let zoom = resp.data.features[0].rank || resp.data.features[0].properties.rank;
+                    console.log(zoom);
+                    dispatch(saveData(actionTypes.GET_COORDS_SUCCESS, coords[0], coords[1], address, zoom))
                 } else {
                     dispatch(failed(actionTypes.GET_COORDS_FAILED, 'места не найдены'))
                 }

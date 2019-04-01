@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Navbar, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Navbar, OverlayTrigger, Tooltip, Nav } from "react-bootstrap";
 import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom'
 
@@ -48,7 +48,11 @@ class Header extends Component {
                     Ручное геокодирование данных
                 </Navbar.Brand>
                 <Navbar.Toggle />
-                <Navbar.Collapse className="justify-content-end">
+                <Navbar.Collapse>
+                <Nav className="mr-auto">
+                    <Nav.Link onClick={ () => this.props.history.push('/add_point') }>Поставить точку</Nav.Link>
+                    <Nav.Link onClick={ () => this.props.history.push('/statistics') }>Статистика</Nav.Link>
+                </Nav>
                     { name }
                 </Navbar.Collapse>
             </Navbar>

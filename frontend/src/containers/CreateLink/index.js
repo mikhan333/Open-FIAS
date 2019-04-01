@@ -1,5 +1,5 @@
 import React from 'react'
-import SideMap from '../../components/SideMap'
+import SideMap from '../../components/Mapbox'
 import SuggestBar from '../../components/SuggestBar'
 
 import classes from './index.module.css'

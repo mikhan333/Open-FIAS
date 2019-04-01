@@ -41,7 +41,7 @@ class LoginPage extends Component {
                         </Card.Body>
                     </Card>,
                     <Card
-                        onClick={ () => this.props.history.push('/addlink') }
+                        onClick={ () => this.props.history.push('/add_point') }
                         className={ classes.AnonCard }
                         key='Anonim'
                     >
@@ -63,7 +63,7 @@ class LoginPage extends Component {
             cards =
                 [
                     <Card
-                        onClick={ () => this.props.history.push('/addlink') }
+                        onClick={ () => this.props.history.push('/add_point') }
                         className={ classes.SuccessCard }
                         key='Work'
                     >
@@ -101,7 +101,7 @@ class LoginPage extends Component {
             ]
         }
         return (
-            <div className={ classes.CardHolder}>
+            <div>
                 <div className={ classes.ActionCards }>
                     { cards }
                 </div>

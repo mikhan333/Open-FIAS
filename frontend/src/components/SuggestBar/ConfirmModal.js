@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import {Modal, Button, Alert} from "react-bootstrap";
+import { Modal, Button, Alert } from "react-bootstrap";
 import { connect } from "react-redux";
 
 import * as mapActionCreators from "../../store/actions/mapActions";

@@ -5,6 +5,7 @@ const initialState = {
         address: '',
         lat: 55.75222,
         lng: 37.61556,
+        zoom: 8,
         loading: false,
         error: null,
     },
@@ -21,7 +22,8 @@ const reducer = ( state = initialState, action ) => {
                 ...initialState.data,
                 address: action.address,
                 lat: action.lat,
-                lng: action.lng
+                lng: action.lng,
+                zoom: action.zoom
             },
         }
     }

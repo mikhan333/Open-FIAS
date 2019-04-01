@@ -28,7 +28,7 @@ class Profile extends Component {
         };
         this.props.setMarkerCoords(coords);
         this.props.setMapCoords(coords);
-        this.props.history.push('/addlink')
+        this.props.history.push('/add_point')
     }
 
     render() {

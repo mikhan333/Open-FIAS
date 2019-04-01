@@ -7,11 +7,10 @@
 .Header {
     background: #1f9952;
     width: 100%;
-    flex: 1;
 }
 
 .Content {
-    flex: 11;
+    flex: 1;
     background: #fafafa;
     overflow: auto;
 }

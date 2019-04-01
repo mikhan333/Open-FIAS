@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route} from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { connect } from "react-redux";
 
 import Layout from './components/Layout'
 import CreateLink from './containers/CreateLink'
 import LoginPage from './containers/LoginPage'
 import Profile from './containers/ProfilePage'
+import Statistics from './containers/Statistics'
 import * as actionCreators from "./store/actions/auth";
 import './App.css';
 
@@ -20,8 +21,9 @@ class App extends Component {
             <Router>
                 <Layout>
                     <Route exact path='/' component={ LoginPage } />
-                    <Route exact path='/addlink' component={ CreateLink } />
+                    <Route exact path='/add_point' component={ CreateLink } />
                     <Route exact path='/profile' component={ Profile } />
+                    <Route exact path='/statistics' component={ Statistics } />
                 </Layout>
             </Router>
       </div>

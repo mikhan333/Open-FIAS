@@ -47,11 +47,7 @@ export const checkAuth = () => {
         axios.get(checkAuthServer, { withCredentials: true })
             .then(resp => {
                 if (resp.data.authorization) {
-                    if (resp.data.points === false) { //TODO delete if
-                        dispatch(setNewPoints([]));
-                    } else {
-                        dispatch(setNewPoints(JSON.parse(resp.data.points)));
-                    }
+                    dispatch(setNewPoints(resp.data.points));
                     if(!localStorage.getItem('username') || localStorage.getItem('username') === '') {
                         dispatch(getProfileInfo());
                     }

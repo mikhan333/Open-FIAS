@@ -26,3 +26,7 @@ test: up
 
 clearsessions: up
 	docker-compose exec fias-python python manage.py clearsessions
+
+restart: 
+	make down
+	make up

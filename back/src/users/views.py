@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers import serialize
 from django.contrib.sessions.backends.db import SessionStore
 from django.shortcuts import get_object_or_404
-from maps.models import Object
+from maps.models import Object, points_serializer
 from datetime import datetime, date, time
 
 
@@ -32,7 +32,8 @@ def get_user_detail(request):  # TODO get info about points from OSM
     if 'email' in extra_data:
         data['email'] = extra_data['email']
     user_obj = Object.objects.all().filter(author=user).order_by("-created")
-    data['points'] = serialize('json', user_obj)
+    data['points'] = points_serializer(user_obj)
+    # data['points'] = serialize('json', user_obj)
     return JsonResponse(data)
 
 
@@ -52,7 +53,8 @@ def check_auth(request):
                 mas_points = []
                 for item in session_points:
                     mas_points.append(get_object_or_404(Object, id=item))
-                    data['points'] = serialize('json', mas_points)
+                    # data['points'] = serialize('json', mas_points)
+                    data['points'] = points_serializer(mas_points)
         return JsonResponse(data)
     if request.session.session_key is None:
         session = SessionStore()

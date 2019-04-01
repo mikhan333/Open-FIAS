@@ -5,12 +5,9 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
-from django.core.serializers import serialize
-from rest_framework import serializers
-from .models import Object
+from .models import Object, ObjectSerializer, points_serializer
 from users.models import User
 from django.db import models
-from django import forms
 from cent import Client, CentException
 from django.conf import settings
 import json
@@ -44,11 +41,8 @@ def create_point(request):
         data.update(create_object(lat, lon, address_obj, user))
         if not data['status_osm']:
             return HttpResponseBadRequest('Osm: can not create changeset')
-        obj_osm_id = int(data['node']['new_id'])
-
-        point_db_id = send_db(lat, lon, address_obj, user)
-        if point_db_id is None:
-            return HttpResponseBadRequest('DB: can not create point')
+        changeset_id = data['changeset_id']
+        point_db_id = Object.objects.create_object(lat, lon, address_obj, user, changeset=changeset_id)
     else:
         if request.session.session_key is None:
             return HttpResponseBadRequest('There is not session')
@@ -59,12 +53,8 @@ def create_point(request):
         data.update(create_note(lat, lon, address_obj))
         if not data['status_osm']:
             return HttpResponseBadRequest('Osm: can not create note')
-        note_osm_id = int(data['info']['id'])
-
-        point_db_id = send_db(lat, lon, address_obj, user)
-        if point_db_id is None:
-            return HttpResponseBadRequest('DB: can not create point')
-
+        note_id = int(data['info']['id'])
+        point_db_id = Object.objects.create_object(lat, lon, address_obj, user, note=note_id)
         session['points'].append(point_db_id)
         session.save()
 
@@ -74,51 +64,15 @@ def create_point(request):
         timeout=getattr(settings, 'CENTRIFUGE_TIMEOUT'),
     )
     point = get_object_or_404(Object, id=point_db_id)
-    dict_point = PointsModelSerializer(point).data
+    dict_point = ObjectSerializer(point).data
     if point.author is not None:
         dict_point['author'] = point.author.username
     data['status_cent'] = True
     try:
-        client.publish("last_points", dict_point)
+        client.publish("latest_points", dict_point)
     except CentException:
         data['status_cent'] = False
     return JsonResponse(data)
-
-
-def send_db(lat, lon, address_obj, user):
-    address_details = address_obj['address_details']
-    form = ObjectForm(data=address_details)
-    if form.is_valid():
-        object_new = form.save(commit=False)
-        object_new.latitude = lat
-        object_new.longitude = lon
-        if 'rank' in address_obj:
-            object_new.rank = int(address_obj['rank'])
-        if 'postalcode' in address_obj:
-            object_new.postcode = int(address_obj['postalcode'])
-        if user.is_authenticated:
-            object_new.author = user
-        object_new.save()
-        return object_new.id
-    return None
-
-
-class ObjectForm(forms.ModelForm):
-    class Meta:
-        """Settings"""
-        model = Object
-        fields = [
-            'name',
-            'country',
-            'region',
-            'subregion',
-            'locality',
-            'suburb',
-            'street',
-            'building',
-            'rank',
-            'postcode',
-        ]
 
 
 @csrf_exempt
@@ -150,38 +104,25 @@ def add_points_from_cookie(request):
     return HttpResponseBadRequest('Wrong request data - should be session')
 
 
-class PointsModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Object
-        fields = "__all__"
-
-
 @csrf_exempt
 def get_list_points(request):
     data = {'points': []}
     points = Object.objects.all().filt_del(request.user)
-    for point in points:
-        dict_point = PointsModelSerializer(point).data
-        data['points'].append(dict_point)
+    data['points'] = points_serializer(points)
     return JsonResponse(data)
 
 
 @csrf_exempt
 def get_statistic(request):
-    data = {'points': []}
     objects_point = Object.objects.select_related('author')
-    data['points_count'] = objects_point.count()
+    data = {'points_count': objects_point.count()}
     points = objects_point.filt_del(request.user).order_by('-created')[:20]
-    for point in points:
-        dict_point = PointsModelSerializer(point).data
-        if point.author is not None:
-            dict_point['author'] = point.author.username
-        data['points'].append(dict_point)
+    data['latest_points'] = points_serializer(points)
 
     objects_user = User.objects
     data['users_count'] = objects_user.count()
-    users = objects_user.annotate(num_points=models.Count('maps'))
-    data['users_top'] = list(users.order_by('-num_points')[:20].values('username'))
+    users = objects_user.annotate(count_points=models.Count('maps'))
+    data['users_top'] = list(users.order_by('-count_points')[:20].values('username', 'count_points'))
 
     data['points_count_days'] = []
     time_now = datetime.datetime.now()

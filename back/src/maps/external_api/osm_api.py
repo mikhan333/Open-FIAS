@@ -115,4 +115,5 @@ def create_object(lat, lon, address_obj, user):
             data_json['node'][str(child[0])] = int(child[1])
     except (IndexError, xml.ParseError):
         return {'status_osm': False}
+    data_json['changeset_id'] = commit_id
     return data_json

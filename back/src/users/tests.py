@@ -62,7 +62,7 @@ class TestUserAuth(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data['authorization'], True)
-        self.assertEqual(data['points'], False)
+        self.assertEqual(data['points'], [])
 
     def test_check_auth_with_points(self):
         self.client.get(self.check_auth)

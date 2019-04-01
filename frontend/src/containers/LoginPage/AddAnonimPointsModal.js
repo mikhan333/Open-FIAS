@@ -58,7 +58,7 @@ class AddAnonimPointsModal extends Component {
                     key={ index }
                     id={ index + 1 }
                     onChange={ () => this.handleChange(index) }
-                    label={ generateAddress(point.fields) }
+                    label={ generateAddress(point.address) }
                 />
             )
         }

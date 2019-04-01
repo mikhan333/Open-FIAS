@@ -66,7 +66,11 @@ export const sendLink = (address, coords) => {
             localStorage.setItem('hasAddedPoints', 'true');
         }).catch(error => {
             if (error.response && error.response.status === 400) {
-                dispatch(failed(actionTypes.SENDING_LINK_FAILED, { message: 'некорректный адрес' }))
+                if (error.response.data === 'You done too many points') {
+                    dispatch(failed(actionTypes.SENDING_LINK_FAILED, { message: 'превышен лимит точек' }))
+                } else {
+                    dispatch(failed(actionTypes.SENDING_LINK_FAILED, { message: 'некорректный адрес' }))
+                }
             } else {
                 dispatch(failed(actionTypes.SENDING_LINK_FAILED, error))
             }

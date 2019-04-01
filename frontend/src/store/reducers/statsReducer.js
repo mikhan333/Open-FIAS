@@ -3,7 +3,11 @@ import * as actionTypes from '../actions/actionTypes';
 const initialState = {
     loading: false,
     error: null,
-    latest_points: []
+    latestPoints: [],
+    pointsCount: 0,
+    pointsPerDay: [],
+    usersCount: 0,
+    usersTop: []
 };
 
 const reducer = ( state = initialState, action ) => {
@@ -11,7 +15,11 @@ const reducer = ( state = initialState, action ) => {
     if (action.type === actionTypes.GET_STATS_SUCCESS) {
         return {
             ...initialState,
-            latest_points: action.latest_points
+            latestPoints: action.latestPoints,
+            pointsCount: action.pointsCount,
+            pointsPerDay: action.pointsPerDay,
+            usersCount: action.usersCount,
+            usersTop: action.usersTop
         }
     }
 
@@ -26,7 +34,18 @@ const reducer = ( state = initialState, action ) => {
         return {
             ...state,
             loading: false,
-            error: action.error
+            error: action.error,
+        }
+    }
+
+    if (action.type === actionTypes.ADD_NEW_POINT_TO_STATS) {
+        const latestPoints = state.latestPoints;
+        if (latestPoints.length === 20) {
+            latestPoints.pop();
+        }
+        return {
+            ...state,
+            latestPoints: [action.point, ...latestPoints]
         }
     }
 

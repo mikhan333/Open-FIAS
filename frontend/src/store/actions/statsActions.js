@@ -2,10 +2,14 @@ import * as actionTypes from './actionTypes';
 import axios from "axios";
 import { statsServer } from "../serverURLs";
 
-function getStatsSuccess(latest_points) {
+function getStatsSuccess(latestPoints, pointsCount, pointsPerDay, usersCount, usersTop) {
     return {
         type: actionTypes.GET_STATS_SUCCESS,
-        latest_points
+        latestPoints,
+        pointsCount,
+        pointsPerDay,
+        usersCount,
+        usersTop
     }
 }
 
@@ -26,10 +30,22 @@ export const getStatistics = () => {
     return function (dispatch) {
         dispatch(getStatsStart());
         return axios.get(statsServer).then(resp => {
-            console.log(resp);
-            dispatch(getStatsSuccess());
+            dispatch(getStatsSuccess(
+                resp.data.latest_points,
+                resp.data.points_count,
+                resp.data.points_count_days,
+                resp.data.users_count,
+                resp.data.users_top
+            ));
         }).catch(error => {
             dispatch(getStatsError(error));
         });
+    }
+};
+
+export const addPoint = (point) => {
+    return {
+        type: actionTypes.ADD_NEW_POINT_TO_STATS,
+        point
     }
 };

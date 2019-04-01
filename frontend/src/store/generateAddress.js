@@ -1,4 +1,8 @@
 const generateAddress = (addressDetails) => {
+    if (!addressDetails) {
+        return ''
+    }
+
     let address = '';
     if (addressDetails.region) {
         address = `${ addressDetails.region }`

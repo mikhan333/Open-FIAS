@@ -48,7 +48,7 @@ export const checkAuth = () => {
             .then(resp => {
                 if (resp.data.authorization) {
                     dispatch(setNewPoints(resp.data.points));
-                    if(!localStorage.getItem('username') || localStorage.getItem('username') === '') {
+                    if (!localStorage.getItem('username') || localStorage.getItem('username') === '') {
                         dispatch(getProfileInfo());
                     }
                 } else {
@@ -70,7 +70,7 @@ export const getProfileInfo = () => {
             .then(resp => {
                 localStorage.setItem('username', resp.data.username);
                 localStorage.setItem('avatar', resp.data.avatar);
-                dispatch(authSuccess(resp.data.username,  resp.data.avatar, JSON.parse(resp.data.points)));
+                dispatch(authSuccess(resp.data.username,  resp.data.avatar, resp.data.points));
             })
             .catch(error => {
                 localStorage.setItem('username', '');

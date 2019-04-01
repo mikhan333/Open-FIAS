@@ -32,7 +32,7 @@ const reducer = ( state = initialState, action ) => {
 
     if (action.type === actionTypes.AUTH_FAILED) {
         return {
-            ...state,
+            ...initialState,
             error: action.error
         }
     }

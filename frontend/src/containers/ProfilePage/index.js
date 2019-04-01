@@ -21,7 +21,7 @@ class Profile extends Component {
     }
 
     handleClick(point) {
-        this.props.setAddress(generateAddress(point));
+        this.props.setAddress(generateAddress(point.address));
         const coords = {
             lat: point.latitude,
             lng: point.longitude
@@ -44,23 +44,34 @@ class Profile extends Component {
                 </div>
         } else {
             myPoints = this.props.points.map((point, index) => {
-                let info = point.fields;
                 index++;
                 return (
                     <Row
                         key={ index }
-                        onClick={ () => this.handleClick(info) }
+                        onClick={ () => this.handleClick(point) }
                         className={ classes.AddressRow }
                     >
                         <Col md="1" className="border border-info border-top-0">{ index }</Col>
-                        <Col md="3" className="border border-info border-top-0 border-left-0">{ info.region || '-' }</Col>
-                        <Col md="2" className="border border-info border-top-0 border-left-0">{ info.locality || '-' }</Col>
-                        <Col md="2" className="border border-info border-top-0 border-left-0">{ info.street || '-' }</Col>
-                        <Col md="2" className="border border-info border-top-0 border-left-0">{ info.building || '-' }</Col>
-                        <Col md="1" className="border border-info border-top-0 border-left-0">{ info.latitude.toFixed(3) }</Col>
-                        <Col md="1" className="border border-info border-top-0 border-left-0">{ info.longitude.toFixed(3) }</Col>
+                        <Col md="3" className="border border-info border-top-0 border-left-0">{ point.address.region || '-' }</Col>
+                        <Col md="2" className="border border-info border-top-0 border-left-0">{ point.address.locality || '-' }</Col>
+                        <Col md="2" className="border border-info border-top-0 border-left-0">{ point.address.street || '-' }</Col>
+                        <Col md="2" className="border border-info border-top-0 border-left-0">{ point.address.building || '-' }</Col>
+                        <Col md="1" className="border border-info border-top-0 border-left-0">{ point.latitude.toFixed(3) }</Col>
+                        <Col md="1" className="border border-info border-top-0 border-left-0">{ point.longitude.toFixed(3) }</Col>
                     </Row>
                 )});
+            myPoints = [
+                <Row key="0">
+                    <Col md="1" className="border border-info">№</Col>
+                    <Col md="3" className="border border-info border-left-0">Регион</Col>
+                    <Col md="2" className="border border-info border-left-0">Населенный пункт</Col>
+                    <Col md="2" className="border border-info border-left-0">Улица</Col>
+                    <Col md="2" className="border border-info border-left-0">Дом</Col>
+                    <Col md="1" className="border border-info border-left-0">Широта</Col>
+                    <Col md="1" className="border border-info border-left-0">Долгота</Col>
+                </Row>,
+                ...myPoints
+            ]
         }
 
         return(
@@ -70,15 +81,6 @@ class Profile extends Component {
                 </div>
                 { pointInfo }
                 <Container>
-                    <Row key="0">
-                        <Col md="1" className="border border-info">№</Col>
-                        <Col md="3" className="border border-info border-left-0">Регион</Col>
-                        <Col md="2" className="border border-info border-left-0">Населенный пункт</Col>
-                        <Col md="2" className="border border-info border-left-0">Улица</Col>
-                        <Col md="2" className="border border-info border-left-0">Дом</Col>
-                        <Col md="1" className="border border-info border-left-0">Широта</Col>
-                        <Col md="1" className="border border-info border-left-0">Долгота</Col>
-                    </Row>
                     { myPoints }
                 </Container>
             </div>

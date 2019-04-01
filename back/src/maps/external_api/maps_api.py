@@ -15,10 +15,11 @@ def check_addr(data):
 
 
 def suggester(data):
-    address = 'россия москва'
     if 'address' in data:
-        address = data['address']
-    address_parts = re.findall(r"[\w']+", address.lower())
+        address = str(data['address'])
+        address_parts = re.findall(r"[\w']+", address.lower())
+    else:
+        return {'error': 400}
 
     url = build_url(
         getattr(settings, 'FIAS_URL'),
@@ -36,13 +37,13 @@ def suggester(data):
 
 
 def geocoder(data):
-    address = 'россия москва'
     if 'address' in data:
-        address = data['address']
-    if isinstance(data, list):
+        address = str(data['address'])
+        address_parts = re.findall(r"[\w']+", address)
+    elif isinstance(data, list):
         address_parts = data
     else:
-        address_parts = re.findall(r"[\w']+", address)
+        return {'error': 400}
 
     # If we have word 'Область' there are some problems in geocoder, so delete it
     # if 'Область' in address_parts:
@@ -88,11 +89,11 @@ def geocoder(data):
 
 
 def rev_geocoder(data):
-    lat = '55'
-    lon = '37'
     if 'lat' in data and 'lon' in data:
         lat = data['lat']
         lon = data['lon']
+    else:
+        return {'error': 400}
 
     url = build_url(
         getattr(settings, 'FIAS_URL'),

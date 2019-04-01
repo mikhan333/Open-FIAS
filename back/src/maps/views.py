@@ -23,41 +23,50 @@ def create_point(request):
     try:
         data = json.loads(request.body)
     except json.decoder.JSONDecodeError:
-        return HttpResponseBadRequest('Wrong request count of fields - bad fields')
+        return HttpResponseBadRequest('Wrong fields')
     if data.get('address') is None:
-        return HttpResponseBadRequest('Wrong request count of fields - address')
+        return HttpResponseBadRequest('Wrong address field')
     try:
         lat = float(data['lat'])
         lon = float(data['lon'])
     except KeyError:
-        return HttpResponseBadRequest('Wrong request count of fields - lat, lon')
+        return HttpResponseBadRequest('Wrong lat, lon field')
     except ValueError:
-        return HttpResponseBadRequest('Wrong request types of data')
+        return HttpResponseBadRequest('Wrong types of data - lat, lon')
 
     address_obj = check_addr(data)
     if address_obj is None:
-        return HttpResponseBadRequest('Wrong request address')
+        return HttpResponseBadRequest('Wrong address data')
 
+    data = {}
     user = request.user
-    point_db_id = send_db(lat, lon, address_obj, user)
-    if point_db_id is None:
-        return HttpResponseBadRequest('Wrong request data - db')
-    data = {'status_db': True}
     if user.is_authenticated:
         data.update(create_object(lat, lon, address_obj, user))
         if not data['status_osm']:
-            return HttpResponseBadRequest('Wrong request data - osm - can not create note')
+            return HttpResponseBadRequest('Osm: can not create changeset')
         obj_osm_id = int(data['node']['new_id'])
+
+        point_db_id = send_db(lat, lon, address_obj, user)
+        if point_db_id is None:
+            return HttpResponseBadRequest('DB: can not create point')
     else:
+        if request.session.session_key is None:
+            return HttpResponseBadRequest('There is not session')
+        session = request.session
+        if len(session['points']) >= 3:
+            return HttpResponseBadRequest('You done too many points')
+
         data.update(create_note(lat, lon, address_obj))
         if not data['status_osm']:
-            return HttpResponseBadRequest('Wrong request data - osm - can not create object')
+            return HttpResponseBadRequest('Osm: can not create note')
         note_osm_id = int(data['info']['id'])
-        if request.session.session_key is not None:
-            session = request.session
-            session['points'].append(point_db_id)
-            session.save()
-    # TODO unite obj_osm_id with point_db_id
+
+        point_db_id = send_db(lat, lon, address_obj, user)
+        if point_db_id is None:
+            return HttpResponseBadRequest('DB: can not create point')
+
+        session['points'].append(point_db_id)
+        session.save()
 
     client = Client(
         getattr(settings, 'CENTRIFUGE_URL'),
@@ -148,19 +157,6 @@ class PointsModelSerializer(serializers.ModelSerializer):
 
 
 @csrf_exempt
-def get_list_last_points(request):
-    data = {'points': []}
-    objects_point = Object.objects.select_related('author')
-    points = objects_point.filt_del(request.user).order_by('-created')[:20]
-    for point in points:
-        dict_point = PointsModelSerializer(point).data
-        if point.author is not None:
-            dict_point['author'] = point.author.username
-        data['points'].append(dict_point)
-    return JsonResponse(data)
-
-
-@csrf_exempt
 def get_list_points(request):
     data = {'points': []}
     points = Object.objects.all().filt_del(request.user)
@@ -172,9 +168,15 @@ def get_list_points(request):
 
 @csrf_exempt
 def get_statistic(request):
-    data = {}
+    data = {'points': []}
     objects_point = Object.objects.select_related('author')
     data['points_count'] = objects_point.count()
+    points = objects_point.filt_del(request.user).order_by('-created')[:20]
+    for point in points:
+        dict_point = PointsModelSerializer(point).data
+        if point.author is not None:
+            dict_point['author'] = point.author.username
+        data['points'].append(dict_point)
 
     objects_user = User.objects
     data['users_count'] = objects_user.count()

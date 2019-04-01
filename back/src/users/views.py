@@ -7,7 +7,7 @@ from django.core.serializers import serialize
 from django.contrib.sessions.backends.db import SessionStore
 from django.shortcuts import get_object_or_404
 from maps.models import Object
-import datetime
+from datetime import datetime, date, time
 
 
 @csrf_exempt
@@ -57,6 +57,9 @@ def check_auth(request):
     if request.session.session_key is None:
         session = SessionStore()
         session['points'] = []
+        session.set_expiry(
+            (datetime.combine(date.today(), time.max) - datetime.now()).seconds
+        )
         session.save()
         response.set_cookie('sessionid', session.session_key, httponly=True)
     return response

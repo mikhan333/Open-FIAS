@@ -21,6 +21,7 @@ services:
             - ./docker/nginx:/etc/nginx/conf.d
         depends_on:
             - fias-python
+            - fias-centrifugo
 
     fias-python:
         restart: always
@@ -43,6 +44,7 @@ services:
 
         depends_on:
             - fias-postgres
+            - fias-centrifugo
 
     fias-postgres:
         image: postgres:latest
@@ -55,3 +57,16 @@ services:
           PGDATA: /var/lib/postgresql/data
         volumes:
             - .sql_data:/var/lib/postgresql/data
+
+    fias-centrifugo:
+        image: centrifugo/centrifugo:latest
+        command: centrifugo -c /config.json --admin
+        volumes:
+            - ./docker/centrifugo/centrifugo.json:/config.json
+        restart: always
+        ports:
+            - 9000:9000
+        ulimits:
+          nofile:
+            soft: 65536
+            hard: 65536

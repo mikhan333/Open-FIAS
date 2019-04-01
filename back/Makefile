@@ -10,6 +10,7 @@ down:
 
 up:
 	docker-compose up -d
+	docker-compose exec fias-python cp logs/openstreetmap.py ../../../usr/local/lib/python3.6/site-packages/social_core/backends/
 
 migrate: up
 	docker-compose exec fias-python python manage.py migrate

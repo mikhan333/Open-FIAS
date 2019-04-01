@@ -1,19 +1,19 @@
 # dependencies
-*/node_modules
-*/env
+*node_modules/
+*env/
 
 # data
 *.sqlite3
 *.sql_data
 
 # testing
-*/coverage
+*coverage/
 *.coverage
 *.log*
-*/logs
+*logs/
 
 # production
-*/build
+*build/
 
 # python
 *.pyc

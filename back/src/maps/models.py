@@ -6,7 +6,7 @@ from django.conf import settings
 class ObjectQuerySet(models.QuerySet):
     """Model for sorting objects of Map"""
     def filt_del(self, user):
-        if user.is_authenticated():
+        if user.is_authenticated:
             return self.filter(
                 models.Q(author=user) | models.Q(is_archive=False)
             )
@@ -22,10 +22,12 @@ class Object(models.Model):
         verbose_name=u'имя объекта',
         blank=True,
     )
-    author = models.ManyToManyField(
+    author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='maps',
         verbose_name=u'автор',
+        null=True,
+        on_delete=models.DO_NOTHING,
     )
     is_archive = models.BooleanField(
         default=False,

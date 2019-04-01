@@ -1,85 +1,97 @@
-import requests
-import re
-import xml.etree.ElementTree as ET
-from urllib import parse
-
-from .models import Object
-from django import forms
-from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-from django.http import JsonResponse, HttpResponseBadRequest
+from .external_api.maps_api import suggester, rev_geocoder, geocoder, check_addr
+from .external_api.osm_api import create_note, create_object
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
+from django.core.serializers import serialize
+from rest_framework import serializers
+from .models import Object
+from users.models import User
+from django.db import models
+from django import forms
+from cent import Client, CentException
+from django.conf import settings
+import json
+import datetime
 
 
 @csrf_exempt
 @require_http_methods("POST")
-def create_note(request):
-    data = request.POST
-    if 'lat' and 'lon' and 'address' in data:
+def create_point(request):
+    try:
+        data = json.loads(request.body)
+    except json.decoder.JSONDecodeError:
+        return HttpResponseBadRequest('Wrong request count of fields - bad fields')
+    if data.get('address') is None:
+        return HttpResponseBadRequest('Wrong request count of fields - address')
+    try:
         lat = float(data['lat'])
         lon = float(data['lon'])
-    else:
-        return HttpResponseBadRequest('Wrong request count of fields')
+    except KeyError:
+        return HttpResponseBadRequest('Wrong request count of fields - lat, lon')
+    except ValueError:
+        return HttpResponseBadRequest('Wrong request types of data')
 
     address_obj = check_addr(data)
     if address_obj is None:
-        return HttpResponseBadRequest('Wrong request data')
+        return HttpResponseBadRequest('Wrong request address')
 
-    url = build_url(
-        getattr(settings, 'OSM_URL'),
-        getattr(settings, 'OSM_URL_CREATE_NOTE'),
-        {
-            'lat': lat,
-            'lon': lon,
-            'text': address_obj['address'],
-        }
-    )
-    response = requests.post(url)
-    if not response.ok:
-        HttpResponseBadRequest(f'Wrong send data to OSM - {response.status_code}')
+    user = request.user
+    point_db_id = send_db(lat, lon, address_obj, user)
+    if point_db_id is None:
+        return HttpResponseBadRequest('Wrong request data - db')
+    data = {'status_db': True}
+    if user.is_authenticated:
+        data.update(create_object(lat, lon, address_obj, user))
+        if not data['status_osm']:
+            return HttpResponseBadRequest('Wrong request data - osm - can not create note')
+        obj_osm_id = int(data['node']['new_id'])
     else:
-        data_json = {'status_osm': response.status_code}
-        root = ET.fromstring(response.content)
-        for child in root[0]:
-            if child.tag != 'comments':
-                data_json[str(child.tag)] = child.text
+        data.update(create_note(lat, lon, address_obj))
+        if not data['status_osm']:
+            return HttpResponseBadRequest('Wrong request data - osm - can not create object')
+        note_osm_id = int(data['info']['id'])
+        if request.session.session_key is not None:
+            session = request.session
+            session['points'].append(point_db_id)
+            session.save()
+    # TODO unite obj_osm_id with point_db_id
 
-        if send_db(lat, lon, address_obj) is False:
-            HttpResponseBadRequest('Wrong send data to DB - 405')
-        else:
-            data_json = {'status_db': 200}
-            return JsonResponse(data_json)
+    client = Client(
+        getattr(settings, 'CENTRIFUGE_URL'),
+        api_key=getattr(settings, 'CENTRIFUGE_APIKEY'),
+        timeout=getattr(settings, 'CENTRIFUGE_TIMEOUT'),
+    )
+    point = get_object_or_404(Object, id=point_db_id)
+    dict_point = PointsModelSerializer(point).data
+    if point.author is not None:
+        dict_point['author'] = point.author.username
+    data['status_cent'] = True
+    try:
+        client.publish("last_points", dict_point)
+    except CentException:
+        data['status_cent'] = False
+    return JsonResponse(data)
 
 
-@csrf_exempt
-def create_object(request):  # TODO for auth users
-    pass
-
-
-def send_osm(data):
-    pass
-
-
-def send_db(lat, lon, address_obj):  # TODO for auth users
+def send_db(lat, lon, address_obj, user):
     address_details = address_obj['address_details']
     form = ObjectForm(data=address_details)
     if form.is_valid():
         object_new = form.save(commit=False)
-        object_new.latitude = float(lat)
-        object_new.longitude = float(lon)
+        object_new.latitude = lat
+        object_new.longitude = lon
         if 'rank' in address_obj:
             object_new.rank = int(address_obj['rank'])
         if 'postalcode' in address_obj:
             object_new.postcode = int(address_obj['postalcode'])
+        if user.is_authenticated:
+            object_new.author = user
         object_new.save()
-        return True
-    return False
-
-
-def check_addr(data):  # TODO check addresses via local DB FIAS
-    data_json = suggester(data)
-    addresses = data_json['results']
-    return addresses[0]
+        return object_new.id
+    return None
 
 
 class ObjectForm(forms.ModelForm):
@@ -101,31 +113,89 @@ class ObjectForm(forms.ModelForm):
 
 
 @csrf_exempt
+@login_required
+@require_http_methods("POST")
+def add_points_from_cookie(request):
+    if request.session.session_key is not None:
+        session = request.session
+        if 'points' not in session:
+            return HttpResponseBadRequest('Wrong request data - there are no points')
+        if len(session['points']) == 0:
+            return HttpResponseBadRequest('Wrong request data - there are no points')
+        try:
+            data = json.loads(request.body)
+            points = list(data['points'])
+        except (json.decoder.JSONDecodeError, KeyError, ValueError):
+            return HttpResponseBadRequest('Wrong request count of fields - bad fields')
+
+        for item in points:
+            if 'points' not in session:
+                return HttpResponseBadRequest('Wrong request data - should be session')
+            if item not in session['points']:
+                return HttpResponseBadRequest('Wrong request data - not correct id')
+            obj = get_object_or_404(Object, id=item)
+            obj.author = request.user
+            obj.save()
+        del session['points']
+        return HttpResponse('OK')
+    return HttpResponseBadRequest('Wrong request data - should be session')
+
+
+class PointsModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Object
+        fields = "__all__"
+
+
+@csrf_exempt
+def get_list_last_points(request):
+    data = {'points': []}
+    objects_point = Object.objects.select_related('author')
+    points = objects_point.filt_del(request.user).order_by('-created')[:20]
+    for point in points:
+        dict_point = PointsModelSerializer(point).data
+        if point.author is not None:
+            dict_point['author'] = point.author.username
+        data['points'].append(dict_point)
+    return JsonResponse(data)
+
+
+@csrf_exempt
+def get_list_points(request):
+    data = {'points': []}
+    points = Object.objects.all().filt_del(request.user)
+    for point in points:
+        dict_point = PointsModelSerializer(point).data
+        data['points'].append(dict_point)
+    return JsonResponse(data)
+
+
+@csrf_exempt
+def get_statistic(request):
+    data = {}
+    objects_point = Object.objects.select_related('author')
+    data['points_count'] = objects_point.count()
+
+    objects_user = User.objects
+    data['users_count'] = objects_user.count()
+    users = objects_user.annotate(num_points=models.Count('maps'))
+    data['users_top'] = list(users.order_by('-num_points')[:20].values('username'))
+
+    data['points_count_days'] = []
+    time_now = datetime.datetime.now()
+    for i in range(100):
+        data['points_count_days'].append({
+            'count': objects_point.filter(created__lte=time_now - datetime.timedelta(days=i)).count(),
+            'days': i,
+        })
+    return JsonResponse(data)
+
+
+@csrf_exempt
 @require_http_methods("GET")
 def get_suggest(request):
     data_json = suggester(request.GET)
     return JsonResponse(data_json)
-
-
-def suggester(data):
-    address = 'россия москва'
-    if 'address' in data:
-        address = data['address']
-    mas = re.findall(r"[\w']+", address.lower())
-
-    url = build_url(
-        getattr(settings, 'FIAS_URL'),
-        getattr(settings, 'FIAS_URL_SUGGEST'),
-        {
-            'api_key': getattr(settings, 'FIAS_API_KEY'),
-            'format': 'json',
-            'q': ' '.join(mas),
-        }
-    )
-    response = requests.get(url)
-    if not response.ok:
-        return {'error': response.status_code}
-    return response.json()
 
 
 @csrf_exempt
@@ -135,57 +205,8 @@ def get_geocoder(request):
     return JsonResponse(data_json)
 
 
-def geocoder(data):
-    address = 'россия москва'
-    if 'address' in data:
-        address = data['address']
-    mas = re.findall(r"[\w']+", address)
-
-    url = build_url(
-        getattr(settings, 'FIAS_URL'),
-        getattr(settings, 'FIAS_URL_GEOCODER'),
-        {
-            'api_key': getattr(settings, 'FIAS_API_KEY'),
-            'q': ' '.join(mas),
-        }
-    )
-    response = requests.get(url)
-    if not response.ok:
-        return {'error': response.status_code}
-    return response.json()
-
-
 @csrf_exempt
 @require_http_methods("GET")
 def get_rev_geocoder(request):
     data_json = rev_geocoder(request.GET)
     return JsonResponse(data_json)
-
-
-def rev_geocoder(data):
-    lat = '55'
-    lon = '37'
-    if 'lat' and 'lon' in data:
-        lat = data['lat']
-        lon = data['lon']
-
-    url = build_url(
-        getattr(settings, 'FIAS_URL'),
-        getattr(settings, 'FIAS_URL_REV_GEOCODER'),
-        {
-            'api_key': getattr(settings, 'FIAS_API_KEY'),
-            'q': f'{lat},{lon}',
-        }
-    )
-    response = requests.get(url)
-    if not response.ok:
-        return {'error': response.status_code}
-    return response.json()
-
-
-def build_url(baseurl, path, args_dict=None):
-    dirty_url = parse.urljoin(baseurl + "/", path)
-    url_parts = list(parse.urlparse(dirty_url))
-    if args_dict:
-        url_parts[4] = parse.urlencode(args_dict)
-    return parse.urlunparse(url_parts)

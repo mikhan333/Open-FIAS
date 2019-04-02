@@ -26,8 +26,12 @@
 }
 
 .Buttons {
-    width: calc(100% - 4px);
-    margin: 2px;
+    width: 100%;
+}
+
+.Button {
+    width: calc(100% + 28px);
+    margin: 1px;
 }
 
 .Warning, .ModelButtons {

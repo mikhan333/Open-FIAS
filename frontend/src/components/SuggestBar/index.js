@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
-import {Form, Button, ButtonGroup, Tooltip, OverlayTrigger} from "react-bootstrap";
+import { Form, Button, Row, Col, Tooltip, OverlayTrigger } from "react-bootstrap";
 import * as suggesterActionCreators from "../../store/actions/suggesterActions";
 import * as mapActionCreators from "../../store/actions/mapActions";
 
@@ -18,7 +18,8 @@ class SuggestBar extends Component {
         };
 
         this.modalClose = this.modalClose.bind(this);
-        this.handleConfirm = this.handleConfirm.bind(this)
+        this.handleConfirm = this.handleConfirm.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     componentDidMount() {
@@ -53,6 +54,14 @@ class SuggestBar extends Component {
         })
     }
 
+    handleChange(value) {
+        if (value[value.length - 1] === '\n') {
+            this.props.setAddress(value.substr(0, value.length - 1).replace('\n', ' '))
+        } else {
+            this.props.setAddress(value.replace('\n', ' '))
+        }
+    }
+
     render() {
         let confirmButton;
         if (this.props.address !== '' && this.props.markerCoords.lat && this.props.markerCoords.lng) {
@@ -60,7 +69,8 @@ class SuggestBar extends Component {
                 <Button
                     variant="success"
                     onClick={ this.handleConfirm }
-                >Продолжить</Button>;
+                    className={ classes.Button }
+                >Далее</Button>;
         } else {
             confirmButton =
                 <OverlayTrigger
@@ -71,7 +81,7 @@ class SuggestBar extends Component {
                         </Tooltip>
                     }
                 >
-                    <Button variant="secondary">Продолжить</Button>
+                    <Button className={ classes.Button } variant="secondary">Далее</Button>
                 </OverlayTrigger>
         }
 
@@ -94,7 +104,7 @@ class SuggestBar extends Component {
                                 autoFocus
                                 ref={(input) => this.focusInput(input)}
                                 placeholder="Введите адрес"
-                                onChange={ (event) => this.props.setAddress(event.target.value) }
+                                onChange={ (event) => this.handleChange(event.target.value) }
                                 value={ this.props.address }
                             />
                         </Form.Group>
@@ -102,15 +112,20 @@ class SuggestBar extends Component {
                     <SuggestionsList/>
                 </div>
 
-                <ButtonGroup className={ classes.Buttons }>
-                    <Button
-                        variant="danger"
-                        onClick={ this.props.clearData }
-                    >
-                        Очистить
-                    </Button>
-                    { confirmButton }
-                </ButtonGroup>
+                <Row className={ classes.Buttons }>
+                    <Col md="6">
+                        { confirmButton }
+                    </Col>
+                    <Col md="6">
+                        <Button
+                            variant="danger"
+                            onClick={ this.props.clearData }
+                            className={ classes.Button }
+                        >
+                            Очистить
+                        </Button>
+                    </Col>
+                </Row>
 
                 { modal }
             </div>

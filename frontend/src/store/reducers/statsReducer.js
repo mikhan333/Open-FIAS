@@ -45,7 +45,8 @@ const reducer = ( state = initialState, action ) => {
         }
         return {
             ...state,
-            latestPoints: [action.point, ...latestPoints]
+            latestPoints: [action.point, ...latestPoints],
+            pointsCount: state.pointsCount + 1
         }
     }
 

@@ -46,16 +46,23 @@ class SideMap extends Component {
     render() {
         let marker, popup;
         if (this.props.markerCoords.lat && this.props.markerCoords.lng) {
-            let address;
+            let address, warning;
             if (this.props.loading) {
-                address = 'Подождите...'
+                warning = 'Подождите...'
             } else if (this.props.error) {
-                address = `Ошибка: ${ this.props.error.message || this.props.error }`
+                warning = `Ошибка: ${ this.props.error.message || this.props.error }`
             } else {
                 if (this.props.address) {
                     address = this.props.address
                 } else {
-                    address = 'Неизвестный адрес'
+                    warning = 'Неизвестный адрес'
+                }
+            }
+            let click = {};
+            if (address) {
+                click = {
+                    onClick: () => this.props.setAddress(address),
+                    style: { cursor: "pointer" }
                 }
             }
             popup =
@@ -68,10 +75,10 @@ class SideMap extends Component {
                         'left': [10, -10],
                         'right': [-10, -10]
                     }}
-                    onClick={ () => this.props.setAddress(address) }
+                    { ... click }
                     className={ classes.Popup }
                 >
-                    { address }
+                    { address || warning }
                 </Popup>;
             marker =
                 <Marker

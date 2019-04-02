@@ -4,8 +4,13 @@ import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom'
 
 import classes from './index.module.css'
+import { authServer } from "../../store/serverURLs";
 
 class Header extends Component {
+    static authRedirect () {
+        window.location.href = authServer;
+    }
+
     render() {
         let avatar;
         if(this.props.avatar) {
@@ -14,26 +19,39 @@ class Header extends Component {
         let name;
         if (this.props.username) {
             name =
-                <div
-                    className={ classes.UserInfo }
-                    onClick={ () => this.props.history.push('/profile') }
+                <OverlayTrigger
+                    placement='bottom'
+                    overlay={
+                        <Tooltip>
+                            Профиль
+                        </Tooltip>
+                    }
                 >
-                    <Navbar.Text className={ classes.Name }>
-                        Вы вошли как: { this.props.username }
-                    </Navbar.Text>
-                    { avatar }
-                </div>
+                    <div
+                        className={ classes.UserInfo }
+                        onClick={ () => this.props.history.push('/profile') }
+                    >
+                        <Navbar.Text className={ classes.Name }>
+                            Вы вошли как: { this.props.username }
+                        </Navbar.Text>
+                        { avatar }
+                    </div>
+                </OverlayTrigger>
+
         } else {
             name =
                 <OverlayTrigger
                     placement='bottom'
                     overlay={
                         <Tooltip>
-                            Войдите, чтобы просмотреть профиль
+                            Войти
                         </Tooltip>
                     }
                 >
-                    <Navbar.Text>
+                    <Navbar.Text
+                        onClick={ Header.authRedirect }
+                        className={ classes.UserInfo }
+                    >
                         Вы не вошли
                     </Navbar.Text>
                 </OverlayTrigger>

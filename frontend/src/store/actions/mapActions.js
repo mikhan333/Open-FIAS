@@ -95,10 +95,9 @@ export const setMapCoords = (coords) => {
     }
 };
 
-export const unfocusInput = (isFocused) => {
+export const unfocusInput = () => {
     return {
-        type: actionTypes.UNFOCUS_INPUT,
-        isFocused
+        type: actionTypes.UNFOCUS_INPUT
     }
 };
 

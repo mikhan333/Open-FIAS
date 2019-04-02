@@ -21,7 +21,7 @@ class AddAnonimPointsModal extends Component {
     }
 
     handleConfirm() {
-        let savedPoints = this.props.newPoints.map((point) => (point.pk));
+        let savedPoints = this.props.newPoints.map((point) => (point.id));
         if (this.state.newPoints.length !== 0) {
             savedPoints = savedPoints.filter((point, index) => (this.state.newPoints[index]))
         }

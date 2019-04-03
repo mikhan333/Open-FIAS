@@ -1,0 +1,20 @@
+.Header, .UserInfo {
+    cursor: pointer;
+}
+
+.UserInfo {
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.Name {
+    white-space: nowrap;
+}
+
+.Avatar {
+    height: 30px;
+    width: auto;
+    margin: 5px;
+    border-radius: 10%;
+}

@@ -1,0 +1,40 @@
+.ActionCards {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+}
+
+.SuccessCard, .LogoutCard, .AnonCard {
+    cursor: pointer;
+    margin: 10px;
+    flex: 1;
+    border-radius: 10px;
+}
+
+.SuccessCard {
+    background: #64ff64;
+}
+
+.LogoutCard {
+    background: #ff6464;
+}
+
+.AnonCard {
+    background: #ffff64;
+}
+
+.InfoCard {
+    text-align: justify;
+    background: #9bffd7;
+    margin: 0 10px 10px 10px;
+    border-radius: 10px;
+}
+
+.Image {
+    width: 40%;
+    margin: 10px;
+}
+
+.ModelButtons {
+    margin: 0 3px 0 3px;
+}

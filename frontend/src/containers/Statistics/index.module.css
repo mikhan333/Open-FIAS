@@ -1,0 +1,24 @@
+.Carousel {
+    height: 100%;
+    width: 100%;
+    background: #3C4044;
+    overflow: auto;
+}
+
+.CarouselDiv {
+    height: 100%;
+    width: 100%;
+}
+
+.Item {
+    width: 100%;
+    margin: 2% 15% 2% 15%;
+    color: #fafafa;
+}
+
+.Graph {
+    text-align: center;
+    max-height: 96%;
+    height: auto;
+    width: 70%;
+}

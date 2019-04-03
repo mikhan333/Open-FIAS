@@ -1,0 +1,12 @@
+.Profile {
+    margin: 10px 20px 0 20px;
+}
+
+.Username {
+    text-align: center;
+    font-size: 15mm;
+}
+
+.AddressRow {
+    cursor: pointer;
+}

@@ -11,7 +11,7 @@
 }
 
 .Item {
-    width: 100%;
+    width: 70%;
     margin: 2% 15% 2% 15%;
     color: #fafafa;
 }
@@ -20,5 +20,11 @@
     text-align: center;
     max-height: 96%;
     height: auto;
-    width: 70%;
+    width: 100%;
+}
+
+@media (max-width: 735px) {
+    .CarouselDiv {
+        height: calc(100vh - 56px);
+    }
 }

@@ -33,16 +33,12 @@ export const getSuggestions = (address) => {
     }
     return function (dispatch) {
         dispatch(suggestStart());
-        return axios.get(suggestServer, {
-            params: {
-                address
-            }
-        }).then(resp => {
-            const suggestions = resp.data.results.map((obj) => (obj.address));
-
-            dispatch(suggestSuccess(address, suggestions));
-        }).catch(error => {
-            dispatch(suggestError(error));
-        });
+        return axios.get(suggestServer, { params: { address }})
+            .then(resp => {
+                const suggestions = resp.data.results.map((obj) => (obj.address));
+                dispatch(suggestSuccess(address, suggestions));
+            }).catch(error => {
+                dispatch(suggestError(error));
+            });
     }
 };

@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { Modal, Button, Alert } from "react-bootstrap";
 import { connect } from "react-redux";
-
+import { authServer } from '../../store/serverURLs'
 import * as mapActionCreators from "../../store/actions/mapActions";
 import classes from "./index.module.css";
 
@@ -26,6 +26,14 @@ class ConfirmModal extends Component {
     }
 
     render() {
+        let suggestedAddress;
+        if (this.props.suggestedAddress && this.props.suggestedAddress !== this.props.address) {
+            suggestedAddress =
+                <div>
+                    Будет сохранено как: { this.props.suggestedAddress } <br/>
+                </div>
+        }
+
         let warning;
         if (this.state.isSent) {
             if (this.props.loading) {
@@ -34,15 +42,32 @@ class ConfirmModal extends Component {
                         Загрузка...
                     </Alert>
             } else if (this.props.error) {
-                warning =
-                    <Alert variant='danger'  className={ classes.Warning }>
-                        Ошибка: { this.props.error.message }
-                    </Alert>
+                if (this.props.error.message === 'Too many points') {
+                    warning =
+                        <Alert variant='danger'  className={ classes.Warning }>
+                            Ошибка: превышен лимит точек для анонимного пользователя (3).<br/>
+                            <a href={ authServer }>Войдите</a>, чтобы добавить больше.
+                        </Alert>
+                } else {
+                    warning =
+                        <Alert variant='danger' className={classes.Warning}>
+                            Ошибка: {this.props.error.message}
+                        </Alert>
+                }
             } else {
-                warning =
-                    <Alert variant='success' className={ classes.Warning }>
-                        Отправлено
-                    </Alert>
+                if (this.props.url) {
+                    warning =
+                        <Alert variant='success' className={ classes.Warning }>
+                            Отправлено <br/>
+                            <a href={ this.props.url } target="_blank" rel="noopener noreferrer">{ this.props.url }</a>
+                        </Alert>
+                } else {
+                    warning =
+                        <Alert variant='success' className={ classes.Warning }>
+                            Отправлено
+                        </Alert>
+                }
+
             }
         }
 
@@ -94,10 +119,11 @@ class ConfirmModal extends Component {
                 </Modal.Header>
                 <Modal.Body>
                     <h5>Вы уверены, что хотите отправить эти данные?</h5>
-                    <p>
+                    <div>
                         Адрес: { this.props.address } <br/>
+                        { suggestedAddress }
                         Координаты: { this.props.markerCoords.lat.toFixed(3) }, { this.props.markerCoords.lng.toFixed(3) }
-                    </p>
+                    </div>
                     { warning }
                 </Modal.Body>
                 <Modal.Footer>
@@ -113,7 +139,9 @@ const mapStateToProps = state => {
         markerCoords: state.marker,
         address: state.map.data.address,
         loading: state.map.loading,
-        error: state.map.error
+        error: state.map.error,
+        url: state.map.url,
+        suggestedAddress: state.suggest.suggestions[0]
     }
 };
 

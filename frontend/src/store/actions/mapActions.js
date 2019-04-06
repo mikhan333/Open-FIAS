@@ -42,8 +42,16 @@ export const getCoords = (address) => {
             }).then( resp => {
                 if (resp.data.features && resp.data.features[0].geometry) {
                     const coords = resp.data.features[0].geometry.coordinates;
-                    let zoom = resp.data.features[0].rank || resp.data.features[0].properties.rank;
-                    console.log(zoom);
+                    const rank = resp.data.features[0].rank || resp.data.features[0].properties.rank;
+                    let zoom;
+                    switch (rank) { //TODO zoom switcher
+                        case 4:
+                            zoom = 8;
+                            break;
+                        default:
+                            zoom = rank < 20 ? rank : 17;
+                            break;
+                    }
                     dispatch(saveData(actionTypes.GET_COORDS_SUCCESS, coords[0], coords[1], address, zoom))
                 } else {
                     dispatch(failed(actionTypes.GET_COORDS_FAILED, 'места не найдены'))
@@ -51,6 +59,13 @@ export const getCoords = (address) => {
             }).catch(error => {
                 dispatch(failed(actionTypes.GET_COORDS_FAILED, error))
             });
+    }
+};
+
+const sendingLinkSuccess = (url) => {
+    return {
+        type: actionTypes.SENDING_LINK_SUCCESS,
+        url
     }
 };
 
@@ -62,14 +77,19 @@ export const sendLink = (address, coords) => {
             lat: coords.lat,
             lon: coords.lng
         }, { withCredentials: true }).then( resp => {
-            dispatch(start(actionTypes.SENDING_LINK_SUCCESS));
-            localStorage.setItem('hasAddedPoints', 'true');
+            let url = null;
+            if (resp.data.info && resp.data.info.id) {
+                url = `https://master.apis.dev.openstreetmap.org/note/${ resp.data.info.id }`
+            } else if (resp.data.changeset_id) {
+                url = `https://master.apis.dev.openstreetmap.org/changeset/${ resp.data.changeset_id }`
+            }
+            dispatch(sendingLinkSuccess(url));
         }).catch(error => {
             if (error.response && error.response.status === 400) {
-                if (error.response.data === 'You done too many points') {
-                    dispatch(failed(actionTypes.SENDING_LINK_FAILED, { message: 'превышен лимит точек' }))
+                if (error.response.data === 'You done too many points') { //TODO change error handler
+                    dispatch(failed(actionTypes.SENDING_LINK_FAILED, { message: 'Too many points' }))
                 } else {
-                    dispatch(failed(actionTypes.SENDING_LINK_FAILED, { message: 'некорректный адрес' }))
+                    dispatch(failed(actionTypes.SENDING_LINK_FAILED, { message: 'некорректный адрес.' }))
                 }
             } else {
                 dispatch(failed(actionTypes.SENDING_LINK_FAILED, error))
@@ -77,8 +97,6 @@ export const sendLink = (address, coords) => {
         });
     }
 };
-
-
 
 export const setAddress = (address) => {
     return {
@@ -95,15 +113,20 @@ export const setMapCoords = (coords) => {
     }
 };
 
-export const unfocusInput = (isFocused) => {
+export const unfocusInput = () => {
     return {
-        type: actionTypes.UNFOCUS_INPUT,
-        isFocused
+        type: actionTypes.UNFOCUS_INPUT
     }
 };
 
 export const clearData = () => {
     return {
         type: actionTypes.CLEAR_DATA
+    }
+};
+
+export const putCoords = () => {
+    return {
+        type: actionTypes.NEW_COORDS_PUTTED
     }
 };

@@ -1,6 +1,7 @@
 .CreateLinkContainer {
     height: 100%;
     display: flex;
+    flex-direction: row;
 }
 
 .SuggestBar {
@@ -10,4 +11,20 @@
 
 .Map {
     flex: 3;
+}
+
+@media (max-width: 735px) {
+    .CreateLinkContainer {
+        flex-direction: column;
+    }
+
+    .SuggestBar {
+        flex: 1;
+        height: 30vh;
+    }
+
+    .Map {
+        flex: 2;
+        height: 70vh;
+    }
 }

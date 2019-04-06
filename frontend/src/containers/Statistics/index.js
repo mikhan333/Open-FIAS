@@ -29,7 +29,7 @@ class Statistics extends Component {
         let graphData = [];
         let labels = [];
 
-        this.props.pointsPerDay.forEach((day) => {
+        this.props.pointsPerDay.slice(0, 30).forEach((day) => { // TODO delete slice and change using array
             graphData.push(day.count);
             labels.push(day.days)
         });
@@ -38,6 +38,7 @@ class Statistics extends Component {
             labels: labels.reverse(),
             datasets: [
                 {
+                    label: 'загеокодированно',
                     lineTension: 0.1,
                     borderColor: 'rgba(75,192,192,1)',
                     borderCapStyle: 'butt',

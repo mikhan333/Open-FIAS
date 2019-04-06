@@ -10,6 +10,9 @@ const generateAddress = (addressDetails) => {
     if (addressDetails.locality && addressDetails.region !== addressDetails.locality) {
         address = `${ address }, ${ addressDetails.locality }`
     }
+    if (addressDetails.district) {
+        address = `${ address }, ${ addressDetails.district }`
+    }
     if (addressDetails.street && addressDetails.street !== 'Unnamed Road') {
         address = `${ address }, ${ addressDetails.street }`
     }

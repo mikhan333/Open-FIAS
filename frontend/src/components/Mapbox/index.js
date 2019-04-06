@@ -10,35 +10,45 @@ import classes from './index.module.css'
 
 const style = "mapbox://styles/artem062/cjtvvluti12vs1fp8xf46ubk0";
 
-const Map = ReactMapboxGl({ accessToken: mapboxAccessToken });
+const Map = ReactMapboxGl({
+    accessToken: mapboxAccessToken,
+    minZoom: 1
+});
 
 class SideMap extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            coords: this.props.coords,
-            currentCoords: this.props.coords,
+            map: null,
+            default: this.props.place,
             currentMarkerCoords: {
                 lat: null,
                 lng: null
-            } //TODO zoom changing
+            }
         };
     }
 
     componentDidMount() {
         setInterval(() => {
             if (JSON.stringify(this.props.markerCoords) !== JSON.stringify(this.state.currentMarkerCoords)) {
-                this.props.getAddress(this.props.markerCoords);
                 this.setState({
-                    currentMarkerCoords: this.props.markerCoords,
-                    coords: this.props.markerCoords.lat ? this.props.markerCoords : this.props.coords
-                })
-            }
-            if (JSON.stringify(this.props.coords) !== JSON.stringify(this.state.currentCoords)) {
-                this.setState({
-                    coords: this.props.coords,
-                    currentCoords: this.state.coords
+                    currentMarkerCoords: this.props.markerCoords
                 });
+                if (JSON.stringify(this.props.markerCoords) !== JSON.stringify({ lat: null, lng: null })) {
+                    this.props.getAddress(this.props.markerCoords);
+                    if (this.state.map) {
+                        this.state.map.flyTo({
+                            center: this.props.markerCoords
+                        })
+                    }
+                }
+            }
+
+            if (this.props.newCoords) {
+                this.props.putCoords();
+                if (this.state.map) {
+                    this.state.map.flyTo(this.props.place);
+                }
             }
         }, 200);
     }
@@ -46,16 +56,23 @@ class SideMap extends Component {
     render() {
         let marker, popup;
         if (this.props.markerCoords.lat && this.props.markerCoords.lng) {
-            let address;
+            let address, warning;
             if (this.props.loading) {
-                address = 'Подождите...'
+                warning = 'Подождите...'
             } else if (this.props.error) {
-                address = `Ошибка: ${ this.props.error.message || this.props.error }`
+                warning = `Ошибка: ${ this.props.error.message || this.props.error }`
             } else {
                 if (this.props.address) {
                     address = this.props.address
                 } else {
-                    address = 'Неизвестный адрес'
+                    warning = 'Неизвестный адрес'
+                }
+            }
+            let click = {};
+            if (address) {
+                click = {
+                    onClick: () => this.props.setAddress(address),
+                    style: { cursor: "pointer" }
                 }
             }
             popup =
@@ -68,10 +85,10 @@ class SideMap extends Component {
                         'left': [10, -10],
                         'right': [-10, -10]
                     }}
-                    onClick={ () => this.props.setAddress(address) }
+                    { ...click }
                     className={ classes.Popup }
                 >
-                    { address }
+                    { address || warning }
                 </Popup>;
             marker =
                 <Marker
@@ -82,13 +99,13 @@ class SideMap extends Component {
         }
 
         return (
-            <Map
-                center={ this.state.coords }
-                style={ style }
+            // eslint-disable-next-line
+            <Map style={ style }
+                { ...this.state.default }
                 onClick={ (map, event) => this.props.setMarkerCoords(event.lngLat) }
+                onStyleLoad={ (map) => { this.setState({ map }) } }
             >
                 <ZoomControl/>
-
                 { marker }
                 { popup }
             </Map>
@@ -98,11 +115,14 @@ class SideMap extends Component {
 
 const mapStateToProps = state => {
     return {
-        coords: {
-            lat: state.map.data.lat,
-            lng: state.map.data.lng
+        place: {
+            center: {
+                lat: state.map.data.lat,
+                lng: state.map.data.lng
+            },
+            zoom: [ state.map.data.zoom ]
         },
-        zoom: state.map.data.zoom,
+        newCoords: state.map.data.new,
         address: state.marker.address,
         loading: state.marker.loading,
         error: state.marker.error,
@@ -117,7 +137,8 @@ const mapDispatchToProps = dispatch => {
     return {
         getAddress: (coords) => dispatch(markerActionCreators.getAddress(coords)),
         setAddress: (address) => dispatch(mapActionCreators.setAddress(address)),
-        setMarkerCoords: (coords) => dispatch(markerActionCreators.setMarkerCoords(coords))
+        setMarkerCoords: (coords) => dispatch(markerActionCreators.setMarkerCoords(coords)),
+        putCoords: () => dispatch(mapActionCreators.putCoords())
     }
 };
 

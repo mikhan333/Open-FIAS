@@ -13,4 +13,11 @@
     flex: 1;
     background: #fafafa;
     overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 735px) {
+    .Layout {
+        height: 100%;
+    }
 }

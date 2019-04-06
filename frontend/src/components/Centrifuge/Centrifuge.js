@@ -9,7 +9,7 @@ class CentrifugeClass extends Component {
 
     componentDidMount() {
         const token = jwt.sign({ sub: null }, centrifugeSecret, { expiresIn: 86400 });
-        const centrifuge = new Centrifuge('ws://172.20.10.4/centrifugo/connection/websocket');
+        const centrifuge = new Centrifuge('ws://89.208.86.148/connection/websocket');
         centrifuge.setToken(token);
         centrifuge.subscribe('latest_points', message => {
             this.props.onAddPoint(message.data);

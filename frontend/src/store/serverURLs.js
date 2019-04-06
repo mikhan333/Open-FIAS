@@ -1,4 +1,4 @@
-const backendURL = '/api';
+const backendURL = '';
 
 export const suggestServer = `${ backendURL }/suggester`;
 export const geocoderServer = `${ backendURL }/geocoder`;

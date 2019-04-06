@@ -5,13 +5,15 @@ const initialState = {
         address: '',
         lat: 55.75222,
         lng: 37.61556,
-        zoom: 8,
+        zoom: 9,
         loading: false,
         error: null,
+        new: true
     },
     loading: false,
     error: null,
-    isFocused: true
+    isFocused: true,
+    url: null
 };
 
 const reducer = ( state = initialState, action ) => {
@@ -23,7 +25,8 @@ const reducer = ( state = initialState, action ) => {
                 address: action.address,
                 lat: action.lat,
                 lng: action.lng,
-                zoom: action.zoom
+                zoom: action.zoom,
+                new: true
             },
         }
     }
@@ -51,11 +54,22 @@ const reducer = ( state = initialState, action ) => {
         }
     }
 
+    if (action.type === actionTypes.NEW_COORDS_PUTTED) {
+        return {
+            ...state,
+            data: {
+                ...state.data,
+                new: false
+            },
+        }
+    }
+
     if (action.type === actionTypes.SENDING_LINK_SUCCESS) {
         return {
             ...state,
             loading: false,
-            error: null
+            error: null,
+            url: action.url
         }
     }
 
@@ -63,7 +77,8 @@ const reducer = ( state = initialState, action ) => {
         return {
             ...state,
             loading: true,
-            error: null
+            error: null,
+            url: null
         }
     }
 

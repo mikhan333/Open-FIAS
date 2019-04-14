@@ -110,11 +110,13 @@ class ObjectSerializer(serializers.ModelSerializer):
         ]
 
 
-def points_serializer(points):
+def points_serializer(points, have_id=False):
     mas_points = []
     for point in points:
         dict_point = ObjectSerializer(point).data
         if point.author is not None:
             dict_point['author'] = point.author.username
+        if have_id:
+            dict_point['id'] = point.id
         mas_points.append(dict_point)
     return mas_points

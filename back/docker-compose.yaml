@@ -13,7 +13,7 @@ services:
         expose:
             - 8080
         ports:
-            - "80:8080"
+            - "8080:8080"
         volumes:
             - ./src/static:/srv/www/fias_back/static
             - ./src/media:/srv/www/fias_back/media
@@ -37,10 +37,15 @@ services:
         command: "gunicorn -c gunicorn.py open_fias.wsgi"
 
         environment:
-          DB_NAME: sql_db
-          DB_HOST: fias-postgres
-          DB_USER: sql_user
-          DB_PASSWORD: sql_pass
+          DB_NAME: ${DB_NAME}
+          DB_HOST: ${DB_HOST}
+          DB_USER: ${DB_USER}
+          DB_PASSWORD: ${DB_PASSWORD}
+
+          CENT_SECRET: ${CENT_SECRET}
+          CENT_ADMIN_PASSWORD: ${CENT_ADMIN_PASSWORD}
+          CENT_ADMIN_SECRET: ${CENT_ADMIN_SECRET}
+          CENT_API_KEY: ${CENT_API_KEY}
 
         depends_on:
             - fias-postgres
@@ -51,9 +56,9 @@ services:
         ports:
             - 6000:5432
         environment:
-          POSTGRES_USER: sql_user
-          POSTGRES_PASSWORD: sql_pass
-          POSTGRES_DB: sql_db
+          POSTGRES_USER: ${DB_USER}
+          POSTGRES_PASSWORD: ${DB_PASSWORD}
+          POSTGRES_DB: ${DB_NAME}
           PGDATA: /var/lib/postgresql/data
         volumes:
             - .sql_data:/var/lib/postgresql/data
@@ -61,6 +66,11 @@ services:
     fias-centrifugo:
         image: centrifugo/centrifugo:latest
         command: centrifugo -c /config.json --admin
+        environment:
+          CENTRIFUGO_SECRET: ${CENT_SECRET}
+          CENTRIFUGO_ADMIN_PASSWORD: ${CENT_ADMIN_PASSWORD}
+          CENTRIFUGO_ADMIN_SECRET: ${CENT_ADMIN_SECRET}
+          CENTRIFUGO_API_KEY: ${CENT_API_KEY}
         volumes:
             - ./docker/centrifugo/centrifugo.json:/config.json
         restart: always
@@ -70,3 +80,11 @@ services:
           nofile:
             soft: 65536
             hard: 65536
+
+
+networks:                                
+  default:                               
+    driver: bridge                       
+    driver_opts:                         
+      com.docker.network.driver.mtu: 1450
+

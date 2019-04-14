@@ -5,6 +5,7 @@
 # data
 *.sqlite3
 *.sql_data
+*.env
 
 # testing
 *coverage/

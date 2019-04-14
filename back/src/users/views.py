@@ -1,7 +1,7 @@
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
-from social_django.views import auth as auth_login
+from social_django.views import auth as auth_login, complete
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers import serialize
 from django.contrib.sessions.backends.db import SessionStore
@@ -33,7 +33,6 @@ def get_user_detail(request):  # TODO get info about points from OSM
         data['email'] = extra_data['email']
     user_obj = Object.objects.all().filter(author=user).order_by("-created")
     data['points'] = points_serializer(user_obj)
-    # data['points'] = serialize('json', user_obj)
     return JsonResponse(data)
 
 
@@ -53,8 +52,7 @@ def check_auth(request):
                 mas_points = []
                 for item in session_points:
                     mas_points.append(get_object_or_404(Object, id=item))
-                    # data['points'] = serialize('json', mas_points)
-                    data['points'] = points_serializer(mas_points)
+                    data['points'] = points_serializer(mas_points, have_id=True)
         return JsonResponse(data)
     if request.session.session_key is None:
         session = SessionStore()

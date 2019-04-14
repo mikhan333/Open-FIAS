@@ -122,7 +122,7 @@ class ConfirmModal extends Component {
                     <div>
                         Адрес: { this.props.address } <br/>
                         { suggestedAddress }
-                        Координаты: { this.props.markerCoords.lat.toFixed(3) }, { this.props.markerCoords.lng.toFixed(3) }
+                        Координаты: { this.props.markerCoords.lat.toFixed(6) }, { this.props.markerCoords.lng.toFixed(6) }
                     </div>
                     { warning }
                 </Modal.Body>

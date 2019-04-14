@@ -56,8 +56,9 @@ class Profile extends Component {
                         <Col md="2" className="border border-info border-top-0 border-left-0">{ point.address.locality || '-' }</Col>
                         <Col md="2" className="border border-info border-top-0 border-left-0">{ point.address.street || '-' }</Col>
                         <Col md="2" className="border border-info border-top-0 border-left-0">{ point.address.building || '-' }</Col>
-                        <Col md="1" className="border border-info border-top-0 border-left-0">{ point.latitude.toFixed(3) }</Col>
-                        <Col md="1" className="border border-info border-top-0 border-left-0">{ point.longitude.toFixed(3) }</Col>
+                        <Col md="2" className="border border-info border-top-0 border-left-0">
+                            { point.latitude.toFixed(6) } { point.longitude.toFixed(6) }
+                        </Col>
                     </Row>
                 )});
             myPoints = [
@@ -67,8 +68,7 @@ class Profile extends Component {
                     <Col md="2" className="border border-info border-left-0">Населенный пункт</Col>
                     <Col md="2" className="border border-info border-left-0">Улица</Col>
                     <Col md="2" className="border border-info border-left-0">Дом</Col>
-                    <Col md="1" className="border border-info border-left-0">Широта</Col>
-                    <Col md="1" className="border border-info border-left-0">Долгота</Col>
+                    <Col md="2" className="border border-info border-left-0">Координаты</Col>
                 </Row>,
                 ...myPoints
             ]

@@ -1,12 +1,14 @@
-import React, { Component } from 'react'
-import ReactMapboxGl, { Marker, ZoomControl, Popup } from "react-mapbox-gl";
-import { connect } from "react-redux";
+import React, {Component} from 'react'
+import ReactMapboxGl, {Marker, Popup, ScaleControl} from "react-mapbox-gl";
+import {connect} from "react-redux";
 import * as mapActionCreators from "../../store/actions/mapActions";
 import * as markerActionCreators from "../../store/actions/markerActions";
 import { mapboxAccessToken } from "../../config";
+import mapboxgl from 'mapbox-gl';
 
 import './index.css'
 import classes from './index.module.css'
+import {MarkerControl} from "./MarkerControl";
 
 const style = "mapbox://styles/artem062/cjtvvluti12vs1fp8xf46ubk0";
 
@@ -24,8 +26,18 @@ class SideMap extends Component {
             currentMarkerCoords: {
                 lat: null,
                 lng: null
+            },
+            markerControl: null,
+            markerPutEnable: false,
+            markerColors: {
+                disabled: 'grey',
+                enabled: null
             }
         };
+
+        this.onMapLoad = this.onMapLoad.bind(this);
+        this.onMapClick = this.onMapClick.bind(this);
+        this.onMarkerControlClick = this.onMarkerControlClick.bind(this)
     }
 
     componentDidMount() {
@@ -51,6 +63,50 @@ class SideMap extends Component {
                 }
             }
         }, 200);
+    }
+
+    onMapLoad(map) {
+        this.setState({ map });
+        map.addControl(new mapboxgl.NavigationControl());
+        map.addControl(new mapboxgl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true
+            },
+            trackUserLocation: true
+        }));
+        const markerControl = new MarkerControl();
+        map.addControl(markerControl);
+        markerControl.button.onclick = this.onMarkerControlClick;
+        this.setState({
+            markerControl,
+            markerColors: {
+                ...this.state.markerColors,
+                on: markerControl.marker.style.background
+            }
+        });
+        if (this.state.markerPutEnable) {
+            markerControl.marker.style.background = this.state.markerColors.enabled;
+        } else {
+            markerControl.marker.style.background = this.state.markerColors.disabled;
+        }
+    }
+
+    onMarkerControlClick() {
+        const markerControl = this.state.markerControl;
+        if (!this.state.markerPutEnable) {
+            markerControl.marker.style.background = this.state.markerColors.enabled;
+        } else {
+            markerControl.marker.style.background = this.state.markerColors.disabled;
+        }
+        this.setState({
+            markerPutEnable: !this.state.markerPutEnable
+        });
+    }
+
+    onMapClick(event) {
+        if (!this.props.loading && this.state.markerPutEnable) {
+            this.props.setMarkerCoords(event.lngLat)
+        }
     }
 
     render() {
@@ -102,10 +158,10 @@ class SideMap extends Component {
             // eslint-disable-next-line
             <Map style={ style }
                 { ...this.state.default }
-                onClick={ (map, event) => this.props.setMarkerCoords(event.lngLat) }
-                onStyleLoad={ (map) => { this.setState({ map }) } }
+                onClick={ (map, event) => this.onMapClick(event) }
+                onStyleLoad={ (map) => this.onMapLoad(map) }
             >
-                <ZoomControl/>
+                <ScaleControl/>
                 { marker }
                 { popup }
             </Map>

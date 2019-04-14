@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Navbar, OverlayTrigger, Tooltip, Nav } from "react-bootstrap";
+import { Navbar, OverlayTrigger, Tooltip, Nav, NavDropdown } from "react-bootstrap";
 import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom'
 
 import classes from './index.module.css'
 import { authServer } from "../../store/serverURLs";
+import mapsMeLogo from '../../static/icon.png'
 
 class Header extends Component {
     static authRedirect () {
@@ -58,17 +59,21 @@ class Header extends Component {
         }
 
         return (
-            <Navbar variant='dark' expand="lg">
+            <Navbar collapseOnSelect variant='dark' expand="lg">
                 <Navbar.Brand
                     onClick={ () => this.props.history.push('/') }
                     className={ classes.Header }
                 >
-                    Ручное геокодирование данных
+                    <img src={ mapsMeLogo } alt="" className={ classes.Logo }/>
                 </Navbar.Brand>
-                <Navbar.Toggle />
+                <Navbar.Toggle/>
                 <Navbar.Collapse>
                 <Nav className="mr-auto">
-                    <Nav.Link onClick={ () => this.props.history.push('/add_point') }>Поставить точку</Nav.Link>
+                    <Nav.Link onClick={ () => this.props.history.push('/') }>Главная</Nav.Link>
+                    <NavDropdown title="Поставить точку" id="basic-nav-dropdown">
+                        <NavDropdown.Item onClick={ () => this.props.history.push('/add_point') }>Через адрес из ФИАС</NavDropdown.Item>
+                        <NavDropdown.Item onClick={ () => this.props.history.push('/add_point') }>Через точку на карте</NavDropdown.Item>
+                    </NavDropdown>
                     <Nav.Link onClick={ () => this.props.history.push('/statistics') }>Статистика</Nav.Link>
                 </Nav>
                     { name }

@@ -43,15 +43,7 @@ export const getCoords = (address) => {
                 if (resp.data.features && resp.data.features[0].geometry) {
                     const coords = resp.data.features[0].geometry.coordinates;
                     const rank = resp.data.features[0].rank || resp.data.features[0].properties.rank;
-                    let zoom;
-                    switch (rank) { //TODO zoom switcher
-                        case 4:
-                            zoom = 8;
-                            break;
-                        default:
-                            zoom = rank < 20 ? rank : 17;
-                            break;
-                    }
+                    const zoom = rank < 11 ? rank + 6 : 17;
                     dispatch(saveData(actionTypes.GET_COORDS_SUCCESS, coords[0], coords[1], address, zoom))
                 } else {
                     dispatch(failed(actionTypes.GET_COORDS_FAILED, 'места не найдены'))

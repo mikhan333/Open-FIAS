@@ -17,5 +17,5 @@
 5. Run in console "make build" and then "make migrate", when you first start and "make up" after
 
 ### Additional function
-1. To start tests run "make test" (doesnt work now)
+1. To start tests run "make test"
 2. Because now there are not automatic clear sessions, you can delete it with run "make clearsessions"

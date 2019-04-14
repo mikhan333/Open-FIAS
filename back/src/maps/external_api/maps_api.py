@@ -45,13 +45,6 @@ def geocoder(data):
     else:
         return {'error': 400}
 
-    # If we have word 'Область' there are some problems in geocoder, so delete it
-    # if 'Область' in address_parts:
-    #     index = address_parts.index('Область')
-    #     if len(address_parts) > index + 2:
-    #         address_parts.pop(index)
-    #         address_parts.pop(index)
-
     url = build_url(
         getattr(settings, 'FIAS_URL'),
         getattr(settings, 'FIAS_URL_GEOCODER'),

@@ -1,6 +1,6 @@
 from .external_api.maps_api import suggester, rev_geocoder, geocoder, check_addr
 from .external_api.osm_api import create_note, create_object
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse, HttpResponseNotAllowed
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -47,6 +47,8 @@ def create_point(request):
         if request.session.session_key is None:
             return HttpResponseBadRequest('There is not session')
         session = request.session
+        if 'points' not in session:
+            return HttpResponseBadRequest('Wrong session')
         if len(session['points']) >= 3:
             return HttpResponseBadRequest('You done too many points')
 
@@ -78,30 +80,44 @@ def create_point(request):
 @csrf_exempt
 @login_required
 @require_http_methods("POST")
+def remove_point(request):
+    try:
+        data = json.loads(request.body)
+        point_pk = int(data['point'])
+    except (json.decoder.JSONDecodeError, KeyError, ValueError):
+        return HttpResponseBadRequest('Wrong request count of fields - bad fields')
+    obj = get_object_or_404(Object, id=point_pk)
+    if obj.author is not request.user:
+        return HttpResponseNotAllowed('Wrong request id')
+    obj.is_archive = True
+    obj.save()
+
+
+@csrf_exempt
+@login_required
+@require_http_methods("POST")
 def add_points_from_cookie(request):
     if request.session.session_key is not None:
         session = request.session
         if 'points' not in session:
-            return HttpResponseBadRequest('Wrong request data - there are no points')
+            return HttpResponseBadRequest('Wrong session')
         if len(session['points']) == 0:
-            return HttpResponseBadRequest('Wrong request data - there are no points')
+            return HttpResponseBadRequest('Wrong points')
         try:
             data = json.loads(request.body)
             points = list(data['points'])
         except (json.decoder.JSONDecodeError, KeyError, ValueError):
-            return HttpResponseBadRequest('Wrong request count of fields - bad fields')
+            return HttpResponseBadRequest('Wrong fields')
 
         for item in points:
-            if 'points' not in session:
-                return HttpResponseBadRequest('Wrong request data - should be session')
             if item not in session['points']:
-                return HttpResponseBadRequest('Wrong request data - not correct id')
+                return HttpResponseNotAllowed('Wrong request id')
             obj = get_object_or_404(Object, id=item)
             obj.author = request.user
             obj.save()
         del session['points']
         return HttpResponse('OK')
-    return HttpResponseBadRequest('Wrong request data - should be session')
+    return HttpResponseBadRequest('There is not session')
 
 
 @csrf_exempt

@@ -42,7 +42,7 @@ def check_auth(request):
     if request.user.is_authenticated:
         session = request.session
         if session.session_key is None:
-            return HttpResponseBadRequest('Wrong request data - should be session')
+            return HttpResponseBadRequest('There is not session')
         data = {'authorization': True, 'points': []}
         if 'points' in session:
             session_points = session['points']

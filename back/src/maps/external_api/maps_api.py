@@ -58,18 +58,6 @@ def geocoder(data):
         return {'error': response.status_code}
     data_json = response.json()
 
-    # Return points with smaller rank firstly
-    # def sort(obj):
-    #     value = obj.get('properties')
-    #     if value is None or 'geometry' not in obj or obj.get('weight') != 1:
-    #         return 15
-    #     value = value.get('rank')
-    #     if value is None:
-    #         return 15
-    #     return obj.get('properties').get('rank')
-
-    # data_json['features'] = sorted(data_json['features'], key=sort)
-
     # If we do not have coordinates for point, we call recursive with smaller address
     try:
         elem = data_json['features'][0]
@@ -93,6 +81,7 @@ def rev_geocoder(data):
         getattr(settings, 'FIAS_URL_REV_GEOCODER'),
         {
             'api_key': getattr(settings, 'FIAS_API_KEY'),
+            'fields': 'related,address_details',
             'q': f'{lat},{lon}',
         }
     )

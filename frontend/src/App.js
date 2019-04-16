@@ -7,6 +7,7 @@ import CreateLink from './containers/CreateLink'
 import LoginPage from './containers/LoginPage'
 import Profile from './containers/ProfilePage'
 import Statistics from './containers/Statistics'
+import LanguageProvider from './components/LanguageProvider'
 import * as actionCreators from "./store/actions/auth";
 import './App.css';
 
@@ -17,16 +18,18 @@ class App extends Component {
 
     render() {
     return (
-        <div className="App">
-            <Router>
-                <Layout>
-                    <Route exact path='/' component={ LoginPage } />
-                    <Route exact path='/add_point' component={ CreateLink } />
-                    <Route exact path='/profile' component={ Profile } />
-                    <Route exact path='/statistics' component={ Statistics } />
-                </Layout>
-            </Router>
-      </div>
+        <LanguageProvider>
+            <div className="App">
+                <Router>
+                    <Layout>
+                        <Route exact path='/' component={ LoginPage } />
+                        <Route exact path='/add_point' component={ CreateLink } />
+                        <Route exact path='/profile' component={ Profile } />
+                        <Route exact path='/statistics' component={ Statistics } />
+                    </Layout>
+                </Router>
+            </div>
+        </LanguageProvider>
     );
   }
 }

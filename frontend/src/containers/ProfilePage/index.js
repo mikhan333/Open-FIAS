@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
-import { Container, Row, Col } from "react-bootstrap"
+import { Container, Row, Col, Table, Card } from "react-bootstrap"
 import { Redirect } from "react-router-dom";
 
 import classes from './index.module.css'
@@ -36,54 +36,80 @@ class Profile extends Component {
             return <Redirect to='/'/>
         }
 
-        let pointInfo, myPoints;
+        let pointInfo, myPoints, myPointsTable, lenPoints;
         if (!this.props.points || this.props.points.length === 0) {
             pointInfo =
                 <div>
                     У вас пока нет добавленных точек
                 </div>
-        } else {
+        } else { 
+            lenPoints = this.props.points.length;
+            pointInfo =
+                <div>
+                    Ваши точки:
+                </div>
             myPoints = this.props.points.map((point, index) => {
                 index++;
                 return (
-                    <Row
-                        key={ index }
-                        onClick={ () => this.handleClick(point) }
+                    <tr 
+                        key={ index } 
+                        onClick={ () => this.handleClick(point) } 
                         className={ classes.AddressRow }
                     >
-                        <Col md="1" className="border border-info border-top-0">{ index }</Col>
-                        <Col md="3" className="border border-info border-top-0 border-left-0">{ point.address.region || '-' }</Col>
-                        <Col md="2" className="border border-info border-top-0 border-left-0">{ point.address.locality || '-' }</Col>
-                        <Col md="2" className="border border-info border-top-0 border-left-0">{ point.address.street || '-' }</Col>
-                        <Col md="2" className="border border-info border-top-0 border-left-0">{ point.address.building || '-' }</Col>
-                        <Col md="2" className="border border-info border-top-0 border-left-0">
-                            { point.latitude.toFixed(6) } { point.longitude.toFixed(6) }
-                        </Col>
-                    </Row>
+                        <td>{ index }</td>
+                        <td>{ point.address.region || '-' }</td>
+                        <td>{ point.address.locality || '-' }</td>
+                        <td>{ point.address.street || '-' }</td>
+                        <td>{ point.address.building || '-' }</td>
+                        <td>
+                            { point.latitude.toFixed(6) }; { point.longitude.toFixed(6) }
+                        </td>
+                    </tr>
                 )});
-            myPoints = [
-                <Row key="0">
-                    <Col md="1" className="border border-info">№</Col>
-                    <Col md="3" className="border border-info border-left-0">Регион</Col>
-                    <Col md="2" className="border border-info border-left-0">Населенный пункт</Col>
-                    <Col md="2" className="border border-info border-left-0">Улица</Col>
-                    <Col md="2" className="border border-info border-left-0">Дом</Col>
-                    <Col md="2" className="border border-info border-left-0">Координаты</Col>
-                </Row>,
-                ...myPoints
+            myPointsTable = [
+                <thead key="0">
+                    <tr className={ classes.AddressRow }>
+                    <th>№</th>
+                    <th>Регион</th>
+                    <th>Населенный пункт</th>
+                    <th>Улица</th>
+                    <th>Дом</th>
+                    <th>Координаты</th>
+                    </tr>
+                </thead>,
+                <tbody key="1">
+                    { myPoints }
+                </tbody>
             ]
         }
 
         return(
-            <div className={ classes.Profile }>
-                <div className={ classes.Username }>
-                    { this.props.username }
-                </div>
-                { pointInfo }
-                <Container>
-                    { myPoints }
-                </Container>
-            </div>
+            <Container fluid>
+                <Row>
+                    <Col 
+                        xl={{ span: 8, offset: 2 }} 
+                        lg={{ span: 10, offset: 1 }} 
+                        md={12}
+                        xs="auto" 
+                    >
+                    <Card className={ classes.ProfileCard }>
+                        <div className={ classes.ProfileInfo }>
+                            <h3>Личное: </h3>
+                            <div className={ classes.Username }>
+                                Ваш логин &mdash; { this.props.username }
+                                <br/>
+                                Вы создали точек &mdash; { lenPoints }
+                            </div>
+                            <br/>
+                            <h4>{ pointInfo }</h4>
+                        </div>
+                        <Table striped bordered hover size="sm" responsive>
+                            { myPointsTable }
+                        </Table>
+                    </Card>
+                    </Col>
+                </Row>
+            </Container>
         )
     }
 }

@@ -5,7 +5,7 @@ export const geocoderServer = `${ backendURL }/geocoder`;
 export const notesServer = `${ backendURL }/create_point`;
 export const revGeocoderServer = `${ backendURL }/rev_geocoder`;
 
-export const authServer = `${ backendURL }/login`;
+export const authServer = `http://localhost:8080/login`;
 export const logoutServer = `${ backendURL }/logout`;
 
 export const checkAuthServer = `${ backendURL }/check_auth`;

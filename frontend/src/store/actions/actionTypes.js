@@ -30,6 +30,7 @@ export const AUTH_FAILED = 'AUTH_FAILED';
 export const USER_LOGOUT = 'USER_LOGOUT';
 
 export const SET_NEW_POINTS = 'SET_NEW_POINTS';
+export const SET_LANGUAGE = 'SET_LANGUAGE';
 
 export const GET_STATS_SUCCESS = 'GET_STATS_SUCCESS';
 export const GET_STATS_START = 'GET_STATS_START';

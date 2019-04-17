@@ -91,7 +91,7 @@ class Header extends Component {
                             title={<TranslatableText dictionary={{russian: "Поставить точку", english: "Put a point"}}/>}
                             id="basic-nav-dropdown"
                         >
-                            <NavDropdown.Item onClick={ () => this.handleLinkClick(modeTypes.fias) } }>
+                            <NavDropdown.Item onClick={ () => this.handleLinkClick(modeTypes.fias) }>
                                 <TranslatableText dictionary={{russian: "Через адрес из ФИАС", english: "Via the address from FIAS"}}/>
                             </NavDropdown.Item>
                             <NavDropdown.Item onClick={ () => this.handleLinkClick(modeTypes.map) }>
@@ -129,8 +129,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setMode: (mode) => dispatch(senderActionCreators.setMode(mode))
-        logout: () => dispatch(authActionCreators.logout()),
+        setMode: (mode) => dispatch(senderActionCreators.setMode(mode)),
+        logout: () => dispatch(authActionCreators.logout())
     }
 };
 

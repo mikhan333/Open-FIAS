@@ -6,3 +6,7 @@
     border: white solid 3px;
     margin: auto;
 }
+
+.EnabledMarker {
+    cursor: pointer;
+}

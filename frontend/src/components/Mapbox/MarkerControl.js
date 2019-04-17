@@ -1,6 +1,6 @@
 import classes from "./index.module.css";
 
-export class MarkerControl {
+class MarkerControl {
     onAdd(map) {
         this.map = map;
 
@@ -23,3 +23,5 @@ export class MarkerControl {
         this.map = undefined;
     }
 }
+
+export default MarkerControl;

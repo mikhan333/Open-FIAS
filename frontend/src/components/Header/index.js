@@ -6,10 +6,23 @@ import { withRouter } from 'react-router-dom'
 import classes from './index.module.css'
 import { authServer } from "../../store/serverURLs";
 import mapsMeLogo from '../../static/icon.png'
+import { modeTypes } from "../../store/reducers/senderReducer";
+import * as actionCreators from "../../store/actions/senderActions";
 
 class Header extends Component {
+    constructor(props) {
+        super(props);
+
+        this.handleLinkClick = this.handleLinkClick.bind(this)
+    }
+
     static authRedirect () {
         window.location.href = authServer;
+    }
+
+    handleLinkClick(mode) {
+        this.props.setMode(mode);
+        this.props.history.push('/add_point')
     }
 
     render() {
@@ -71,8 +84,8 @@ class Header extends Component {
                 <Nav className="mr-auto">
                     <Nav.Link onClick={ () => this.props.history.push('/') }>Главная</Nav.Link>
                     <NavDropdown title="Поставить точку" id="basic-nav-dropdown">
-                        <NavDropdown.Item onClick={ () => this.props.history.push('/add_point') }>Через адрес из ФИАС</NavDropdown.Item>
-                        <NavDropdown.Item onClick={ () => this.props.history.push('/add_point') }>Через точку на карте</NavDropdown.Item>
+                        <NavDropdown.Item onClick={ () => this.handleLinkClick(modeTypes.fias) }>Через адрес из ФИАС</NavDropdown.Item>
+                        <NavDropdown.Item onClick={ () => this.handleLinkClick(modeTypes.map) }>Через точку на карте</NavDropdown.Item>
                     </NavDropdown>
                     <Nav.Link onClick={ () => this.props.history.push('/statistics') }>Статистика</Nav.Link>
                 </Nav>
@@ -90,4 +103,10 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps)(withRouter(Header));
+const mapDispatchToProps = dispatch => {
+    return {
+        setMode: (mode) => dispatch(actionCreators.setMode(mode))
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header));

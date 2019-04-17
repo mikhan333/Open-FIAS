@@ -1,20 +1,21 @@
 import React, {Component} from 'react'
-import ReactMapboxGl, {Marker, Popup, ScaleControl} from "react-mapbox-gl";
-import {connect} from "react-redux";
-import * as mapActionCreators from "../../store/actions/mapActions";
-import * as markerActionCreators from "../../store/actions/markerActions";
-import { mapboxAccessToken } from "../../config";
+import ReactMapboxGl, {Marker, Popup, ScaleControl} from 'react-mapbox-gl';
+import { connect } from 'react-redux';
+import * as mapActionCreators from '../../store/actions/mapActions';
+import * as markerActionCreators from '../../store/actions/markerActions';
+import { mapboxAccessToken } from '../../config';
 import mapboxgl from 'mapbox-gl';
 
 import './index.css'
 import classes from './index.module.css'
-import {MarkerControl} from "./MarkerControl";
+import MarkerControl from './MarkerControl';
 
-const style = "mapbox://styles/artem062/cjtvvluti12vs1fp8xf46ubk0";
+const style = 'mapbox://styles/artem062/cjtvvluti12vs1fp8xf46ubk0';
 
 const Map = ReactMapboxGl({
     accessToken: mapboxAccessToken,
-    minZoom: 1
+    minZoom: 1,
+    logoPosition: 'bottom-right'
 });
 
 class SideMap extends Component {
@@ -78,17 +79,52 @@ class SideMap extends Component {
         map.addControl(markerControl);
         markerControl.button.onclick = this.onMarkerControlClick;
         this.setState({
-            markerControl,
-            markerColors: {
-                ...this.state.markerColors,
-                on: markerControl.marker.style.background
-            }
+            markerControl
         });
         if (this.state.markerPutEnable) {
             markerControl.marker.style.background = this.state.markerColors.enabled;
         } else {
             markerControl.marker.style.background = this.state.markerColors.disabled;
         }
+
+        //adding 3d buildings
+
+        let isShow = false;
+
+        setInterval(() => {
+            if (map.getPitch() !== 0) {
+                if (!isShow) {
+                    map.addLayer({
+                        'id': '3d-buildings',
+                        'source': 'composite',
+                        'source-layer': 'building',
+                        'filter': ['==', 'extrude', 'true'],
+                        'type': 'fill-extrusion',
+                        'minzoom': 15,
+                        'paint': {
+                            'fill-extrusion-color': '#aaa',
+                            'fill-extrusion-height': [
+                                'interpolate', ['linear'], ['zoom'],
+                                15, 0,
+                                15.05, ['get', 'height']
+                            ],
+                            'fill-extrusion-base': [
+                                'interpolate', ['linear'], ['zoom'],
+                                15, 0,
+                                15.05, ['get', 'min_height']
+                            ],
+                            'fill-extrusion-opacity': .6
+                        }
+                    });
+                    isShow = true
+                }
+            } else {
+                if (isShow) {
+                    map.removeLayer('3d-buildings');
+                    isShow = false
+                }
+            }
+        }, 200)
     }
 
     onMarkerControlClick() {
@@ -128,18 +164,21 @@ class SideMap extends Component {
             if (address) {
                 click = {
                     onClick: () => this.props.setAddress(address),
-                    style: { cursor: "pointer" }
+                    style: { cursor: 'pointer' }
                 }
             }
             popup =
                 <Popup
                     coordinates={ this.props.markerCoords }
                     offset={{
-                        'bottom-left': [0, -20],
-                        'bottom': [0, -20],
-                        'bottom-right': [0, -20],
-                        'left': [10, -10],
-                        'right': [-10, -10]
+                        'left': [10, 0],
+                        'right': [-10, 0],
+                        'top': [0, 10],
+                        'top-left': [0, 10],
+                        'top-right': [0, 10],
+                        'bottom': [0, -10],
+                        'bottom-left': [0, -10],
+                        'bottom-right': [0, -10]
                     }}
                     { ...click }
                     className={ classes.Popup }
@@ -149,19 +188,29 @@ class SideMap extends Component {
             marker =
                 <Marker
                     coordinates={ this.props.markerCoords }
+                    anchor='bottom'
                 >
                     <div className={ classes.Marker } />
                 </Marker>
         }
 
+        const canvas = document.getElementsByClassName('mapboxgl-canvas')[0];
+        if (canvas) {
+            if (this.state.markerPutEnable) {
+                canvas.className = `mapboxgl-canvas ${ classes.EnabledMarker }`
+            } else {
+                canvas.className = 'mapboxgl-canvas'
+            }
+        }
+
         return (
             // eslint-disable-next-line
             <Map style={ style }
-                { ...this.state.default }
-                onClick={ (map, event) => this.onMapClick(event) }
-                onStyleLoad={ (map) => this.onMapLoad(map) }
+                 { ...this.state.default }
+                 onClick={ (map, event) => this.onMapClick(event) }
+                 onStyleLoad={ (map) => this.onMapLoad(map) }
             >
-                <ScaleControl/>
+                <ScaleControl position='bottom-left'/>
                 { marker }
                 { popup }
             </Map>
@@ -173,12 +222,12 @@ const mapStateToProps = state => {
     return {
         place: {
             center: {
-                lat: state.map.data.lat,
-                lng: state.map.data.lng
+                lat: state.map.lat,
+                lng: state.map.lng
             },
-            zoom: [ state.map.data.zoom ]
+            zoom: [ state.map.zoom ]
         },
-        newCoords: state.map.data.new,
+        newCoords: state.map.new,
         address: state.marker.address,
         loading: state.marker.loading,
         error: state.marker.error,

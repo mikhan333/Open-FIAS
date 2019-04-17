@@ -157,7 +157,7 @@ class SuggestBar extends Component {
 const mapStateToProps = state => {
     return {
         markerCoords: state.marker,
-        address: state.map.data.address,
+        address: state.map.address,
         isFocused: state.map.isFocused,
         suggestedAddress: state.suggest.suggestions[0]
     }

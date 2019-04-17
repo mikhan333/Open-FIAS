@@ -12,13 +12,15 @@ import markerReducer from './store/reducers/markerReducer';
 import suggestionsReducer from './store/reducers/suggestionsReducer';
 import authReducer from './store/reducers/authReducer'
 import statsReducer from './store/reducers/statsReducer'
+import senderReducer from './store/reducers/senderReducer'
 
 const rootReducer = combineReducers({
     auth: authReducer,
     map: mapReducer,
     marker: markerReducer,
     suggest: suggestionsReducer,
-    stats: statsReducer
+    stats: statsReducer,
+    sender: senderReducer
 });
 
 const logger = store => {

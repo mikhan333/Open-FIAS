@@ -2,7 +2,7 @@ import React, { Component } from "react"
 import { Modal, Button, Alert } from "react-bootstrap";
 import { connect } from "react-redux";
 import { authServer } from '../../store/serverURLs'
-import * as mapActionCreators from "../../store/actions/mapActions";
+import * as actionCreators from "../../store/actions/senderActions";
 import classes from "./index.module.css";
 
 class ConfirmModal extends Component {
@@ -137,17 +137,17 @@ class ConfirmModal extends Component {
 const mapStateToProps = state => {
     return {
         markerCoords: state.marker,
-        address: state.map.data.address,
-        loading: state.map.loading,
-        error: state.map.error,
-        url: state.map.url,
+        address: state.map.address,
+        loading: state.sender.loading,
+        error: state.sender.error,
+        url: state.sender.url,
         suggestedAddress: state.suggest.suggestions[0]
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        sendLink: (address, coords) => dispatch(mapActionCreators.sendLink(address, coords)),
+        sendLink: (address, coords) => dispatch(actionCreators.sendLink(address, coords)),
     }
 };
 

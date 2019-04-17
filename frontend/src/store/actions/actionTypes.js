@@ -35,3 +35,5 @@ export const GET_STATS_SUCCESS = 'GET_STATS_SUCCESS';
 export const GET_STATS_START = 'GET_STATS_START';
 export const GET_STATS_FAILED = 'GET_STATS_FAILED';
 export const ADD_NEW_POINT_TO_STATS = 'ADD_NEW_POINT_TO_STATS';
+
+export const SET_MODE = 'SET_MODE';

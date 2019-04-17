@@ -39,10 +39,22 @@ export const logoutSuccess = () => {
     }
 };
 
+
+export const setLanguage = (language) => {
+    localStorage.setItem('language', language);
+    return {
+        type: actionTypes.SET_LANGUAGE,
+        language
+    }
+};
+
 export const checkAuth = () => {
     return dispatch => {
         if (localStorage.getItem('username')) {
             dispatch(authSuccess(localStorage.getItem('username'), localStorage.getItem('avatar') || null));
+        }
+        if (localStorage.getItem('language')) {
+            dispatch(setLanguage(localStorage.getItem('language')));
         }
         axios.get(checkAuthServer, { withCredentials: true })
             .then(resp => {
@@ -100,3 +112,4 @@ export const logout = () => {
             });
     }
 };
+

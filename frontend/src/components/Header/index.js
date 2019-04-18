@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, NavDropdown, Image, Button} from "react-bootstrap";
+import { Navbar, Nav, NavDropdown, Image, Button } from "react-bootstrap";
 import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom'
 import * as authActionCreators from "../../store/actions/auth";
 import LanguageHeader from "../LanguageProvider/LanguageHeader";
-import { TranslatableText } from '../LanguageProvider/LanguageTranslater';
+import TranslatableText from '../LanguageProvider/LanguageTranslater';
 import { authServer } from "../../store/serverURLs";
 
 import classes from './index.module.css'
@@ -61,7 +61,7 @@ class Header extends Component {
                 <Button variant="" className={ classes.NameButton }>
                     <div className={ classes.UserInfo }>
                         <Navbar.Text variant="light" className={ classes.Name }>
-                            <TranslatableText dictionary={{russian: "Вы не вошли", english: "You are't auth"}}/>
+                            <TranslatableText dictionary={{russian: "Вы не вошли", english: "You are not auth"}}/>
                         </Navbar.Text>
                     </div>
                 </Button>;
@@ -104,10 +104,10 @@ class Header extends Component {
                     </Nav>
                     
                     <Nav>
-                        <NavDropdown title={ name } id="basic-nav-dropdown" expanded="true">
+                        <NavDropdown title={ name } id="basic-nav-dropdown" expanded="true" alignRight>
                             { user_nav }
                             <NavDropdown.Divider/>
-                            <NavDropdown.Item onClick={ () => this.props.history.push('/') }>
+                            <NavDropdown.Item onClick={ () => this.props.history.push('/info_project') }>
                                 <TranslatableText dictionary={{russian: "О проекте", english: "About project"}}/>
                             </NavDropdown.Item>
                             <NavDropdown.Divider/>

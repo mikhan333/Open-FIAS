@@ -6,6 +6,7 @@ import Layout from './components/Layout'
 import CreateLink from './containers/CreateLink'
 import LoginPage from './containers/LoginPage'
 import Profile from './containers/ProfilePage'
+import InfoProject from './containers/InfoProject'
 import Statistics from './containers/Statistics'
 import LanguageProvider from './components/LanguageProvider'
 import * as actionCreators from "./store/actions/auth";
@@ -25,6 +26,7 @@ class App extends Component {
                         <Route exact path='/' component={ LoginPage } />
                         <Route exact path='/add_point' component={ CreateLink } />
                         <Route exact path='/profile' component={ Profile } />
+                        <Route exact path='/info_project' component={ InfoProject } />
                         <Route exact path='/statistics' component={ Statistics } />
                     </Layout>
                 </Router>

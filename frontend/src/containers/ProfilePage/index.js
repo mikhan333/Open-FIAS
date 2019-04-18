@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
-import { Container, Row, Col, Table, Card } from "react-bootstrap"
+import { Container, Row, Col, Table, Card, Image } from "react-bootstrap"
 import { Redirect } from "react-router-dom";
 
+import TranslatableText from '../../components/LanguageProvider/LanguageTranslater';
 import classes from './index.module.css'
 import * as actionCreators from "../../store/actions/auth";
 import * as mapActionCreators from "../../store/actions/mapActions";
@@ -35,18 +36,22 @@ class Profile extends Component {
         if(!localStorage.getItem('username') || localStorage.getItem('username') === '') {
             return <Redirect to='/'/>
         }
+        let avatar;
+        if(this.props.avatar) {
+            avatar = <Image src={ this.props.avatar } className={ classes.Avatar } rounded />
+        }
 
         let pointInfo, myPoints, myPointsTable, lenPoints;
         if (!this.props.points || this.props.points.length === 0) {
             pointInfo =
                 <div>
-                    У вас пока нет добавленных точек
+                    <TranslatableText dictionary={{russian: "У вас пока нет добавленных точек", english: "You have no points added yet"}}/>
                 </div>
         } else { 
             lenPoints = this.props.points.length;
             pointInfo =
                 <div>
-                    Ваши точки:
+                    <TranslatableText dictionary={{russian: "Ваши точки:", english: "Your points:"}}/>
                 </div>
             myPoints = this.props.points.map((point, index) => {
                 index++;
@@ -94,11 +99,16 @@ class Profile extends Component {
                     >
                     <Card className={ classes.ProfileCard }>
                         <div className={ classes.ProfileInfo }>
-                            <h3>Личное: </h3>
+                            <h3><TranslatableText dictionary={{russian: "Личное:", english: "Private:"}}/></h3>
                             <div className={ classes.Username }>
-                                Ваш логин &mdash; { this.props.username }
+                                <TranslatableText dictionary={{russian: "Ваш логин ", english: "Your login "}}/> 
+                                &mdash; { this.props.username }
                                 <br/>
-                                Вы создали точек &mdash; { lenPoints }
+                                <TranslatableText dictionary={{russian: "Ваш аватар ", english: "Your avatar "}}/> 
+                                &mdash; { avatar }
+                                <br/>
+                                <TranslatableText dictionary={{russian: "Вы создали точек ", english: "You created points "}}/> 
+                                &mdash; { lenPoints }
                             </div>
                             <br/>
                             <h4>{ pointInfo }</h4>
@@ -117,7 +127,8 @@ class Profile extends Component {
 const mapStateToProps = state => {
     return {
         username: state.auth.username,
-        points: state.auth.points
+        points: state.auth.points,
+        avatar: state.auth.avatar
     }
 };
 

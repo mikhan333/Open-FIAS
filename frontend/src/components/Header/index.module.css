@@ -15,6 +15,7 @@
 
 .NameButton {
     padding: 0;
+    margin: -.5rem 0;
 }
 
 .NameButton:focus {

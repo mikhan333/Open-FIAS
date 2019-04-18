@@ -1,34 +1,24 @@
-.ProfileInfo {
+.Content {
     padding: 2% 1.5%;
+    text-align: center;
 }
 
-.Username {
+.ContentText {
     margin-left: 20px;
 }
 
-.Avatar {
-    height: 30px;
-    width: auto;
-    margin: 5px;
-}
-
-.ProfileCard {
+.InfoCard {
     min-height: 700px;
     margin: 2%;
     padding: 1%;
 }
 
 @media all and (max-width: 500px) {
-    .ProfileCard {
+    .InfoCard {
         min-height: none;
         background: transparent;
         border: 0;
         margin: 0;
         padding: 1%;
     }
-}
-
-.AddressRow {
-    cursor: pointer;
-    text-align: center;
 }

@@ -3,9 +3,10 @@ import React from 'react';
 export const LanguageContext = React.createContext();
 export const LanguageConsumer = LanguageContext.Consumer;
 
-export const TranslatableText = props => (
+const TranslatableText = props => (
     <LanguageConsumer>
         {({ language }) => props.dictionary[language]}
     </LanguageConsumer>
 );
 
+export default TranslatableText;

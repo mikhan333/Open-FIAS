@@ -103,7 +103,8 @@ export const logout = () => {
     return dispatch => {
         axios.get(logoutServer, { withCredentials: true })
             .then(() => {
-                localStorage.clear();
+                localStorage.removeItem('username');
+                localStorage.removeItem('avatar');
                 dispatch(logoutSuccess());
                 dispatch(checkAuth());
             })

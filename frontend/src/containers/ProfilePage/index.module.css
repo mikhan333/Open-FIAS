@@ -7,7 +7,7 @@
 }
 
 .Avatar {
-    height: 30px;
+    height: 40px;
     width: auto;
     margin: 5px;
 }
@@ -31,4 +31,14 @@
 .AddressRow {
     cursor: pointer;
     text-align: center;
+}
+
+.Pagination {
+    align-self: center;
+    position: absolute;
+    bottom: 0px;
+}
+
+.Table {
+    margin-bottom: 60px;
 }

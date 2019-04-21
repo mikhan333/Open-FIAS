@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Container, Row, Col, Table, Card, Image } from "react-bootstrap"
+import { Container, Row, Col, Card } from "react-bootstrap"
 
 import classes from './index.module.css'
 

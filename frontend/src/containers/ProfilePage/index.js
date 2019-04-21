@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
-import { Container, Row, Col, Table, Card, Image } from "react-bootstrap"
+import { Container, Row, Col, Table, Card, Image, Pagination } from "react-bootstrap"
 import { Redirect } from "react-router-dom";
 
 import TranslatableText from '../../components/LanguageProvider/LanguageTranslater';
@@ -14,11 +14,24 @@ class Profile extends Component {
     constructor(props) {
         super(props);
 
-        this.handleClick = this.handleClick.bind(this)
+        this.handlePagination = this.handlePagination.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.state = {
+            startPoints: 0,
+            activePagination: 1,
+            diffPoints: 10,
+        }
     }
 
     componentDidMount() {
-        this.props.getProfileInfo()
+        this.props.getProfileInfo();
+    }
+
+    handlePagination(number) {
+        this.setState({ 
+            startPoints: (number - 1) * this.state.diffPoints, 
+            activePagination: number,
+        });
     }
 
     handleClick(point) {
@@ -33,6 +46,7 @@ class Profile extends Component {
     }
 
     render() {
+        let diffPoints = this.state.diffPoints;
         if(!localStorage.getItem('username') || localStorage.getItem('username') === '') {
             return <Redirect to='/'/>
         }
@@ -53,7 +67,7 @@ class Profile extends Component {
                 <div>
                     <TranslatableText dictionary={{russian: "Ваши точки:", english: "Your points:"}}/>
                 </div>
-            myPoints = this.props.points.map((point, index) => {
+            myPoints = this.props.points.slice(this.state.startPoints, this.state.startPoints + diffPoints).map((point, index) => {
                 index++;
                 return (
                     <tr 
@@ -61,7 +75,7 @@ class Profile extends Component {
                         onClick={ () => this.handleClick(point) } 
                         className={ classes.AddressRow }
                     >
-                        <td>{ index }</td>
+                        <td>{ this.state.startPoints + index }</td>
                         <td>{ point.address.region || '-' }</td>
                         <td>{ point.address.locality || '-' }</td>
                         <td>{ point.address.street || '-' }</td>
@@ -88,6 +102,38 @@ class Profile extends Component {
             ]
         }
 
+        let paginationItems = [];
+        let paginationMax = Math.ceil(lenPoints / diffPoints);
+        let paginationStart = 1, paginationEnd = paginationMax;
+        if (paginationMax !== 1) {
+            let paginationPrev = this.state.activePagination === 1 ? 1 : this.state.activePagination - 1;
+            let paginationNext = this.state.activePagination === paginationMax ? paginationMax : this.state.activePagination + 1;
+            if (paginationMax >= 6) {
+                if (this.state.activePagination <= 3) {
+                    paginationStart = 1;
+                    paginationEnd = 5;
+                } else if (this.state.activePagination >= paginationMax - 2) {
+                    paginationStart = paginationMax - 4;
+                    paginationEnd = paginationMax;
+                } else {
+                    paginationStart = this.state.activePagination - 2;
+                    paginationEnd = this.state.activePagination + 2;
+                }
+            }
+            paginationItems.push(
+                <Pagination.Prev onClick={() => this.handlePagination(paginationPrev)} />
+            );
+            for (let number = paginationStart; number <= paginationEnd; number++) {
+                paginationItems.push(
+                    <Pagination.Item key={ number } active={ number === this.state.activePagination } onClick={() => this.handlePagination(number) }>
+                        {number}
+                    </Pagination.Item>,
+                );
+            }
+            paginationItems.push(
+                <Pagination.Next onClick={() => this.handlePagination(paginationNext)} />
+            );
+        }
         return(
             <Container fluid>
                 <Row>
@@ -113,9 +159,12 @@ class Profile extends Component {
                             <br/>
                             <h4>{ pointInfo }</h4>
                         </div>
-                        <Table striped bordered hover size="sm" responsive>
+                        <Table striped bordered hover size="sm" responsive className={ classes.Table }> 
                             { myPointsTable }
                         </Table>
+                        <Pagination className={ classes.Pagination }>
+                            { paginationItems }
+                        </Pagination>
                     </Card>
                     </Col>
                 </Row>

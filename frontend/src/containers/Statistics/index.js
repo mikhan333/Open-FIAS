@@ -85,14 +85,16 @@ class Statistics extends Component {
                     className={ classes.Carousel }
                     interval={ null }
                 >
-                    <Carousel.Item className={ classes.Item }>
-                        <h3>Всего точек загеокодированно: { this.props.pointsCount }</h3>
-                        <ol>
-                            { latestPoints }
-                        </ol>
+                    <Carousel.Item >
+                        <div className={ classes.Item }>
+                            <h3>Всего точек загеокодированно: { this.props.pointsCount }</h3>
+                            <ol>
+                                { latestPoints }
+                            </ol>
+                        </div>
                     </Carousel.Item>
-                    <Carousel.Item className={ classes.Item }>
-                        <div className={ classes.Graph }>
+                    <Carousel.Item>
+                        <div className={ (classes.Graph, classes.Item) }>
                             <h3>График загеокодированных точек</h3>
                             <Line
                                 data={ data }
@@ -100,11 +102,13 @@ class Statistics extends Component {
                             />
                         </div>
                     </Carousel.Item>
-                    <Carousel.Item className={ classes.Item }>
-                        <h3>Всего зарегистрированно пользователей: { this.props.usersCount }</h3>
-                        <ol>
-                            { usersTop }
-                        </ol>
+                    <Carousel.Item>
+                        <div className={ classes.Item }>
+                            <h3>Всего зарегистрированно пользователей: { this.props.usersCount }</h3>
+                            <ol>
+                                { usersTop }
+                            </ol>
+                        </div>
                     </Carousel.Item>
                 </Carousel>
                 <CentrifugeClass/>

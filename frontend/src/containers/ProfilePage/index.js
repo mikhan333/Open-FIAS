@@ -19,7 +19,7 @@ class Profile extends Component {
         this.state = {
             startPoints: 0,
             activePagination: 1,
-            diffPoints: 10,
+            diffPoints: 8,
         }
     }
 
@@ -121,7 +121,7 @@ class Profile extends Component {
                 }
             }
             paginationItems.push(
-                <Pagination.Prev onClick={() => this.handlePagination(paginationPrev)} />
+                <Pagination.Prev key={ -1 } onClick={() => this.handlePagination(paginationPrev)} />
             );
             for (let number = paginationStart; number <= paginationEnd; number++) {
                 paginationItems.push(
@@ -131,7 +131,7 @@ class Profile extends Component {
                 );
             }
             paginationItems.push(
-                <Pagination.Next onClick={() => this.handlePagination(paginationNext)} />
+                <Pagination.Next key={ -2 } onClick={() => this.handlePagination(paginationNext)} />
             );
         }
         return(
@@ -144,7 +144,7 @@ class Profile extends Component {
                         xs="auto" 
                     >
                     <Card className={ classes.ProfileCard }>
-                        <div className={ classes.ProfileInfo }>
+                        <div>
                             <h3><TranslatableText dictionary={{russian: "Личное:", english: "Private:"}}/></h3>
                             <div className={ classes.Username }>
                                 <TranslatableText dictionary={{russian: "Ваш логин ", english: "Your login "}}/> 
@@ -162,7 +162,7 @@ class Profile extends Component {
                         <Table striped bordered hover size="sm" responsive className={ classes.Table }> 
                             { myPointsTable }
                         </Table>
-                        <Pagination className={ classes.Pagination }>
+                        <Pagination className={ classes.Pagination } >
                             { paginationItems }
                         </Pagination>
                     </Card>

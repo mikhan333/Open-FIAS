@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, NavDropdown, Image, Button } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown, Image, Button, NavItem } from "react-bootstrap";
 import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom'
 import * as authActionCreators from "../../store/actions/auth";
@@ -36,14 +36,10 @@ class Header extends Component {
         let name, user_nav;
         if (this.props.username) {
             name =
-                <Button variant="" className={ classes.NameButton }>
-                    <div className={ classes.UserInfo }>
-                        <Navbar.Text variant="light" className={ classes.Name }>
-                            { this.props.username }
-                        </Navbar.Text>
-                        { avatar }
-                    </div>
-                </Button>;
+                <span>
+                    { this.props.username }
+                    { avatar }
+                </span>;
             user_nav = 
                 <div>
                     <NavDropdown.Item onClick={ () => this.props.history.push('/profile') }>
@@ -55,29 +51,25 @@ class Header extends Component {
                     <NavDropdown.Item onClick={ () => this.props.history.push('/') }>
                         <TranslatableText dictionary={{russian: "Настройки", english: "Settings"}}/>
                     </NavDropdown.Item>
-                </div>
+                </div>;
         } else {     
             name =
-                <Button variant="" className={ classes.NameButton }>
-                    <div className={ classes.UserInfo }>
-                        <Navbar.Text variant="light" className={ classes.Name }>
-                            <TranslatableText dictionary={{russian: "Вы не вошли", english: "You are not auth"}}/>
-                        </Navbar.Text>
-                    </div>
-                </Button>;
+                <span>
+                    { this.props.username }
+                    { avatar }
+                </span>;
             user_nav = 
                 <div>
                     <NavDropdown.Item onClick={ Header.authRedirect }>
                         <TranslatableText dictionary={{russian: "Войти", english: "Login"}}/>
                     </NavDropdown.Item>
-                </div>
+                </div>;
         }
         return (
             
-            <Navbar collapseOnSelect variant='dark' expand="lg">
+            <Navbar collapseOnSelect variant='light' expand="lg" className={ classes.Header }>
                 <Navbar.Brand
                     onClick={ () => this.props.history.push('/') }
-                    className={ classes.Header }
                 >
                     <img src={ mapsMeLogo } alt="" className={ classes.Logo }/>
                 </Navbar.Brand>

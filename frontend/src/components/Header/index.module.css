@@ -1,32 +1,11 @@
-.Header, .UserInfo {
-    cursor: pointer;
-}
-
-.UserInfo {
-    display: flex;
-    height: 100%;
-    align-items: center;
-}
-
-.Name {
-    white-space: nowrap;
-    color: white;
-}
-
-.NameButton {
-    padding: 0;
-    margin: -.5rem 0;
-}
-
-.NameButton:focus {
-    outline: 0;
-    box-shadow: none;
+.Header {
+    padding: .5rem 10%;
 }
 
 .Avatar {
     height: 30px;
     width: auto;
-    margin: 5px;
+    margin: 0 5px;
     border-radius: 10%;
 }
 
@@ -34,4 +13,17 @@
     height: 39px;
     margin: -6px;
     padding-bottom: 3px;
+    cursor: pointer;
+}
+
+@media (max-width: 1199px) {
+    .Header {
+        padding: .5rem 6%;
+    }
+}
+
+@media (max-width: 991px) {
+    .Header {
+        padding: .5rem 1rem;    
+    }
 }

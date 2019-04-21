@@ -1,7 +1,3 @@
-.ProfileInfo {
-    padding: 2% 1.5%;
-}
-
 .Username {
     margin-left: 20px;
 }
@@ -15,12 +11,12 @@
 .ProfileCard {
     min-height: 700px;
     margin: 2%;
-    padding: 1%;
+    padding: 2%;
 }
 
 @media all and (max-width: 500px) {
     .ProfileCard {
-        min-height: none;
+        min-height: inherit;
         background: transparent;
         border: 0;
         margin: 0;

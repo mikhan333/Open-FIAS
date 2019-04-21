@@ -25,7 +25,8 @@ const reducer = ( state = initialState, action ) => {
     if (action.type === actionTypes.SENDING_LINK_START) {
         return {
             ...initialState,
-            mode: state.mode
+            mode: state.mode,
+            loading: true
         }
     }
 

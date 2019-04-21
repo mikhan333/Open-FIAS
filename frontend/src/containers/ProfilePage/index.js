@@ -58,15 +58,21 @@ class Profile extends Component {
         let pointInfo, myPoints, myPointsTable, lenPoints;
         if (!this.props.points || this.props.points.length === 0) {
             pointInfo =
-                <div>
-                    <TranslatableText dictionary={{russian: "У вас пока нет добавленных точек", english: "You have no points added yet"}}/>
-                </div>
-        } else { 
+                <TranslatableText
+                    dictionary={{
+                        russian: "У вас пока нет добавленных точек",
+                        english: "You have no points added yet"
+                    }}
+                />
+        } else {
             lenPoints = this.props.points.length;
             pointInfo =
-                <div>
-                    <TranslatableText dictionary={{russian: "Ваши точки:", english: "Your points:"}}/>
-                </div>
+                <TranslatableText
+                    dictionary={{
+                        russian: "Ваши точки:",
+                        english: "Your points:"
+                    }}
+                />;
             myPoints = this.props.points.slice(this.state.startPoints, this.state.startPoints + diffPoints).map((point, index) => {
                 index++;
                 return (
@@ -88,12 +94,54 @@ class Profile extends Component {
             myPointsTable = [
                 <thead key="0">
                     <tr className={ classes.AddressRow }>
-                    <th>№</th>
-                    <th>Регион</th>
-                    <th>Населенный пункт</th>
-                    <th>Улица</th>
-                    <th>Дом</th>
-                    <th>Координаты</th>
+                    <th>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "№",
+                                english: "#"
+                            }}
+                        />
+                    </th>
+                    <th>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Регион",
+                                english: "Region"
+                            }}
+                        />
+                    </th>
+                    <th>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Населенный пункт",
+                                english: "Locality"
+                            }}
+                        />
+                    </th>
+                    <th>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Улица",
+                                english: "Street"
+                            }}
+                        />
+                    </th>
+                    <th>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Дом",
+                                english: "Building"
+                            }}
+                        />
+                    </th>
+                    <th>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Координаты",
+                                english: "Coordinates"
+                            }}
+                        />
+                    </th>
                     </tr>
                 </thead>,
                 <tbody key="1">
@@ -145,15 +193,37 @@ class Profile extends Component {
                     >
                     <Card className={ classes.ProfileCard }>
                         <div>
-                            <h3><TranslatableText dictionary={{russian: "Личное:", english: "Private:"}}/></h3>
+                            <h3>
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "Личное:",
+                                        english: "Personal:"
+                                    }}
+                                />
+                            </h3>
                             <div className={ classes.Username }>
-                                <TranslatableText dictionary={{russian: "Ваш логин ", english: "Your login "}}/> 
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "Ваш логин ",
+                                        english: "Your login "
+                                    }}
+                                />
                                 &mdash; { this.props.username }
                                 <br/>
-                                <TranslatableText dictionary={{russian: "Ваш аватар ", english: "Your avatar "}}/> 
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "Ваш аватар ",
+                                        english: "Your avatar "
+                                    }}
+                                />
                                 &mdash; { avatar }
                                 <br/>
-                                <TranslatableText dictionary={{russian: "Вы создали точек ", english: "You created points "}}/> 
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "Вы создали точек ",
+                                        english: "You created points "
+                                    }}
+                                />
                                 &mdash; { lenPoints }
                             </div>
                             <br/>

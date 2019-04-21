@@ -6,6 +6,7 @@ import * as actionCreators from "../../store/actions/auth";
 class LanguageProvider extends Component {
     constructor(props) {
         super(props);
+
         this.updateLanguage = this.updateLanguage.bind(this);
     }
 
@@ -21,7 +22,7 @@ class LanguageProvider extends Component {
                 updateLanguage: this.updateLanguage
             }}
         >
-            {this.props.children}
+            { this.props.children }
         </LanguageContext.Provider>
         );
     }
@@ -35,7 +36,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setLanguage: (lng) => dispatch(actionCreators.setLanguage(lng)),
+        setLanguage: (language) => dispatch(actionCreators.setLanguage(language)),
     }
 };
 

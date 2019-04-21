@@ -9,6 +9,7 @@ import mapboxgl from 'mapbox-gl';
 import './index.css'
 import classes from './index.module.css'
 import MarkerControl from './MarkerControl';
+import TranslatableText from "../LanguageProvider/LanguageTranslater";
 
 const style = 'mapbox://styles/artem062/cjtvvluti12vs1fp8xf46ubk0';
 
@@ -146,18 +147,37 @@ class SideMap extends Component {
     }
 
     render() {
+
         let marker, popup;
         if (this.props.markerCoords.lat && this.props.markerCoords.lng) {
             let address, warning;
             if (this.props.loading) {
-                warning = 'Подождите...'
+                warning =
+                    <TranslatableText
+                        dictionary={{
+                            russian: "Подождите...",
+                            english: "Wait..."
+                        }}
+                    />
             } else if (this.props.error) {
-                warning = `Ошибка: ${ this.props.error.message || this.props.error }`
+                warning =
+                    <TranslatableText
+                        dictionary={{
+                            russian: `Ошибка: ${ this.props.error.message || this.props.error }`,
+                            english: `Error: ${ this.props.error.message || this.props.error }`
+                        }}
+                    />
             } else {
                 if (this.props.address) {
                     address = this.props.address
                 } else {
-                    warning = 'Неизвестный адрес'
+                    warning =
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Неизвестный адрес",
+                                english: "Unknown address"
+                            }}
+                        />
                 }
             }
             let click = {};

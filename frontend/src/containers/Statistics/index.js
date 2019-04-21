@@ -7,6 +7,7 @@ import CentrifugeClass from "../../components/Centrifuge/Centrifuge";
 import generateAddress from "../../store/generateAddress"
 
 import classes from './index.module.css'
+import TranslatableText from "../../components/LanguageProvider/LanguageTranslater";
 
 class Statistics extends Component {
     componentDidMount() {
@@ -14,31 +15,49 @@ class Statistics extends Component {
     }
 
     render() {
+        const unauthorized =
+            <TranslatableText
+                dictionary={{
+                    russian: "Неавторизованный",
+                    english: "Unauthorized"
+                }}
+            />;
         const latestPoints = this.props.latestPoints.map( (point, index) =>
             <li key={ index }>
-                { point.author || 'Неавторизованный' } : { generateAddress(point.address) }
+                { point.author || unauthorized } : { generateAddress(point.address) }
             </li>
         );
 
         const usersTop = this.props.usersTop.map((user, index) =>
             <li key={ index }>
-                { user.username } (загеокодировал точек: { user.count_points })
+                { user.username } (
+                <TranslatableText
+                    dictionary={{
+                        russian: "загеокодировал точек: ",
+                        english: "put points: "
+                    }}
+                /> { user.count_points })
             </li>
         );
 
         let graphData = [];
         let labels = [];
 
-        this.props.pointsPerDay.slice(0, 30).forEach((day) => { // TODO delete slice and change using array
+        this.props.pointsPerDay.forEach((day) => {
             graphData.push(day.count);
             labels.push(day.days)
         });
+
+        const pointLabels = {
+            russian: 'загеокодированно',
+            english: 'putted'
+        };
 
         const data = {
             labels: labels.reverse(),
             datasets: [
                 {
-                    label: 'загеокодированно',
+                    label: pointLabels[ this.props.language ],
                     lineTension: 0.1,
                     borderColor: 'rgba(75,192,192,1)',
                     borderCapStyle: 'butt',
@@ -59,6 +78,16 @@ class Statistics extends Component {
             ]
         };
 
+        const xLabels = {
+            russian: 'дней назад',
+            english: 'days ago'
+        };
+
+        const yLabels = {
+            russian: 'точек загеокодированно',
+            english: 'points were putted'
+        };
+
         const options = {
             legend: {
                 display: false,
@@ -67,13 +96,13 @@ class Statistics extends Component {
                 yAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: 'точек загеокодированно'
+                        labelString: yLabels[ this.props.language ]
                     }
                 }],
                 xAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: 'дней назад',
+                        labelString: xLabels[ this.props.language ]
                     }
                 }],
             }
@@ -85,17 +114,31 @@ class Statistics extends Component {
                     className={ classes.Carousel }
                     interval={ null }
                 >
-                    <Carousel.Item >
+                    <Carousel.Item>
                         <div className={ classes.Item }>
-                            <h3>Всего точек загеокодированно: { this.props.pointsCount }</h3>
+                            <h3>
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "Всего точек загеокодированно: ",
+                                        english: "Total points were putted:"
+                                    }}
+                                /> { this.props.pointsCount }
+                            </h3>
                             <ol>
                                 { latestPoints }
                             </ol>
                         </div>
                     </Carousel.Item>
                     <Carousel.Item>
-                        <div className={ (classes.Graph, classes.Item) }>
-                            <h3>График загеокодированных точек</h3>
+                        <div className={ classes.Item }>
+                            <h3>
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "График загеокодированных точек",
+                                        english: "Chart of logged points"
+                                    }}
+                                />
+                            </h3>
                             <Line
                                 data={ data }
                                 options={ options }
@@ -104,7 +147,13 @@ class Statistics extends Component {
                     </Carousel.Item>
                     <Carousel.Item>
                         <div className={ classes.Item }>
-                            <h3>Всего зарегистрированно пользователей: { this.props.usersCount }</h3>
+                            <h3>
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "Всего зарегистрированно пользователей: ",
+                                        english: "Total registered users: "
+                                    }}
+                                /> { this.props.usersCount }</h3>
                             <ol>
                                 { usersTop }
                             </ol>
@@ -123,7 +172,8 @@ const mapStateToProps = state => {
         usersTop: state.stats.usersTop,
         pointsPerDay: state.stats.pointsPerDay,
         usersCount: state.stats.usersCount,
-        pointsCount: state.stats.pointsCount
+        pointsCount: state.stats.pointsCount,
+        language: state.auth.language
     }
 };
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, NavDropdown, Image, Button, NavItem } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown, Image } from "react-bootstrap";
 import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom'
 import * as authActionCreators from "../../store/actions/auth";
@@ -43,25 +43,49 @@ class Header extends Component {
             user_nav = 
                 <div>
                     <NavDropdown.Item onClick={ () => this.props.history.push('/profile') }>
-                        <TranslatableText dictionary={{russian: "Профиль", english: "Profile"}}/>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Профиль",
+                                english: "Profile"
+                            }}
+                        />
                     </NavDropdown.Item>
                     <NavDropdown.Item onClick={ this.props.logout }>
-                        <TranslatableText dictionary={{russian: "Выйти", english: "Logout"}}/>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Выйти",
+                                english: "Logout"
+                            }}
+                        />
                     </NavDropdown.Item>
                     <NavDropdown.Item onClick={ () => this.props.history.push('/') }>
-                        <TranslatableText dictionary={{russian: "Настройки", english: "Settings"}}/>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Настройки",
+                                english: "Settings"
+                            }}
+                        />
                     </NavDropdown.Item>
                 </div>;
         } else {     
             name =
                 <span>
-                    { this.props.username }
-                    { avatar }
+                    <TranslatableText
+                        dictionary={{
+                            russian: "Вы не вошли",
+                            english: "You are not auth"
+                        }}
+                    />
                 </span>;
             user_nav = 
                 <div>
                     <NavDropdown.Item onClick={ Header.authRedirect }>
-                        <TranslatableText dictionary={{russian: "Войти", english: "Login"}}/>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Войти",
+                                english: "Login"
+                            }}
+                        />
                     </NavDropdown.Item>
                 </div>;
         }
@@ -77,21 +101,47 @@ class Header extends Component {
                 <Navbar.Collapse>
                     <Nav className="mr-auto">
                         <Nav.Link onClick={ () => this.props.history.push('/') }>
-                            <TranslatableText dictionary={{russian: "Главная", english: "Main"}}/>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Главная", english: "Main"
+                                }}
+                            />
                         </Nav.Link>
                         <NavDropdown 
-                            title={<TranslatableText dictionary={{russian: "Поставить точку", english: "Put a point"}}/>}
+                            title={
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "Поставить точку",
+                                        english: "Create point"
+                                    }}
+                                />
+                            }
                             id="basic-nav-dropdown"
                         >
                             <NavDropdown.Item onClick={ () => this.handleLinkClick(modeTypes.fias) }>
-                                <TranslatableText dictionary={{russian: "Через адрес из ФИАС", english: "Via the address from FIAS"}}/>
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "Через адрес из ФИАС",
+                                        english: "Using FIAS address"
+                                    }}
+                                />
                             </NavDropdown.Item>
                             <NavDropdown.Item onClick={ () => this.handleLinkClick(modeTypes.map) }>
-                                <TranslatableText dictionary={{russian: "Через точку на карте", english: "Via the point on the map"}}/>
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "Через точку на карте",
+                                        english: "Using a map location"
+                                    }}
+                                />
                             </NavDropdown.Item>
                         </NavDropdown>
                         <Nav.Link onClick={ () => this.props.history.push('/statistics') }>
-                            <TranslatableText dictionary={{russian: "Статистика", english: "Statistics"}}/>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Статистика",
+                                    english: "Statistics"
+                                }}
+                            />
                         </Nav.Link>
                     </Nav>
                     
@@ -99,8 +149,13 @@ class Header extends Component {
                         <NavDropdown title={ name } id="basic-nav-dropdown" expanded="true" alignRight>
                             { user_nav }
                             <NavDropdown.Divider/>
-                            <NavDropdown.Item onClick={ () => this.props.history.push('/info_project') }>
-                                <TranslatableText dictionary={{russian: "О проекте", english: "About project"}}/>
+                            <NavDropdown.Item onClick={ () => this.props.history.push('/about') }>
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "О проекте",
+                                        english: "About project"
+                                    }}
+                                />
                             </NavDropdown.Item>
                             <NavDropdown.Divider/>
                             <NavDropdown.Header><LanguageHeader/></NavDropdown.Header>

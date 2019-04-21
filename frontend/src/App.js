@@ -26,7 +26,7 @@ class App extends Component {
                         <Route exact path='/' component={ LoginPage } />
                         <Route exact path='/add_point' component={ CreateLink } />
                         <Route exact path='/profile' component={ Profile } />
-                        <Route exact path='/info_project' component={ InfoProject } />
+                        <Route exact path='/about' component={ InfoProject } />
                         <Route exact path='/statistics' component={ Statistics } />
                     </Layout>
                 </Router>

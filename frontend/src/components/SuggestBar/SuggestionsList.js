@@ -4,6 +4,7 @@ import { ListGroup, Alert } from "react-bootstrap";
 import * as actionCreators from "../../store/actions/mapActions";
 
 import classes from './index.module.css'
+import TranslatableText from "../LanguageProvider/LanguageTranslater";
 
 class SuggestionsList extends Component {
     render() {
@@ -11,12 +12,22 @@ class SuggestionsList extends Component {
         if (this.props.loading) {
             warning =
                 <Alert variant='primary' className={ classes.Warning }>
-                    Загрузка...
+                    <TranslatableText
+                        dictionary={{
+                            russian: "Загрузка...",
+                            english: "Loading..."
+                        }}
+                    />
                 </Alert>
         } else if (this.props.error) {
             warning =
                 <Alert variant='danger'  className={ classes.Warning }>
-                    Ошибка: { this.props.error.message }
+                    <TranslatableText
+                        dictionary={{
+                            russian: "Ошибка: ",
+                            english: "Error: "
+                        }}
+                    /> { this.props.error.message }
                 </Alert>
         }
 

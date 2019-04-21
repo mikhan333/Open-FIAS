@@ -7,6 +7,7 @@ import * as mapActionCreators from "../../store/actions/mapActions";
 import SuggestionsList from './SuggestionsList'
 import classes from './index.module.css'
 import ConfirmModal from './ConfirmModal'
+import TranslatableText from "../LanguageProvider/LanguageTranslater";
 
 class SuggestBar extends Component {
     constructor(props) {
@@ -95,18 +96,37 @@ class SuggestBar extends Component {
                     variant="success"
                     onClick={ this.handleConfirm }
                     className={ classes.Button }
-                >Далее</Button>;
+                >
+                    <TranslatableText
+                        dictionary={{
+                            russian: "Далее",
+                            english: "Continue"
+                        }}
+                    />
+                </Button>
         } else {
             confirmButton =
                 <OverlayTrigger
                     placement='top'
                     overlay={
                         <Tooltip>
-                            Заполните адрес и поставьте метку, чтобы продолжить
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Заполните адрес и поставьте метку, чтобы продолжить",
+                                    english: "Fill address and put a marker to continue"
+                                }}
+                            />
                         </Tooltip>
                     }
                 >
-                    <Button className={ classes.Button } variant="secondary">Далее</Button>
+                    <Button className={ classes.Button } variant="secondary">
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Далее",
+                                english: "Continue"
+                            }}
+                        />
+                    </Button>
                 </OverlayTrigger>
         }
 
@@ -118,6 +138,10 @@ class SuggestBar extends Component {
                 />
         }
 
+        const placeholder = {
+            russian: 'Введите адрес',
+            english: 'Enter address'
+        };
 
         return (
             <div className={ classes.SuggestBar }>
@@ -128,7 +152,7 @@ class SuggestBar extends Component {
                                 { ...this.state.inputType }
                                 autoFocus
                                 ref={(input) => this.focusInput(input)}
-                                placeholder="Введите адрес"
+                                placeholder={ placeholder[ this.props.language ] }
                                 onChange={ (event) => this.handleChange(event.target.value) }
                                 value={ this.props.address }
                             />
@@ -144,7 +168,12 @@ class SuggestBar extends Component {
                         onClick={ this.props.clearData }
                         className={ classes.Button }
                     >
-                        Очистить
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Очистить",
+                                english: "Clear"
+                            }}
+                        />
                     </Button>
                 </div>
 
@@ -159,7 +188,8 @@ const mapStateToProps = state => {
         markerCoords: state.marker,
         address: state.map.address,
         isFocused: state.map.isFocused,
-        suggestedAddress: state.suggest.suggestions[0]
+        suggestedAddress: state.suggest.suggestions[0],
+        language: state.auth.language
     }
 };
 

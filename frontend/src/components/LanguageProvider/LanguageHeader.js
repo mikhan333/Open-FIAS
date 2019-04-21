@@ -12,11 +12,24 @@ class LanguageHeader extends Component {
             <LanguageConsumer>
                 {({ updateLanguage }) => (
                     <ButtonToolbar className={ classes.ButtonGroup }>
-                        <ToggleButtonGroup type="radio" name="options" value={ this.props.language } onChange={updateLanguage}>
-                            <ToggleButton variant="outline-secondary" value="russian" className={ classes.ButtonGroup } >
+                        <ToggleButtonGroup
+                            type="radio"
+                            name="options"
+                            value={ this.props.language }
+                            onChange={ updateLanguage }
+                        >
+                            <ToggleButton
+                                variant="outline-secondary"
+                                value="russian"
+                                className={ classes.ButtonGroup }
+                            >
                                 <img src={ logoRussia } className={ classes.Picture } alt=''/>
                             </ToggleButton>
-                            <ToggleButton variant="outline-secondary" value="english" className={ classes.ButtonGroup }>
+                            <ToggleButton
+                                variant="outline-secondary"
+                                value="english"
+                                className={ classes.ButtonGroup }
+                            >
                                 <img src={ logoUK } className={ classes.Picture } alt=''/>
                             </ToggleButton>
                         </ToggleButtonGroup>
@@ -25,11 +38,11 @@ class LanguageHeader extends Component {
             </LanguageConsumer>
         );
     }
-};
+}
 
 const mapStateToProps = state => {
     return {
-        language: state.auth.language,
+        language: state.auth.language
     }
 };
 

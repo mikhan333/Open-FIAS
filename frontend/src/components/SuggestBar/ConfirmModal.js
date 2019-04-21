@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { authServer } from '../../store/serverURLs'
 import * as actionCreators from "../../store/actions/senderActions";
 import classes from "./index.module.css";
+import TranslatableText from "../LanguageProvider/LanguageTranslater";
 
 class ConfirmModal extends Component {
     constructor(props) {
@@ -29,9 +30,12 @@ class ConfirmModal extends Component {
         let suggestedAddress;
         if (this.props.suggestedAddress && this.props.suggestedAddress !== this.props.address) {
             suggestedAddress =
-                <div>
-                    Будет сохранено как: { this.props.suggestedAddress } <br/>
-                </div>
+                <TranslatableText
+                    dictionary={{
+                        russian: `Будет сохранено как: ${ this.props.suggestedAddress }`,
+                        english: `Will save as: ${ this.props.suggestedAddress }`
+                    }}
+                />
         }
 
         let warning;
@@ -39,35 +43,74 @@ class ConfirmModal extends Component {
             if (this.props.loading) {
                 warning =
                     <Alert variant='primary' className={ classes.Warning }>
-                        Загрузка...
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Загрузка",
+                                english: "Loading"
+                            }}
+                        />
                     </Alert>
             } else if (this.props.error) {
                 if (this.props.error.message === 'Too many points') {
                     warning =
                         <Alert variant='danger'  className={ classes.Warning }>
-                            Ошибка: превышен лимит точек для анонимного пользователя (3).<br/>
-                            <a href={ authServer }>Войдите</a>, чтобы добавить больше.
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Ошибка: превышен лимит точек для анонимного пользователя (3).",
+                                    english: "Error: points limit is exceeded for anonymous user (3)."
+                                }}
+                            />
+                            <br/>
+                            <a href={ authServer }>
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "Войдите",
+                                        english: "Login"
+                                    }}
+                                />
+                            </a>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: ", чтобы добавить больше.",
+                                    english: " if you want to add more"
+                                }}
+                            />
                         </Alert>
                 } else {
                     warning =
                         <Alert variant='danger' className={classes.Warning}>
-                            Ошибка: {this.props.error.message}
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Ошибка: ",
+                                    english: "Error: "
+                                }}
+                            /> { this.props.error.message }
                         </Alert>
                 }
             } else {
                 if (this.props.url) {
                     warning =
                         <Alert variant='success' className={ classes.Warning }>
-                            Отправлено <br/>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Отправлено",
+                                    english: "Sent"
+                                }}
+                            />
+                            <br/>
                             <a href={ this.props.url } target="_blank" rel="noopener noreferrer">{ this.props.url }</a>
                         </Alert>
                 } else {
                     warning =
                         <Alert variant='success' className={ classes.Warning }>
-                            Отправлено
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Отправлено",
+                                    english: "Sent"
+                                }}
+                            />
                         </Alert>
                 }
-
             }
         }
 
@@ -80,14 +123,24 @@ class ConfirmModal extends Component {
                         onClick={ this.props.onHide }
                         className={ classes.ModelButtons }
                     >
-                        Отменить
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Отменить",
+                                english: "Cancel"
+                            }}
+                        />
                     </Button>
                     <Button
                         variant="success"
                         onClick={ this.handleConfirm }
                         className={ classes.ModelButtons }
                     >
-                        Подтвердить
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Подтвердить",
+                                english: "Confirm"
+                            }}
+                        />
                     </Button>
                 </div>
         } else {
@@ -98,7 +151,12 @@ class ConfirmModal extends Component {
                         onClick={ this.props.onHide }
                         className={ classes.ModelButtons }
                     >
-                        Закрыть
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Закрыть",
+                                english: "Close"
+                            }}
+                        />
                     </Button>
                 </div>
         }
@@ -114,15 +172,38 @@ class ConfirmModal extends Component {
             >
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Подтверждение отправки данных
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Подтверждение отправки данных",
+                                english: "Confirmation of sending data"
+                            }}
+                        />
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <h5>Вы уверены, что хотите отправить эти данные?</h5>
+                    <h5>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Вы уверены, что хотите отправить эти данные?",
+                                english: "Are you sure about sending data?"
+                            }}
+                        />
+                    </h5>
                     <div>
-                        Адрес: { this.props.address } <br/>
-                        { suggestedAddress }
-                        Координаты: { this.props.markerCoords.lat.toFixed(6) }, { this.props.markerCoords.lng.toFixed(6) }
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Адрес: ",
+                                english: "Address: "
+                            }}
+                        /> { this.props.address } <br/>
+                        { suggestedAddress } <br/>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Координаты: ",
+                                english: "Coordinates: "
+                            }}
+                        />
+                        { this.props.markerCoords.lat.toFixed(6) }, { this.props.markerCoords.lng.toFixed(6) }
                     </div>
                     { warning }
                 </Modal.Body>

@@ -5,7 +5,7 @@ export const LanguageConsumer = LanguageContext.Consumer;
 
 const TranslatableText = props => (
     <LanguageConsumer>
-        {({ language }) => props.dictionary[language]}
+        { ({ language }) => props.dictionary[ language ] }
     </LanguageConsumer>
 );
 

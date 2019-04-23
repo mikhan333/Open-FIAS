@@ -1,11 +1,12 @@
 .Header {
-    padding: .5rem 10%;
+    padding: .5rem 1%;
+    background: #249CF2;
 }
 
 .Avatar {
     height: 30px;
     width: auto;
-    margin: 0 5px;
+    margin: -5px 5px;
     border-radius: 10%;
 }
 
@@ -14,12 +15,6 @@
     margin: -6px;
     padding-bottom: 3px;
     cursor: pointer;
-}
-
-@media (max-width: 1199px) {
-    .Header {
-        padding: .5rem 6%;
-    }
 }
 
 @media (max-width: 991px) {

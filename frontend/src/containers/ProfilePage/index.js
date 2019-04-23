@@ -14,13 +14,14 @@ class Profile extends Component {
     constructor(props) {
         super(props);
 
-        this.handlePagination = this.handlePagination.bind(this);
-        this.handleClick = this.handleClick.bind(this);
         this.state = {
             startPoints: 0,
             activePagination: 1,
-            diffPoints: 8,
-        }
+            diffPoints: 8
+        };
+
+        this.handlePagination = this.handlePagination.bind(this);
+        this.handleClick = this.handleClick.bind(this)
     }
 
     componentDidMount() {
@@ -173,69 +174,70 @@ class Profile extends Component {
             );
             for (let number = paginationStart; number <= paginationEnd; number++) {
                 paginationItems.push(
-                    <Pagination.Item key={ number } active={ number === this.state.activePagination } onClick={() => this.handlePagination(number) }>
-                        {number}
+                    <Pagination.Item key={ number } active={ number === this.state.activePagination } onClick={ () => this.handlePagination(number) }>
+                        { number }
                     </Pagination.Item>,
                 );
             }
             paginationItems.push(
-                <Pagination.Next key={ -2 } onClick={() => this.handlePagination(paginationNext)} />
+                <Pagination.Next key={ -2 } onClick={ () => this.handlePagination(paginationNext) } />
             );
         }
-        return(
+
+        return (
             <Container fluid>
                 <Row>
                     <Col 
                         xl={{ span: 8, offset: 2 }} 
                         lg={{ span: 10, offset: 1 }} 
-                        md={12}
-                        xs="auto" 
+                        md={ 12 }
+                        xs="auto"
                     >
-                    <Card className={ classes.ProfileCard }>
-                        <div>
-                            <h3>
-                                <TranslatableText
-                                    dictionary={{
-                                        russian: "Личное:",
-                                        english: "Personal:"
-                                    }}
-                                />
-                            </h3>
-                            <div className={ classes.Username }>
-                                <TranslatableText
-                                    dictionary={{
-                                        russian: "Ваш логин ",
-                                        english: "Your login "
-                                    }}
-                                />
-                                &mdash; { this.props.username }
+                        <Card className={ classes.ProfileCard }>
+                            <div>
+                                <h3>
+                                    <TranslatableText
+                                        dictionary={{
+                                            russian: "Личное:",
+                                            english: "Personal:"
+                                        }}
+                                    />
+                                </h3>
+                                <div className={ classes.Username }>
+                                    <TranslatableText
+                                        dictionary={{
+                                            russian: "Ваш логин ",
+                                            english: "Your username "
+                                        }}
+                                    />
+                                    &mdash; { this.props.username }
+                                    <br/>
+                                    <TranslatableText
+                                        dictionary={{
+                                            russian: "Ваш аватар ",
+                                            english: "Your avatar "
+                                        }}
+                                    />
+                                    &mdash; { avatar }
+                                    <br/>
+                                    <TranslatableText
+                                        dictionary={{
+                                            russian: "Вы создали точек ",
+                                            english: "You created points "
+                                        }}
+                                    />
+                                    &mdash; { lenPoints }
+                                </div>
                                 <br/>
-                                <TranslatableText
-                                    dictionary={{
-                                        russian: "Ваш аватар ",
-                                        english: "Your avatar "
-                                    }}
-                                />
-                                &mdash; { avatar }
-                                <br/>
-                                <TranslatableText
-                                    dictionary={{
-                                        russian: "Вы создали точек ",
-                                        english: "You created points "
-                                    }}
-                                />
-                                &mdash; { lenPoints }
+                                <h4>{ pointInfo }</h4>
                             </div>
-                            <br/>
-                            <h4>{ pointInfo }</h4>
-                        </div>
-                        <Table striped bordered hover size="sm" responsive className={ classes.Table }> 
-                            { myPointsTable }
-                        </Table>
-                        <Pagination className={ classes.Pagination } >
-                            { paginationItems }
-                        </Pagination>
-                    </Card>
+                            <Table striped bordered hover size="sm" responsive className={ classes.Table }>
+                                { myPointsTable }
+                            </Table>
+                            <Pagination className={ classes.Pagination } >
+                                { paginationItems }
+                            </Pagination>
+                        </Card>
                     </Col>
                 </Row>
             </Container>

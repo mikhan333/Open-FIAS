@@ -6,20 +6,20 @@
     height: 40px;
     width: auto;
     margin: 5px;
+    border: #3C4044 solid 1px;
 }
 
 .ProfileCard {
-    min-height: 700px;
-    margin: 2%;
+    min-height: calc(100vh - 76px);
+    margin: 10px;
     padding: 2%;
 }
 
 @media all and (max-width: 500px) {
     .ProfileCard {
-        min-height: inherit;
         background: transparent;
         border: 0;
-        margin: 0;
+        margin: 5px 0;
         padding: 1%;
     }
 }
@@ -32,7 +32,7 @@
 .Pagination {
     align-self: center;
     position: absolute;
-    bottom: 0px;
+    bottom: 0;
 }
 
 .Table {

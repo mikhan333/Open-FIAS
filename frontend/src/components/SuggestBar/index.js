@@ -8,6 +8,7 @@ import SuggestionsList from './SuggestionsList'
 import classes from './index.module.css'
 import ConfirmModal from './ConfirmModal'
 import TranslatableText from "../LanguageProvider/LanguageTranslater";
+import {modeTypes} from "../../store/reducers/senderReducer";
 
 class SuggestBar extends Component {
     constructor(props) {
@@ -18,7 +19,8 @@ class SuggestBar extends Component {
             modalShow: false,
             inputType: {
                 as: 'textarea'
-            }
+            },
+            intervals: []
         };
 
         this.modalClose = this.modalClose.bind(this);
@@ -27,7 +29,7 @@ class SuggestBar extends Component {
     }
 
     componentDidMount() {
-        setInterval(() => {
+        const interval = setInterval(() => {
             if (this.props.address !== this.state.currentAddress) {
                 this.props.getSuggestions(this.props.address);
                 this.setState({
@@ -53,6 +55,13 @@ class SuggestBar extends Component {
                 })
             }
         }, 200);
+        this.state.intervals.push(interval)
+    }
+
+    componentWillUnmount() {
+        this.state.intervals.forEach((interval) => {
+            clearInterval(interval)
+        })
     }
 
     modalClose() {
@@ -149,6 +158,7 @@ class SuggestBar extends Component {
                     <Form className={ classes.AddressInput }>
                         <Form.Group>
                             <Form.Control
+                                disabled={ this.props.isFormOff }
                                 { ...this.state.inputType }
                                 autoFocus
                                 ref={(input) => this.focusInput(input)}
@@ -189,7 +199,8 @@ const mapStateToProps = state => {
         address: state.map.address,
         isFocused: state.map.isFocused,
         suggestedAddress: state.suggest.suggestions[0],
-        language: state.auth.language
+        language: state.auth.language,
+        isFormOff: state.sender.mode === modeTypes.map && !(state.marker.lat && state.marker.lng)
     }
 };
 

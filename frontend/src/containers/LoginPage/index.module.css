@@ -26,15 +26,15 @@
 }
 
 .SuccessCard {
-    background: #64ff64;
+    background: rgba(0, 255, 0, 0.5);
 }
 
 .LogoutCard {
-    background: #ff6464;
+    background: rgba(255, 79, 84, 0.5);
 }
 
 .AnonCard {
-    background: #ffff64;
+    background: rgba(255, 243, 65, 0.5);
 }
 
 .InfoCard {

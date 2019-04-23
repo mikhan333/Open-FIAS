@@ -25,7 +25,7 @@ class Header extends Component {
 
     handleLinkClick(mode) {
         this.props.setMode(mode);
-        this.props.history.push('/add_point')
+        this.props.history.push(`/add_point`)
     }
 
     render() {
@@ -58,14 +58,6 @@ class Header extends Component {
                             }}
                         />
                     </NavDropdown.Item>
-                    <NavDropdown.Item onClick={ () => this.props.history.push('/') }>
-                        <TranslatableText
-                            dictionary={{
-                                russian: "Настройки",
-                                english: "Settings"
-                            }}
-                        />
-                    </NavDropdown.Item>
                 </div>;
         } else {     
             name =
@@ -90,8 +82,7 @@ class Header extends Component {
                 </div>;
         }
         return (
-            
-            <Navbar collapseOnSelect variant='light' expand="lg" className={ classes.Header }>
+            <Navbar collapseOnSelect variant='dark' expand="lg" className={ classes.Header }>
                 <Navbar.Brand
                     onClick={ () => this.props.history.push('/') }
                 >
@@ -107,7 +98,7 @@ class Header extends Component {
                                 }}
                             />
                         </Nav.Link>
-                        <NavDropdown 
+                        <NavDropdown
                             title={
                                 <TranslatableText
                                     dictionary={{

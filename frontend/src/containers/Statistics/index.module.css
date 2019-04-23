@@ -18,9 +18,6 @@
 
 .Graph {
     text-align: center;
-    max-height: 96%;
-    height: auto;
-    width: 100%;
 }
 
 @media (max-width: 735px) {

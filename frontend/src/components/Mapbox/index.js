@@ -1,5 +1,5 @@
-import React, {Component} from 'react'
-import ReactMapboxGl, {Marker, Popup, ScaleControl} from 'react-mapbox-gl';
+import React, { Component } from 'react'
+import ReactMapboxGl, { Marker, Popup, ScaleControl } from 'react-mapbox-gl';
 import { connect } from 'react-redux';
 import * as mapActionCreators from '../../store/actions/mapActions';
 import * as markerActionCreators from '../../store/actions/markerActions';
@@ -10,8 +10,9 @@ import './index.css'
 import classes from './index.module.css'
 import MarkerControl from './MarkerControl';
 import TranslatableText from "../LanguageProvider/LanguageTranslater";
+import { modeTypes } from "../../store/reducers/senderReducer";
 
-const style = 'mapbox://styles/artem062/cjtvvluti12vs1fp8xf46ubk0';
+const style = 'mapbox://styles/artem062/cjtvvluti12vs1fp8xf46ubk0'; //TODO change map language
 
 const Map = ReactMapboxGl({
     accessToken: mapboxAccessToken,
@@ -22,6 +23,7 @@ const Map = ReactMapboxGl({
 class SideMap extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
             map: null,
             default: this.props.place,
@@ -34,7 +36,8 @@ class SideMap extends Component {
             markerColors: {
                 disabled: 'grey',
                 enabled: null
-            }
+            },
+            intervals: []
         };
 
         this.onMapLoad = this.onMapLoad.bind(this);
@@ -43,8 +46,8 @@ class SideMap extends Component {
     }
 
     componentDidMount() {
-        setInterval(() => {
-            if (JSON.stringify(this.props.markerCoords) !== JSON.stringify(this.state.currentMarkerCoords)) {
+        const interval = setInterval(() => {
+            if (JSON.stringify(this.props.markerCoords) !== JSON.stringify( this.state.currentMarkerCoords)) {
                 this.setState({
                     currentMarkerCoords: this.props.markerCoords
                 });
@@ -55,7 +58,7 @@ class SideMap extends Component {
                             center: this.props.markerCoords
                         })
                     }
-                }
+                } //TODO marker fly
             }
 
             if (this.props.newCoords) {
@@ -65,6 +68,13 @@ class SideMap extends Component {
                 }
             }
         }, 200);
+        this.state.intervals.push(interval);
+    }
+
+    componentWillUnmount() {
+        this.state.intervals.forEach((interval) => {
+            clearInterval(interval)
+        })
     }
 
     onMapLoad(map) {
@@ -92,7 +102,14 @@ class SideMap extends Component {
 
         let isShow = false;
 
-        setInterval(() => {
+        if (this.props.mode === modeTypes.fias) {
+            if (this.props.isMarkerControlShow) {
+                markerControl.container.style.visibility = 'visible';
+            } else {
+                markerControl.container.style.visibility = 'hidden';
+            }
+        }
+        const interval = setInterval(() => {
             if (map.getPitch() !== 0) {
                 if (!isShow) {
                     map.addLayer({
@@ -125,7 +142,18 @@ class SideMap extends Component {
                     isShow = false
                 }
             }
-        }, 200)
+
+            if (this.props.mode === modeTypes.fias) {
+                if (this.props.isMarkerControlShow) {
+                    markerControl.container.style.visibility = 'visible';
+                } else {
+                    markerControl.container.style.visibility = 'hidden';
+                }
+            } else {
+                markerControl.container.style.visibility = 'visible';
+            }
+        }, 200);
+        this.state.intervals.push(interval);
     }
 
     onMarkerControlClick() {
@@ -147,7 +175,6 @@ class SideMap extends Component {
     }
 
     render() {
-
         let marker, popup;
         if (this.props.markerCoords.lat && this.props.markerCoords.lng) {
             let address, warning;
@@ -254,7 +281,10 @@ const mapStateToProps = state => {
         markerCoords: {
             lat: state.marker.lat,
             lng: state.marker.lng
-        }
+        },
+        language: state.auth.language,
+        mode: state.sender.mode,
+        isMarkerControlShow: state.suggest.isMarkerControlShow
     }
 };
 

@@ -51,9 +51,22 @@ export const sendLink = (address, coords) => {
     }
 };
 
-export const setMode = (mode) => {
+const switchMode = (mode) => {
     return {
         type: actionTypes.SET_MODE,
         mode
+    }
+};
+
+const clear = () => {
+    return {
+        type: actionTypes.CLEAR_DATA
+    }
+};
+
+export const setMode = (mode) => {
+    return function (dispatch) {
+        dispatch(switchMode(mode));
+        dispatch(clear())
     }
 };

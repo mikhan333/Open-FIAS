@@ -2,11 +2,12 @@ import * as actionTypes from './actionTypes';
 import axios from "axios";
 import { suggestServer } from "../serverURLs";
 
-function suggestSuccess(address, suggestions) {
+function suggestSuccess(address, suggestions, isMarkerControlShow) {
     return {
         type: actionTypes.SUGGEST_SUCCESS,
         address,
-        suggestions
+        suggestions,
+        isMarkerControlShow
     }
 }
 
@@ -36,7 +37,11 @@ export const getSuggestions = (address) => {
         return axios.get(suggestServer, { params: { address }})
             .then(resp => {
                 const suggestions = resp.data.results.map((obj) => (obj.address));
-                dispatch(suggestSuccess(address, suggestions));
+                let isMarkerControlShow = false;
+                if (resp.data.results[0] && resp.data.results[0].address_details.building && resp.data.results[0].weight === 1) {
+                    isMarkerControlShow = true
+                }
+                dispatch(suggestSuccess(address, suggestions, isMarkerControlShow));
             }).catch(error => {
                 dispatch(suggestError(error));
             });

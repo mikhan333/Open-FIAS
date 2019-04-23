@@ -46,6 +46,12 @@ export const getAddress = (coords) => {
                 return;
             }
 
+            if (resp.data.results[0].related[0] && resp.data.results[0].related[0].coordinates) {
+                const coordinates = resp.data.results[0].related[0].coordinates;
+                coords.lat = coordinates[0];
+                coords.lng = coordinates[1]
+            }
+
             dispatch(getAddressSuccess(coords.lat, coords.lng, generateAddress(resp.data.results[0].address_details)))
         }).catch(error => {
             dispatch(getAddressFailed(error))

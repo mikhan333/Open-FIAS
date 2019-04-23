@@ -131,7 +131,7 @@ class Statistics extends Component {
                     </Carousel.Item>
                     <Carousel.Item>
                         <div className={ classes.Item }>
-                            <h3>
+                            <h3 className={ classes.Graph }>
                                 <TranslatableText
                                     dictionary={{
                                         russian: "График загеокодированных точек",

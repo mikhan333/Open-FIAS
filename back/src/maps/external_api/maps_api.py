@@ -3,15 +3,44 @@ import requests
 
 from ..helpers import build_url
 from django.conf import settings
+from ..models import Object
 
 
 def check_addr(data):
-    data_json = suggester(data)
+    exist_db = True
+    exist_osm = 'full'
+
+    # Check existence in DB fias and get address
+    data_suggest = suggester(data)
     try:
-        addresses = data_json['results']
-        return addresses[0]
+        addresses = data_suggest['results']
+        address_sug = addresses[0]
+        building_sug = address_sug['address_details']['building'].lower()
     except (IndexError, KeyError):
-        return None
+        return None, False, 'none'
+
+    fias_id = address_sug['id']
+    if len(Object.objects.filter(fias_id=fias_id)) == 0:
+        exist_db = False
+
+    # Check existence in OSM
+    data_geocoder = nomination_geocoder(data)
+    address_geo = {}
+    try:
+        address_geo = data_geocoder[0]
+        building_geo = address_geo['address']['house_number'].lower()
+        if building_geo != building_sug:
+            raise KeyError
+    except IndexError:
+        exist_osm = 'none'
+    except KeyError:
+        exist_osm = 'none_chg'
+        address_sug['osm_info'] = {
+            'osm_id': address_geo['osm_id'],
+            'osm_type': address_geo['osm_type'],
+        }
+
+    return address_sug, exist_db, exist_osm
 
 
 def suggester(data):
@@ -28,6 +57,7 @@ def suggester(data):
             'api_key': getattr(settings, 'FIAS_API_KEY'),
             'format': 'json',
             'q': ' '.join(address_parts),
+            'extra': '1',
         }
     )
     response = requests.get(url, timeout=2000)
@@ -39,7 +69,7 @@ def suggester(data):
 def geocoder(data):
     if 'address' in data:
         address = str(data['address'])
-        address_parts = re.findall(r"[\w']+", address)
+        address_parts = re.findall(r"[\w']+", address.lower())
     elif isinstance(data, list):
         address_parts = data
     else:
@@ -83,6 +113,37 @@ def rev_geocoder(data):
             'api_key': getattr(settings, 'FIAS_API_KEY'),
             'fields': 'related,address_details',
             'q': f'{lat},{lon}',
+            'extra': '1',
+        }
+    )
+    response = requests.get(url, timeout=2000)
+    if not response.ok:
+        return {'error': response.status_code}
+    return response.json()
+
+
+def nomination_geocoder(data):
+    if 'address' in data:
+        address = str(data['address'])
+        address_parts = re.findall(r"[\w']+", address.lower())
+    else:
+        return {'error': 400}
+
+    try:
+        index = address_parts.index('улица')
+        address_parts.remove('улица')
+    except ValueError:
+        pass
+
+    url = build_url(
+        getattr(settings, 'NOMINATION_URL'),
+        'search',
+        {
+            'q': ' '.join(address_parts),
+            'format': 'json',
+            'addressdetails': 1,
+            'accept-language': 'ru',
+            'limit': 1,
         }
     )
     response = requests.get(url, timeout=2000)

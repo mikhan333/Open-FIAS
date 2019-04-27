@@ -27,21 +27,30 @@ def create_point(request):
         lat = float(data['lat'])
         lon = float(data['lon'])
     except KeyError:
-        return HttpResponseBadRequest('Wrong lat, lon field')
+        return HttpResponseBadRequest('Wrong lat or (and) lon fields')
     except ValueError:
         return HttpResponseBadRequest('Wrong types of data - lat, lon')
 
-    address_obj = check_addr(data)
+    address_obj, exist_db, exist_osm = check_addr(data)
     if address_obj is None:
         return HttpResponseBadRequest('Wrong address data')
 
-    data = {}
+    data = {
+        'exist_db': exist_db,
+        'exist_osm': exist_osm
+    }
+    # When address exists in DB
+    if exist_db:
+        return JsonResponse(data)
+    # When address doesn't exist in DB
     user = request.user
     if user.is_authenticated:
-        data.update(create_object(lat, lon, address_obj, user))
-        if not data['status_osm']:
-            return HttpResponseBadRequest('Osm: can not create changeset')
-        changeset_id = data['changeset_id']
+        changeset_id = None
+        if exist_osm is 'none' or exist_osm is 'none_chg':
+            data.update(create_object(lat, lon, address_obj, user))
+            if not data['status_osm']:
+                return HttpResponseBadRequest('Osm: can not create changeset')
+            changeset_id = data['changeset_id']
         point_db_id = Object.objects.create_object(lat, lon, address_obj, user, changeset=changeset_id)
     else:
         if request.session.session_key is None:
@@ -52,29 +61,35 @@ def create_point(request):
         if len(session['points']) >= 3:
             return HttpResponseBadRequest('You done too many points')
 
-        data.update(create_note(lat, lon, address_obj))
-        if not data['status_osm']:
-            return HttpResponseBadRequest('Osm: can not create note')
-        note_id = int(data['info']['id'])
+        note_id = None
+        if exist_osm is 'none' or exist_osm is 'none_chg':
+            data.update(create_note(lat, lon, address_obj))
+            if not data['status_osm']:
+                return HttpResponseBadRequest('Osm: can not create note')
+            note_id = int(data['info']['id'])
         point_db_id = Object.objects.create_object(lat, lon, address_obj, user, note=note_id)
         session['points'].append(point_db_id)
         session.save()
 
+    data['status_cent'] = send_centrifuge(point_db_id)
+    return JsonResponse(data)
+
+
+def send_centrifuge(point_id):
     client = Client(
         getattr(settings, 'CENTRIFUGE_URL'),
         api_key=getattr(settings, 'CENTRIFUGE_APIKEY'),
         timeout=getattr(settings, 'CENTRIFUGE_TIMEOUT'),
     )
-    point = get_object_or_404(Object, id=point_db_id)
+    point = get_object_or_404(Object, id=point_id)
     dict_point = ObjectSerializer(point).data
     if point.author is not None:
         dict_point['author'] = point.author.username
-    data['status_cent'] = True
     try:
-        client.publish("latest_points", dict_point)
+        client.publish('latest_points', dict_point)
     except CentException:
-        data['status_cent'] = False
-    return JsonResponse(data)
+        return False
+    return True
 
 
 @csrf_exempt

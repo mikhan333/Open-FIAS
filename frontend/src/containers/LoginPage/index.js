@@ -4,7 +4,7 @@ import * as actionCreators from "../../store/actions/auth";
 import { connect } from "react-redux";
 import { authServer } from '../../store/serverURLs'
 
-import AddAnonimPointsModal from './AddAnonimPointsModal'
+import AddAnonimPointsModal from '../MainPage/AddAnonimPointsModal'
 import classes from './index.module.css'
 
 import OSMLogo from '../../static/Openstreetmap_logo.svg.png'

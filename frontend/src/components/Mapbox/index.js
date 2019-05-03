@@ -79,15 +79,15 @@ class SideMap extends Component {
 
     onMapLoad(map) {
         this.setState({ map });
-        map.addControl(new mapboxgl.NavigationControl());
+        map.addControl(new mapboxgl.NavigationControl(), 'top-left');
         map.addControl(new mapboxgl.GeolocateControl({
             positionOptions: {
                 enableHighAccuracy: true
             },
             trackUserLocation: true
-        }));
+        }), 'top-left');
         const markerControl = new MarkerControl();
-        map.addControl(markerControl);
+        map.addControl(markerControl, 'top-left');
         markerControl.button.onclick = this.onMarkerControlClick;
         this.setState({
             markerControl

@@ -1,0 +1,34 @@
+.Container {
+    overflow: hidden;
+    height: calc(100vh - 56px);
+}
+
+.Section {
+    height: calc(100vh - 56px);
+}
+
+.Section1 {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+.Section1Left {
+    flex: 1;
+    height: 100%;
+    padding: 3%;
+}
+
+.Section1Right {
+    flex: 1;
+    height: 100%;
+    text-align: center;
+    padding: 3%;
+}
+
+.OSMLogo {
+    max-width: calc(100% - 20px);
+    max-height: calc(100% - 20px);
+    margin: 10px;
+}

@@ -3,7 +3,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { connect } from "react-redux";
 
 import * as actionCreators from "../../store/actions/auth";
-import classes from "./index.module.css";
+import classes from "../LoginPage/index.module.css";
 import generateAddress from "../../store/generateAddress";
 import TranslatableText from "../../components/LanguageProvider/LanguageTranslater";
 

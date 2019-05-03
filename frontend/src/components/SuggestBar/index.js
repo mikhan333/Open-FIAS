@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
-import { Form, Button, Tooltip, OverlayTrigger } from "react-bootstrap";
+import { Form, Button, Tooltip, OverlayTrigger, Nav } from "react-bootstrap";
 import * as suggesterActionCreators from "../../store/actions/suggesterActions";
 import * as mapActionCreators from "../../store/actions/mapActions";
 
@@ -8,7 +8,10 @@ import SuggestionsList from './SuggestionsList'
 import classes from './index.module.css'
 import ConfirmModal from './ConfirmModal'
 import TranslatableText from "../LanguageProvider/LanguageTranslater";
-import {modeTypes} from "../../store/reducers/senderReducer";
+import { modeTypes } from "../../store/reducers/senderReducer";
+
+import { withRouter } from "react-router-dom";
+import * as senderActionCreators from "../../store/actions/senderActions";
 
 class SuggestBar extends Component {
     constructor(props) {
@@ -26,6 +29,7 @@ class SuggestBar extends Component {
         this.modalClose = this.modalClose.bind(this);
         this.handleConfirm = this.handleConfirm.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handleSelect = this.handleSelect.bind(this)
     }
 
     componentDidMount() {
@@ -97,6 +101,10 @@ class SuggestBar extends Component {
         }
     }
 
+    handleSelect(mode) {
+        this.props.setMode(mode);
+    }
+
     render() {
         let confirmButton;
         if (this.props.address !== '' && this.props.markerCoords.lat && this.props.markerCoords.lng) {
@@ -154,6 +162,36 @@ class SuggestBar extends Component {
 
         return (
             <div className={ classes.SuggestBar }>
+                <Button variant="outline-success" className={ classes.toMain } onClick={ () => this.props.history.push('/') }>
+                    <TranslatableText
+                        dictionary={{
+                            russian: "На главную",
+                            english: "Main page"
+                        }}
+                    />
+                </Button>
+                <Nav variant="pills" fill activeKey={ this.props.mode } onSelect={ this.handleSelect } className={ classes.ModeSelector }>
+                    <Nav.Item>
+                        <Nav.Link eventKey={ modeTypes.fias }>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Адрес из ФИАС",
+                                    english: "FIAS address"
+                                }}
+                            />
+                        </Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link eventKey={ modeTypes.map }>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Точку на карте",
+                                    english: "Map location"
+                                }}
+                            />
+                        </Nav.Link>
+                    </Nav.Item>
+                </Nav>
                 <div className={ classes.Suggester }>
                     <Form className={ classes.AddressInput }>
                         <Form.Group>
@@ -200,7 +238,8 @@ const mapStateToProps = state => {
         isFocused: state.map.isFocused,
         suggestedAddress: state.suggest.suggestions[0],
         language: state.auth.language,
-        isFormOff: state.sender.mode === modeTypes.map && !(state.marker.lat && state.marker.lng)
+        isFormOff: state.sender.mode === modeTypes.map && !(state.marker.lat && state.marker.lng),
+        mode: state.sender.mode
     }
 };
 
@@ -209,8 +248,10 @@ const mapDispatchToProps = dispatch => {
         getSuggestions: (address) => dispatch(suggesterActionCreators.getSuggestions(address)),
         setAddress: (address) => dispatch(mapActionCreators.setAddress(address)),
         clearData: () => dispatch(mapActionCreators.clearData()),
-        unfocus: () => dispatch(mapActionCreators.unfocusInput())
+        unfocus: () => dispatch(mapActionCreators.unfocusInput()),
+        setMode: (mode) => dispatch(senderActionCreators.setMode(mode)),
+
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SuggestBar);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SuggestBar));

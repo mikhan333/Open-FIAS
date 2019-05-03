@@ -84,7 +84,7 @@ class Statistics extends Component {
         };
 
         const yLabels = {
-            russian: 'точек загеокодированно',
+            russian: 'точек загеокодировано',
             english: 'points were putted'
         };
 
@@ -134,7 +134,7 @@ class Statistics extends Component {
                             <h3 className={ classes.Graph }>
                                 <TranslatableText
                                     dictionary={{
-                                        russian: "График загеокодированных точек",
+                                        russian: "График загеокодированых точек",
                                         english: "Chart of logged points"
                                     }}
                                 />

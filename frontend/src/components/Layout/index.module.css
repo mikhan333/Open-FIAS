@@ -10,7 +10,6 @@
 
 .Content {
     flex: 1;
-    background: #fafafa;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 }

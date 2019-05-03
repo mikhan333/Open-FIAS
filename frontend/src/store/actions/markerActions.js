@@ -46,7 +46,7 @@ export const getAddress = (coords) => {
                 return;
             }
 
-            if (resp.data.results[0].related[0] && resp.data.results[0].related[0].coordinates) {
+            if (resp.data.results[0].related && resp.data.results[0].related[0] && resp.data.results[0].related[0].coordinates) {
                 const coordinates = resp.data.results[0].related[0].coordinates;
                 coords.lat = coordinates[0];
                 coords.lng = coordinates[1]

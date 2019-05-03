@@ -39,3 +39,21 @@
 .Warning, .ModelButtons {
     margin: 0 3px 0 3px;
 }
+
+.toMain {
+    width: calc(100% - 6px);
+    margin: 3px;
+}
+
+.ModeSelector {
+    width: calc(100% - 6px);
+    margin: 3px;
+    border: #007bff solid 1px;
+    border-radius: .25rem;
+}
+
+@media (max-width: 735px) {
+    .toMain {
+        width: calc(50% - 6px);
+    }
+}

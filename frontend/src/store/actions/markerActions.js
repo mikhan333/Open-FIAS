@@ -25,6 +25,14 @@ const getAddressFailed = (error) => {
     }
 };
 
+
+function setAllowAddressInput(allowAddressInput) {
+    return {
+        type: actionTypes.SET_ALLOW_ADDRESS_INPUT,
+        allowAddressInput
+    }
+}
+
 export const getAddress = (coords) => {
     if (!coords || !coords.lat || !coords.lng ) {
         return {
@@ -46,13 +54,20 @@ export const getAddress = (coords) => {
                 return;
             }
 
-            if (resp.data.results[0].related && resp.data.results[0].related[0] && resp.data.results[0].related[0].coordinates) {
+            let allowAddressInput = true;
+            if (resp.data.results[0].weight === 1
+                && resp.data.results[0].related[0]
+                && resp.data.results[0].related[0].coordinates
+                && resp.data.results[0].address_details.building
+            ) {
                 const coordinates = resp.data.results[0].related[0].coordinates;
                 coords.lat = coordinates[0];
-                coords.lng = coordinates[1]
+                coords.lng = coordinates[1];
+                allowAddressInput = false
             }
 
-            dispatch(getAddressSuccess(coords.lat, coords.lng, generateAddress(resp.data.results[0].address_details)))
+            dispatch(getAddressSuccess(coords.lat, coords.lng, generateAddress(resp.data.results[0].address_details)));
+            dispatch(setAllowAddressInput(allowAddressInput))
         }).catch(error => {
             dispatch(getAddressFailed(error))
         });

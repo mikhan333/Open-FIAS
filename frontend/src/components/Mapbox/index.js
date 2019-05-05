@@ -5,7 +5,6 @@ import * as mapActionCreators from '../../store/actions/mapActions';
 import * as markerActionCreators from '../../store/actions/markerActions';
 import { mapboxAccessToken } from '../../config';
 import mapboxgl from 'mapbox-gl';
-
 import './index.css'
 import classes from './index.module.css'
 import MarkerControl from './MarkerControl';
@@ -101,9 +100,10 @@ class SideMap extends Component {
         //adding 3d buildings
 
         let isShow = false;
+        let currentMode = this.props.mode;
 
         if (this.props.mode === modeTypes.fias) {
-            if (this.props.isMarkerControlShow) {
+            if (this.props.allowMarkerPut) {
                 markerControl.container.style.visibility = 'visible';
             } else {
                 markerControl.container.style.visibility = 'hidden';
@@ -144,13 +144,21 @@ class SideMap extends Component {
             }
 
             if (this.props.mode === modeTypes.fias) {
-                if (this.props.isMarkerControlShow) {
+                if (this.props.allowMarkerPut) {
                     markerControl.container.style.visibility = 'visible';
                 } else {
                     markerControl.container.style.visibility = 'hidden';
                 }
             } else {
                 markerControl.container.style.visibility = 'visible';
+            }
+
+            if (currentMode !== this.props.mode) {
+                this.setState({
+                    markerPutEnable: false
+                });
+                markerControl.marker.style.background = this.state.markerColors.disabled;
+                currentMode = this.props.mode
             }
         }, 200);
         this.state.intervals.push(interval);
@@ -175,6 +183,11 @@ class SideMap extends Component {
     }
 
     render() {
+        const alreadyExists = {
+            russian: 'Выбранный адрес здесь (выберете незанятый адрес)',
+            english: 'This address is here (choose another address)'
+        };
+
         let marker, popup;
         if (this.props.markerCoords.lat && this.props.markerCoords.lng) {
             let address, warning;
@@ -196,7 +209,8 @@ class SideMap extends Component {
                     />
             } else {
                 if (this.props.address) {
-                    address = this.props.address
+                    address = this.props.mode === modeTypes.fias && !this.props.allowMarkerPut ?
+                        alreadyExists[ this.props.language ] : this.props.address
                 } else {
                     warning =
                         <TranslatableText
@@ -208,7 +222,7 @@ class SideMap extends Component {
                 }
             }
             let click = {};
-            if (address) {
+            if (address && this.props.mode === modeTypes.map && this.props.allowAddressInput) {
                 click = {
                     onClick: () => this.props.setAddress(address),
                     style: { cursor: 'pointer' }
@@ -284,7 +298,8 @@ const mapStateToProps = state => {
         },
         language: state.auth.language,
         mode: state.sender.mode,
-        isMarkerControlShow: state.suggest.isMarkerControlShow
+        allowMarkerPut: state.sender.allowMarkerPut,
+        allowAddressInput: state.sender.allowAddressInput
     }
 };
 

@@ -107,7 +107,13 @@ class SuggestBar extends Component {
 
     render() {
         let confirmButton;
-        if (this.props.address !== '' && this.props.markerCoords.lat && this.props.markerCoords.lng) {
+        if (this.props.address !== ''
+            && this.props.markerCoords.lat
+            && this.props.markerCoords.lng
+            && ((this.props.mode === modeTypes.fias && this.props.allowMarkerPut)
+                || (this.props.mode === modeTypes.map && this.props.allowAddressInput)
+            )
+        ) {
             confirmButton =
                 <Button
                     variant="success"
@@ -156,8 +162,13 @@ class SuggestBar extends Component {
         }
 
         const placeholder = {
-            russian: 'Введите адрес',
-            english: 'Enter address'
+            russian: 'Найти адрес',
+            english: 'Find address'
+        };
+
+        const alreadyExists = {
+            russian: "Отметьте новый дом",
+            english: "Point a new house"
         };
 
         return (
@@ -192,17 +203,21 @@ class SuggestBar extends Component {
                         </Nav.Link>
                     </Nav.Item>
                 </Nav>
+
                 <div className={ classes.Suggester }>
                     <Form className={ classes.AddressInput }>
                         <Form.Group>
                             <Form.Control
-                                disabled={ this.props.isFormOff }
+                                disabled={ this.props.mode === modeTypes.map && !this.props.allowAddressInput }
                                 { ...this.state.inputType }
                                 autoFocus
                                 ref={(input) => this.focusInput(input)}
                                 placeholder={ placeholder[ this.props.language ] }
                                 onChange={ (event) => this.handleChange(event.target.value) }
-                                value={ this.props.address }
+                                value={
+                                    this.props.mode === modeTypes.fias || this.props.allowAddressInput ?
+                                    this.props.address : alreadyExists[ this.props.language ]
+                                }
                             />
                         </Form.Group>
                     </Form>
@@ -238,8 +253,9 @@ const mapStateToProps = state => {
         isFocused: state.map.isFocused,
         suggestedAddress: state.suggest.suggestions[0],
         language: state.auth.language,
-        isFormOff: state.sender.mode === modeTypes.map && !(state.marker.lat && state.marker.lng),
-        mode: state.sender.mode
+        mode: state.sender.mode,
+        allowAddressInput: state.sender.allowAddressInput,
+        allowMarkerPut: state.sender.allowMarkerPut
     }
 };
 

@@ -4,8 +4,7 @@ const initialState = {
     address: '',
     suggestions: [],
     loading: false,
-    error: null,
-    isMarkerControlShow: false
+    error: null
 };
 
 const reducer = ( state = initialState, action ) => {
@@ -14,8 +13,7 @@ const reducer = ( state = initialState, action ) => {
         return {
             ...initialState,
             address: action.address,
-            suggestions: action.suggestions,
-            isMarkerControlShow: action.isMarkerControlShow
+            suggestions: action.suggestions
         }
     }
 
@@ -32,6 +30,10 @@ const reducer = ( state = initialState, action ) => {
             loading: false,
             error: action.error
         }
+    }
+
+    if (action.type === actionTypes.CLEAR_DATA) {
+        return initialState
     }
 
     return state;

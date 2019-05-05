@@ -5,6 +5,7 @@ import * as actionCreators from "../../store/actions/mapActions";
 
 import classes from './index.module.css'
 import TranslatableText from "../LanguageProvider/LanguageTranslater";
+import {modeTypes} from "../../store/reducers/senderReducer";
 
 class SuggestionsList extends Component {
     render() {
@@ -34,7 +35,10 @@ class SuggestionsList extends Component {
         const suggestions = this.props.suggestions.map((address, index) =>
             <ListGroup.Item
                 className={ classes.SingleAddress }
-                onClick={ () => this.props.getCoords(address) }
+                onClick={ () =>
+                    this.props.mode === modeTypes.fias ?
+                    this.props.getCoords(address) : this.props.setAddress(address)
+                }
                 key={ index }
             >
                 { address }
@@ -56,13 +60,15 @@ const mapStateToProps = state => {
     return {
         suggestions: state.suggest.suggestions,
         loading: state.suggest.loading,
-        error: state.suggest.error
+        error: state.suggest.error,
+        mode: state.sender.mode
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         getCoords: (address) => dispatch(actionCreators.getCoords(address)),
+        setAddress: (address) => dispatch(actionCreators.setAddress(address)),
     }
 };
 

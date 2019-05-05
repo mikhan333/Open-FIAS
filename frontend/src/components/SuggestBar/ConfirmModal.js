@@ -30,12 +30,14 @@ class ConfirmModal extends Component {
         let suggestedAddress;
         if (this.props.suggestedAddress && this.props.suggestedAddress !== this.props.address) {
             suggestedAddress =
-                <TranslatableText
-                    dictionary={{
-                        russian: `Будет сохранено как: ${ this.props.suggestedAddress }`,
-                        english: `Will save as: ${ this.props.suggestedAddress }`
-                    }}
-                />
+                <div>
+                    <TranslatableText
+                        dictionary={{
+                            russian: `Будет сохранено как: `,
+                            english: `Will save as: `
+                        }}
+                    /> { this.props.suggestedAddress } <br/>
+                </div>
         }
 
         let warning;
@@ -196,7 +198,7 @@ class ConfirmModal extends Component {
                                 english: "Address: "
                             }}
                         /> { this.props.address } <br/>
-                        { suggestedAddress } <br/>
+                        { suggestedAddress }
                         <TranslatableText
                             dictionary={{
                                 russian: "Координаты: ",

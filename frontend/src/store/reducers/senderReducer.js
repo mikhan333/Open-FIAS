@@ -9,7 +9,9 @@ const initialState = {
     mode: modeTypes.fias,
     loading: false,
     error: null,
-    url: null
+    url: null,
+    allowAddressInput: false,
+    allowMarkerPut: false
 };
 
 const reducer = ( state = initialState, action ) => {
@@ -42,6 +44,20 @@ const reducer = ( state = initialState, action ) => {
         return {
             ...initialState,
             mode: action.mode
+        }
+    }
+
+    if (action.type === actionTypes.SET_ALLOW_ADDRESS_INPUT) {
+        return {
+            ...state,
+            allowAddressInput: action.allowAddressInput
+        }
+    }
+
+    if (action.type === actionTypes.SET_ALLOW_MARKER_PUT) {
+        return {
+            ...state,
+            allowMarkerPut: action.allowMarkerPut
         }
     }
 

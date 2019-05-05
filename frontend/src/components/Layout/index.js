@@ -1,6 +1,6 @@
 import React from 'react';
 import classes from './index.module.css';
-import Header from '../Header'
+import Header from '../Header';
 
 const layout = ({ children }) => (
     <div className={ classes.Layout }>

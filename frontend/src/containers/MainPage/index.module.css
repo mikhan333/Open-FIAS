@@ -53,10 +53,20 @@
     flex-flow: row wrap;
 }
 
-.Section2 > * {
+.Section2 .Section2Bot, .Section2 .Section2Top,
+.Section2 .Section2BotAddit, .Section2 .Section2TopAddit{
     flex: 1 100%;
     padding: 3%;
     height: 50%;
+}
+
+.Section2Bot, .Section2TopAddit {
+    color: white;
+    background-color: #303438;
+}
+.Section2Top, .Section2BotAddit {
+    color: black;
+    background-color: #eeeeee;
 }
 
 .HelperImages {

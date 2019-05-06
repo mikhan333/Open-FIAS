@@ -1,19 +1,21 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Slider from "react-slick";
 
-import classes from './index.module.css'
+import classes from './index.module.css';
+import "./index.css";
 
 import MAPSPicture from '../../static/mainMapsGeocod.png';
 import HelperPicture from '../../static/helper/helper2.png';
 import HelperPicture11 from '../../static/helper/helperPicture11.png';
 import HelperPicture13 from '../../static/helper/helperPicture13.png';
 import { Button, Row, Col } from "react-bootstrap";
+import { CSSTransition } from 'react-transition-group';
 
 class HelperSlider extends React.Component {
     render() {
-        var pictComp = this.props.pictures.map((picture) => 
+        var pictComp = this.props.pictures.map((picture) =>
             <div>
-                <img src={ picture } className={ classes.HelperImages } alt='' key={ picture.id }/>
+                <img src={picture} className={classes.HelperImages} alt='' key={picture.id} />
             </div>
         )
         var settings = {
@@ -23,149 +25,182 @@ class HelperSlider extends React.Component {
             slidesToScroll: 1,
         };
         return (
-            <div className="container">
-                <Slider {...settings} className={ classes.Slider }>
-                    { pictComp }
+            <div className="container" id={this.props.id}>
+                <Slider {...settings} className={classes.Slider}>
+                    {pictComp}
                 </Slider>
             </div>
         );
     }
 }
 
-export default class HelperPage extends Component {
-    constructor(props) {
-        super(props);
+const HelperPage = (props) => {
+    const [showTopDef, setShowTopDef] = useState(true);
+    const [showBotDef, setShowBotDef] = useState(true);
+    const [showTopNew, setShowTopNew] = useState(false);
+    const [showBotNew, setShowBotNew] = useState(false);
 
-        this.state = {
-            showBot: false,
-            showTop: false,
-        };
-
-        this.handleClick = this.handleClick.bind(this)
+    let buttonTop =
+        <Button variant="dark" onClick={() => setShowBotDef(false)}>
+            Подробнее
+        </Button>;
+    if (!showBotDef) {
+        buttonTop =
+            <Button variant="dark" onClick={() => setShowBotNew(false)}>
+                Скрыть
+            </Button>;
     }
-
-    handleClick(variant) {
-        if (variant === 'top') {
-            this.setState({
-                showTop: !this.state.showTop
-            })
-        }
-        else {
-            this.setState({
-                showBot: !this.state.showBot
-            })
-        }
-    }
-
-    render() {
-        let contentTop = 
+    let contentTop =
+        <div className={classes.Section2Top}>
             <Row>
-                <Col sm={{ span: 3, offset: 1 }}>
-                    <img src={ HelperPicture } className={classes.MAPSPicture} alt='' />
+                <Col sm={{ span: 3, offset: 2 }}>
+                    <img src={HelperPicture} className={classes.MAPSPicture} alt='' />
                 </Col>
-                <Col sm={{ span: 6, offset: 1 }}>
+                <Col sm={{ span: 4, offset: 1 }}>
                     <h4 className={classes.TextStyleHead}>
                         Если вы знаете адрес или название объекта
-                    </h4>
+                        </h4>
                     <div>
                         <ul>
                             <li>
                                 Введите название объекта в нужное поле
-                            </li>
+                                </li>
                             <li>
                                 Выберите объект из предоставленного списка
-                            </li>
+                                </li>
                             <li>
                                 Найдите объект на карте
-                            </li>
+                                </li>
                             <li>
                                 Закончите, нажав кнопку "далее"
-                            </li>
+                                </li>
                         </ul>
                     </div>
-                    <Button variant="success" onClick={ () => this.props.link.push('/add_point') } style={{ marginRight: '5px', }}>
+                    <Button variant="success" onClick={() => props.link.push('/add_point')} style={{ marginRight: '5px', }}>
                         Попробовать
                     </Button>
-                    <Button variant="dark" onClick={ () => this.handleClick('bot') }>
-                        { !this.state.showBot ? 'Подробнее' : 'Скрыть' }
-                    </Button>
+                    { buttonTop }
                 </Col>
             </Row>
+        </div>;
 
-        let contentBot = 
+    let buttonBot =
+        <Button variant="dark" onClick={() => setShowTopDef(false)}>
+            Подробнее
+        </Button>;
+    if (!showTopDef) {
+        buttonBot =
+            <Button variant="dark" onClick={() => setShowTopNew(false)}>
+                Скрыть
+            </Button>;
+    }
+    let contentBot =
+        <div className={classes.Section2Bot}>
             <Row>
-                <Col sm={{ span: 5, offset: 1 }}>
-                    <h4 className={ classes.TextStyleHead }>
+                <Col sm={{ span: 4, offset: 2 }}>
+                    <h4 className={classes.TextStyleHead}>
                         Если вы знаете положение объекта
-                    </h4>
+                        </h4>
                     <div>
                         <ul>
                             <li>
                                 Найдите объект на карте
-                            </li>
+                                </li>
                             <li>
                                 После этого введите название
-                            </li>
+                                </li>
                             <li>
                                 Выберите корректное название
-                            </li>
+                                </li>
                             <li>
                                 Закончите, нажав кнопку "далее"
-                            </li>
+                                </li>
                         </ul>
                     </div>
-                    <Button variant="success" onClick={ () => this.props.link.push('/add_point') } style={{ marginRight: '5px', }}>
+                    <Button variant="success" onClick={() => this.props.link.push('/add_point')} style={{ marginRight: '5px', }}>
                         Попробовать
                     </Button>
-                    <Button variant="dark" onClick={ () => this.handleClick('top') }>
-                        { !this.state.showTop ? 'Подробнее' : 'Скрыть' }
-                    </Button>
+                    {buttonBot}
                 </Col>
                 <Col sm={{ span: 3, offset: 1 }}>
                     <img src={MAPSPicture} className={classes.MAPSPicture} alt='' />
                 </Col>
             </Row>
+        </div>;
 
-        var pictures;
-        if (this.state.showTop) {
-            pictures = [ HelperPicture13, HelperPicture13, HelperPicture13 ]
-            contentTop = 
-                <Row>
-                    <Col sm={{ span: 3, offset: 1 }}>
-                        <h4 className={classes.TextStyleHead}>
-                            Последовательность в скриншотах
-                        </h4>
-                    </Col>
-                    <Col sm={{ span: 6 }}>
-                        <HelperSlider pictures={ pictures }/>
-                    </Col>
-                </Row>
-        }
+    let contentBot2, contentTop2;
+    var pictures;
+    pictures = [HelperPicture13, HelperPicture13, HelperPicture13];
+    contentTop2 =
+        <div className={classes.Section2TopAddit}>
+            <Row>
+                <Col sm={{ span: 3, offset: 2 }}>
+                    <h4 className={classes.TextStyleHead}>
+                        Последовательность в скриншотах
+                            </h4>
+                </Col>
+                <Col sm={{ span: 6 }}>
+                    <HelperSlider pictures={pictures} id="top-slider" />
+                </Col>
+            </Row>
+        </div>;
 
-        if (this.state.showBot) {
-            pictures = [ HelperPicture11, HelperPicture11, HelperPicture11 ]
-            contentBot = 
-                <Row>
-                    <Col sm={{ span: 3, offset: 1 }}>
-                        <h4 className={classes.TextStyleHead}>
-                            Последовательность в скриншотах
-                        </h4>
-                    </Col>
-                    <Col sm={{ span: 6 }}>
-                        <HelperSlider pictures={ pictures }/>
-                    </Col>
-                </Row>
-        }
+    pictures = [HelperPicture11, HelperPicture11, HelperPicture11];
+    contentBot2 =
+        <div className={classes.Section2BotAddit}>
+            <Row>
+                <Col sm={{ span: 3, offset: 2 }}>
+                    <h4 className={classes.TextStyleHead}>
+                        Последовательность в скриншотах
+                            </h4>
+                </Col>
+                <Col sm={{ span: 6 }}>
+                    <HelperSlider pictures={pictures} id="bot-slider" />
+                </Col>
+            </Row>
+        </div>;
 
-        return (
-            <div className={classes.Section2}>
-                <div className={classes.Section2Top} style={{ backgroundColor: this.state.showTop ? '#737373' : '#eeeeee', }}>
-                    { contentTop }
-                </div>
-                <div className={ classes.Section2Bot } style={{ backgroundColor: this.state.showBot ? '#eeeeee' : '#737373', }}>
-                    { contentBot }
-                </div>
-            </div>
-        )
-    }
+    return (
+        <div className={classes.Section2}>
+            <CSSTransition
+                in={showTopDef}
+                timeout={300}
+                classNames="anim"
+                unmountOnExit
+                onExited={() => setShowTopNew(true)}
+            >
+                {contentTop}
+            </CSSTransition>
+            <CSSTransition
+                in={showTopNew}
+                timeout={300}
+                classNames="anim"
+                unmountOnExit
+                onExited={() => setShowTopDef(true)}
+            >
+                {contentTop2}
+            </CSSTransition>
+
+            <CSSTransition
+                in={showBotDef}
+                timeout={300}
+                classNames="anim"
+                unmountOnExit
+                onExited={() => setShowBotNew(true)}
+            >
+                {contentBot}
+            </CSSTransition>
+            <CSSTransition
+                in={showBotNew}
+                timeout={300}
+                classNames="anim"
+                unmountOnExit
+                onExited={() => setShowBotDef(true)}
+            >
+                {contentBot2}
+            </CSSTransition>
+        </div>
+    );
 }
+
+export default HelperPage;

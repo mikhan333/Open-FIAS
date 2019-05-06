@@ -73,7 +73,7 @@ class MainPage extends Component {
                     navigation
                     navigationTooltips={tooltips}
 
-                    sectionsColor={[null, null, null, 'whitesmoke', 'black']}
+                    sectionsColor={[null, '#303438', '#54595f', 'whitesmoke', 'black']}
                     verticalCentered={false}
                     loopBottom
 
@@ -107,12 +107,12 @@ class MainPage extends Component {
                                     <Row>
                                         <Col sm={{ span: 3, offset: 3 }}>
                                             <div className={ classes.Section5 }>
-                                                <h4 style={{ marginBottom: '30px' }}>Contacts</h4>
-                                                <p>
+                                                <h4 className={ classes.TextStyleHead } style={{ marginBottom: '30px' }}>Contacts</h4>
+                                                <p className={ classes.TextStyleBody }>
                                                     This is open-source project: <br />
                                                     <a href="https://github.com/mikhan333/Open-FIAS" target="_blank" rel="noopener noreferrer">Open-FIAS</a> <br />
                                                 </p>
-                                                <p>
+                                                <p className={ classes.TextStyleBody }>
                                                     Please contact us with<br /> information about any problems <br />
                                                     or with your affiliate offers: <br />
                                                     smth@mail.ru <br />
@@ -122,9 +122,9 @@ class MainPage extends Component {
                                         </Col>
                                         <Col sm={{ span: 3 }}>
                                             <div className={ classes.Section5 }>
-                                                <h4 style={{ marginBottom: '30px' }}>Information</h4>
-                                                <p>
-                                                    This project was made as an institute project. <br />
+                                                <h4 className={ classes.TextStyleHead } style={{ marginBottom: '30px' }}>Information</h4>
+                                                <p className={ classes.TextStyleBody }>
+                                                    This project was made<br /> as an institute project. <br />
                                                     It did with the help of services: <br />
                                                     <a href="https://maps.me/" target="_blank" rel="noopener noreferrer">MAPS.ME</a> <br />
                                                     <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> <br />

@@ -40,6 +40,8 @@ const HelperPage = (props) => {
     const [showTopNew, setShowTopNew] = useState(false);
     const [showBotNew, setShowBotNew] = useState(false);
 
+    const time = 300;
+
     let buttonTop =
         <Button variant="dark" onClick={() => setShowBotDef(false)}>
             Подробнее
@@ -64,16 +66,16 @@ const HelperPage = (props) => {
                         <ul>
                             <li>
                                 Введите название объекта в нужное поле
-                                </li>
+                            </li>
                             <li>
                                 Выберите объект из предоставленного списка
-                                </li>
+                            </li>
                             <li>
                                 Найдите объект на карте
-                                </li>
+                            </li>
                             <li>
                                 Закончите, нажав кнопку "далее"
-                                </li>
+                            </li>
                         </ul>
                     </div>
                     <Button variant="success" onClick={() => props.link.push('/add_point')} style={{ marginRight: '5px', }}>
@@ -105,16 +107,16 @@ const HelperPage = (props) => {
                         <ul>
                             <li>
                                 Найдите объект на карте
-                                </li>
+                            </li>
                             <li>
                                 После этого введите название
-                                </li>
+                            </li>
                             <li>
                                 Выберите корректное название
-                                </li>
+                            </li>
                             <li>
                                 Закончите, нажав кнопку "далее"
-                                </li>
+                            </li>
                         </ul>
                     </div>
                     <Button variant="success" onClick={() => this.props.link.push('/add_point')} style={{ marginRight: '5px', }}>
@@ -164,7 +166,7 @@ const HelperPage = (props) => {
         <div className={classes.Section2}>
             <CSSTransition
                 in={showTopDef}
-                timeout={300}
+                timeout={time}
                 classNames="anim"
                 unmountOnExit
                 onExited={() => setShowTopNew(true)}
@@ -173,7 +175,7 @@ const HelperPage = (props) => {
             </CSSTransition>
             <CSSTransition
                 in={showTopNew}
-                timeout={300}
+                timeout={time}
                 classNames="anim"
                 unmountOnExit
                 onExited={() => setShowTopDef(true)}
@@ -183,7 +185,7 @@ const HelperPage = (props) => {
 
             <CSSTransition
                 in={showBotDef}
-                timeout={300}
+                timeout={time}
                 classNames="anim"
                 unmountOnExit
                 onExited={() => setShowBotNew(true)}
@@ -192,7 +194,7 @@ const HelperPage = (props) => {
             </CSSTransition>
             <CSSTransition
                 in={showBotNew}
-                timeout={300}
+                timeout={time}
                 classNames="anim"
                 unmountOnExit
                 onExited={() => setShowBotDef(true)}

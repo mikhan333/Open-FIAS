@@ -4,7 +4,7 @@
 }
 
 .Section3 {
-    height: calc(100vh - 56px);
+    height: 100vh;
 }
 
 .Header {
@@ -14,6 +14,10 @@
 .TextStyleHead {
     font-family: fantasy;
     font-weight: bold;
+}
+
+.TextStyleBody {
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .Section1 {
@@ -53,11 +57,13 @@
     flex-flow: row wrap;
 }
 
-.Section2 .Section2Bot, .Section2 .Section2Top,
-.Section2 .Section2BotAddit, .Section2 .Section2TopAddit{
+.Section2Bot, .Section2Top,
+.Section2BotAddit, .Section2TopAddit{
     flex: 1 100%;
     padding: 3%;
     height: 50%;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .Section2Bot, .Section2TopAddit {
@@ -86,6 +92,9 @@
     .MAPSPicture {
         display: initial;
     }
+    .Section2Top, .Section2Bot {
+        overflow: initial;
+    }
 }
 
 
@@ -94,8 +103,6 @@
 .Section5 {
     padding: 20px 5px;
     text-align: center;
-    font-family: fantasy;
-    font-weight: bold;
     color: white;
 }
 

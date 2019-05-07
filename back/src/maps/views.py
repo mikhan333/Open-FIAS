@@ -1,4 +1,4 @@
-from .external_api.maps_api import suggester, rev_geocoder, geocoder, check_addr
+from .external_api.maps_api import suggester, rev_geocoder, geocoder, check_addr, nomination_geocoder
 from .external_api.osm_api import create_note, create_object
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse, HttpResponseNotAllowed
 from django.views.decorators.http import require_http_methods
@@ -11,6 +11,7 @@ from django.db import models
 from cent import Client, CentException
 from django.conf import settings
 import json
+import math
 import datetime
 
 
@@ -31,31 +32,43 @@ def create_point(request):
     except ValueError:
         return HttpResponseBadRequest('Wrong types of data - lat, lon')
 
-    address_obj, exist_db, exist_osm = check_addr(data)
+    if request.session.session_key is None:
+        return HttpResponseBadRequest('There is not session')
+    session = request.session
+    dialog = session.get('dialog')
+    if dialog is not None:
+        del session['dialog']
+
+    address_obj = check_addr(data, lat, lon, dialog)
+
+    exist_db = address_obj.get('exist_db')
+    exist_osm = address_obj.get('exist_osm')
     if address_obj is None:
         return HttpResponseBadRequest('Wrong address data')
 
-    data = {
-        'exist_db': exist_db,
-        'exist_osm': exist_osm
-    }
+    # If we should show dialog and there isn't full information in OSM
+    if exist_osm is 'no_full':
+        request.session['dialog'] = {
+            'address': address_obj,
+            'exist_osm': exist_osm,
+            'exist_db': exist_db
+        }
+        return JsonResponse(address_obj)
     # When address exists in DB
     if exist_db:
-        return JsonResponse(data)
+        return JsonResponse(address_obj)
     # When address doesn't exist in DB
     user = request.user
+    address = address_obj['address_sug']
     if user.is_authenticated:
         changeset_id = None
         if exist_osm is 'none' or exist_osm is 'none_chg':
-            data.update(create_object(lat, lon, address_obj, user))
-            if not data['status_osm']:
+            address_obj.update(create_object(lat, lon, address, user))
+            if not address_obj['status_osm']:
                 return HttpResponseBadRequest('Osm: can not create changeset')
-            changeset_id = data['changeset_id']
-        point_db_id = Object.objects.create_object(lat, lon, address_obj, user, changeset=changeset_id)
+            changeset_id = address_obj['changeset_id']
+        point_db_id = Object.objects.create_object(lat, lon, address, user, changeset=changeset_id)
     else:
-        if request.session.session_key is None:
-            return HttpResponseBadRequest('There is not session')
-        session = request.session
         if 'points' not in session:
             return HttpResponseBadRequest('Wrong session')
         if len(session['points']) >= 3:
@@ -63,16 +76,16 @@ def create_point(request):
 
         note_id = None
         if exist_osm is 'none' or exist_osm is 'none_chg':
-            data.update(create_note(lat, lon, address_obj))
-            if not data['status_osm']:
+            address_obj.update(create_note(lat, lon, address))
+            if not address_obj['status_osm']:
                 return HttpResponseBadRequest('Osm: can not create note')
-            note_id = int(data['info']['id'])
-        point_db_id = Object.objects.create_object(lat, lon, address_obj, user, note=note_id)
+            note_id = int(address_obj['info']['id'])
+        point_db_id = Object.objects.create_object(lat, lon, address, user, note=note_id)
         session['points'].append(point_db_id)
         session.save()
 
-    data['status_cent'] = send_centrifuge(point_db_id)
-    return JsonResponse(data)
+    address_obj['status_cent'] = send_centrifuge(point_db_id)
+    return JsonResponse(address_obj)
 
 
 def send_centrifuge(point_id):
@@ -175,12 +188,92 @@ def get_suggest(request):
 @csrf_exempt
 @require_http_methods("GET")
 def get_geocoder(request):
-    data_json = geocoder(request.GET)
-    return JsonResponse(data_json)
+    geo_data = geocoder(request.GET)
+    return JsonResponse(geo_data)
+    # return JsonResponse(get_mode(geo_data, request.user, True))
 
 
 @csrf_exempt
 @require_http_methods("GET")
 def get_rev_geocoder(request):
-    data_json = rev_geocoder(request.GET)
-    return JsonResponse(data_json)
+    geo_data = rev_geocoder(request.GET)
+    return JsonResponse(get_mode(geo_data, request.user, False))
+
+
+def get_mode(geo_data, user, mode_geocoder):
+    geo_data['status'] = {
+        'osm': 'none',
+        'db': False,
+        'done': 'nothing'
+    }
+
+    # If we use rev_geocoder
+    if not mode_geocoder:
+        geo_result = geo_data['results'][0]
+        geo_address = geo_result['address_details']
+
+        # Check existence building on this point
+        if 'building' not in geo_address:
+            geo_data['status']['done'] = 'nothing#not_building'
+            return geo_data
+        if geo_result['weight'] != 1 or 'related' not in geo_result:
+            geo_data['status']['done'] = 'nothing#can_geocode'
+            return geo_data
+
+        coordinates = geo_result['related'][0]['coordinates']
+        address = geo_result['address']
+    # If we use geocoder
+    else:
+        geo_result = geo_data['features'][0]
+        geo_address = geo_result['properties']['address']
+
+        # Check existence building on this address
+        if 'building' not in geo_address:
+            geo_data['status']['done'] = 'nothing#not_building'
+            return geo_data
+        if geo_result['weight'] != 1 or 'geometry' not in geo_result:
+            geo_data['status']['done'] = 'nothing#can_geocode'
+            return geo_data
+
+        coordinates = geo_result['geometry']['coordinates']
+        address = geo_data['request']
+
+    sug_result = suggester({'address': address})['results'][0]
+    sug_address = sug_result['address_details']
+
+    # Define state of DB
+    fias_id = sug_result['id']
+    db_objects = Object.objects.filter(fias_id=fias_id)
+    db_object = None
+    if len(db_objects) != 0:
+        geo_data['status']['db'] = True
+        db_object = db_objects[0]
+
+    # Define state of OSM
+    geo_data['status']['osm'] = 'full'
+    for name in sug_address:
+        if name not in geo_address:
+            geo_data['status']['osm'] = 'nfull'
+            break
+
+    # Return answer
+    # If information in OSM NOT full
+    if geo_data['status']['osm'] == 'nfull':
+        geo_data['sug_address'] = sug_address
+        geo_data['geo_address'] = geo_address
+    # If information in OSM full
+    else:
+        # If there isn't in DB
+        if not geo_data['status']['db']:
+            Object.objects.create_object(coordinates[0], coordinates[1], sug_result, user)
+            geo_data['status']['done'] = 'add_db'
+        # If there is in DВ
+        else:
+            # Check coordinates
+            if not math.isclose(coordinates[0], db_object.latitude, abs_tol=1e-6) or \
+                    not math.isclose(coordinates[1], db_object.longitude, abs_tol=1e-6):
+                db_object.latitude = coordinates[0]
+                db_object.longitude = coordinates[1]
+                db_object.save()
+                geo_data['status']['done'] = 'change_db'
+    return geo_data

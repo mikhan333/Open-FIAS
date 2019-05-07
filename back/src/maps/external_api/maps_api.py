@@ -1,60 +1,17 @@
 import re
 import requests
-import math
 from ..helpers import build_url
 from django.conf import settings
 from ..models import Object
 
 
-def check_addr(data, lat, lon, session=None):
-    address = {
-        'exist_db': True,
-        'exist_osm': 'full'
-    }
-
-    # Check existence in DB fias and get address_sug
-    data_suggest = suggester(data)
+def check_addr(data):
+    data_json = suggester(data)
     try:
-        address_sug = data_suggest['results'][0]
-        building_sug = address_sug['address_details']['building'].lower()
-        address['address_sug'] = address_sug
+        addresses = data_json['results']
+        return addresses[0]
     except (IndexError, KeyError):
         return None
-
-    fias_id = address_sug['id']
-    if len(Object.objects.filter(fias_id=fias_id)) == 0:
-        address['exist_db'] = False
-
-    # If we showed dialog window we should not check another data
-    if session is not None:
-        if session.get('exist_osm') == 'no_full':
-            address['exist_osm'] = 'no_full'
-            return address
-
-    # Check existence in OSM and get address_geo
-    address_geo = {}
-    data_geocoder = nomination_geocoder(data)
-    try:
-        address_geo = data_geocoder
-        building_geo = address_geo['address']['house_number'].lower()
-        address['address_geo'] = address_geo
-
-        if building_geo != building_sug:
-            raise KeyError
-        # if not math.isclose(float(address_geo['lat']), lat, abs_tol=1e-1) or \
-        #         not math.isclose(float(address_geo['lon']), lon, abs_tol=1e-1) or \
-        if not {'road', 'town', 'county', 'state', 'postcode', 'country'}.issubset(address_geo['address']):
-            address['exist_osm'] = 'no_full'
-    except IndexError:
-        address['exist_osm'] = 'none'
-    except KeyError:
-        address['exist_osm'] = 'none_chg'
-        address['osm_info'] = {
-            'osm_id': address_geo['osm_id'],
-            'osm_type': address_geo['osm_type'],
-        }
-
-    return address
 
 
 def suggester(data):

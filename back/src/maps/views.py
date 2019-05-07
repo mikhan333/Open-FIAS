@@ -28,64 +28,42 @@ def create_point(request):
         lat = float(data['lat'])
         lon = float(data['lon'])
     except KeyError:
-        return HttpResponseBadRequest('Wrong lat or (and) lon fields')
+        return HttpResponseBadRequest('Wrong lat or/and lon fields')
     except ValueError:
         return HttpResponseBadRequest('Wrong types of data - lat, lon')
 
     if request.session.session_key is None:
         return HttpResponseBadRequest('There is not session')
     session = request.session
-    dialog = session.get('dialog')
-    if dialog is not None:
-        del session['dialog']
 
-    address_obj = check_addr(data, lat, lon, dialog)
-
-    exist_db = address_obj.get('exist_db')
-    exist_osm = address_obj.get('exist_osm')
+    address_obj = check_addr(data)
     if address_obj is None:
         return HttpResponseBadRequest('Wrong address data')
 
-    # If we should show dialog and there isn't full information in OSM
-    if exist_osm is 'no_full':
-        request.session['dialog'] = {
-            'address': address_obj,
-            'exist_osm': exist_osm,
-            'exist_db': exist_db
-        }
-        return JsonResponse(address_obj)
-    # When address exists in DB
-    if exist_db:
-        return JsonResponse(address_obj)
-    # When address doesn't exist in DB
     user = request.user
-    address = address_obj['address_sug']
+    data = {}
     if user.is_authenticated:
-        changeset_id = None
-        if exist_osm is 'none' or exist_osm is 'none_chg':
-            address_obj.update(create_object(lat, lon, address, user))
-            if not address_obj['status_osm']:
-                return HttpResponseBadRequest('Osm: can not create changeset')
-            changeset_id = address_obj['changeset_id']
-        point_db_id = Object.objects.create_object(lat, lon, address, user, changeset=changeset_id)
+        data.update(create_object(lat, lon, address_obj, user))
+        if not data['status_osm']:
+            return HttpResponseBadRequest('Osm: can not create changeset')
+        changeset_id = data['changeset_id']
+        point_db_id = Object.objects.create_object(lat, lon, address_obj, user, changeset=changeset_id)
     else:
         if 'points' not in session:
             return HttpResponseBadRequest('Wrong session')
         if len(session['points']) >= 3:
             return HttpResponseBadRequest('You done too many points')
 
-        note_id = None
-        if exist_osm is 'none' or exist_osm is 'none_chg':
-            address_obj.update(create_note(lat, lon, address))
-            if not address_obj['status_osm']:
-                return HttpResponseBadRequest('Osm: can not create note')
-            note_id = int(address_obj['info']['id'])
-        point_db_id = Object.objects.create_object(lat, lon, address, user, note=note_id)
+        data.update(create_note(lat, lon, address_obj))
+        if not data['status_osm']:
+            return HttpResponseBadRequest('Osm: can not create note')
+        note_id = int(data['info']['id'])
+        point_db_id = Object.objects.create_object(lat, lon, address_obj, user, note=note_id)
         session['points'].append(point_db_id)
         session.save()
 
-    address_obj['status_cent'] = send_centrifuge(point_db_id)
-    return JsonResponse(address_obj)
+    data['status_cent'] = send_centrifuge(point_db_id)
+    return JsonResponse(data)
 
 
 def send_centrifuge(point_id):
@@ -211,7 +189,6 @@ def get_mode(geo_data, user, mode_geocoder):
     if not mode_geocoder:
         geo_result = geo_data['results'][0]
         geo_address = geo_result['address_details']
-
         # Check existence building on this point
         if 'building' not in geo_address:
             geo_data['status']['done'] = 'nothing#not_building'
@@ -219,14 +196,12 @@ def get_mode(geo_data, user, mode_geocoder):
         if geo_result['weight'] != 1 or 'related' not in geo_result:
             geo_data['status']['done'] = 'nothing#can_geocode'
             return geo_data
-
         coordinates = geo_result['related'][0]['coordinates']
         address = geo_result['address']
     # If we use geocoder
     else:
         geo_result = geo_data['features'][0]
         geo_address = geo_result['properties']['address']
-
         # Check existence building on this address
         if 'building' not in geo_address:
             geo_data['status']['done'] = 'nothing#not_building'
@@ -234,7 +209,6 @@ def get_mode(geo_data, user, mode_geocoder):
         if geo_result['weight'] != 1 or 'geometry' not in geo_result:
             geo_data['status']['done'] = 'nothing#can_geocode'
             return geo_data
-
         coordinates = geo_result['geometry']['coordinates']
         address = geo_data['request']
 

@@ -17,32 +17,32 @@ import { Button, Row, Col } from "react-bootstrap";
 import AddAnonimPointsModal from "./AddAnonimPointsModal";
 
 const FrontPage = props => (
-    <div className={classes.Section1}>
-        <div className={classes.Section1Left}>
-            <h1 className={classes.TextStyleHead}>
+    <div className={ classes.Section1 }>
+        <div className={ classes.Section1Left }>
+            <h1 className={ classes.TextStyleHead }>
                 Open-FIAS
             </h1><br />
             <h3>
                 <TranslatableText
                     dictionary={{
-                        russian: "Геокодирование - это просто и легко",
-                        english: "Hello"
+                        russian: "Геокодирование - это просто и легко!",
+                        english: "Geocoding is simple and easy!"
                     }}
                 />
             </h3>
 
-            <Button variant="secondary" onClick={() => props.fullpageApi.moveSectionDown()}>
+            <Button variant="secondary" onClick={ () => props.fullpageApi.moveSectionDown() }>
                 <TranslatableText
                     dictionary={{
                         russian: "Что делать?",
-                        english: "How to use"
+                        english: "How to use?"
                     }}
                 />
             </Button>
         </div>
 
-        <div className={classes.Section1Right}>
-            <img src={OSMLogo} alt='' className={classes.OSMLogo} />
+        <div>
+            <img src={ OSMLogo } alt='' className={ classes.OSMLogo } />
         </div>
 
     </div>
@@ -58,26 +58,18 @@ class MainPage extends Component {
         }
 
         return (
-            <div className={classes.Container}>
-                {/* <div className={[ classes.Header, "menu"].join(' ')}
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        zIndex: 100,
-                }}>
-                    <Header/>
-                </div> */}
+            <div className={ classes.Container }>
                 <ReactFullpage
-                    licenseKey={fullpageLicenseKey}
+                    licenseKey={ fullpageLicenseKey }
                     debug
                     navigation
                     navigationTooltips={tooltips}
 
-                    sectionsColor={[null, '#303438', '#54595f', 'whitesmoke', 'black']}
-                    verticalCentered={false}
+                    sectionsColor={[ null, '#303438', '#eeeeee', 'whitesmoke', 'black' ]}
+                    verticalCentered={ false }
                     loopBottom
 
-                    anchors={['main', 'help', 'statistics', 'about', 'contacts']}
+                    anchors={[ 'main', 'help', 'statistics', 'about', 'contacts' ]}
                     lockAnchors
 
                     render={({ state, fullpageApi }) => {
@@ -89,14 +81,14 @@ class MainPage extends Component {
                                         backgroundImage: `url(${Background1})`,
                                         backgroundSize: 'cover'
                                     }}>
-                                    <FrontPage fullpageApi={fullpageApi} />
+                                    <FrontPage fullpageApi={ fullpageApi } />
                                 </div>
 
                                 <div className="section">
                                     <HelperPage link={ this.props.history }/>
                                 </div>
                                 <div className="section">
-                                    <div className={classes.Section3}>
+                                    <div className={ classes.Section3 }>
                                         <Statistics />
                                     </div>
                                 </div>
@@ -107,25 +99,76 @@ class MainPage extends Component {
                                     <Row>
                                         <Col sm={{ span: 3, offset: 3 }}>
                                             <div className={ classes.Section5 }>
-                                                <h4 className={ classes.TextStyleHead } style={{ marginBottom: '30px' }}>Contacts</h4>
+                                                <h4 className={ classes.TextStyleHead } style={{ marginBottom: '30px' }}>
+                                                    <TranslatableText
+                                                        dictionary={{
+                                                            russian: "Контакты",
+                                                            english: "Contacts"
+                                                        }}
+                                                    />
+                                                </h4>
                                                 <p className={ classes.TextStyleBody }>
-                                                    This is open-source project: <br />
+                                                    <TranslatableText
+                                                        dictionary={{
+                                                            russian: "Это open-source проект: ",
+                                                            english: "This is open-source project: "
+                                                        }}
+                                                    /> <br />
                                                     <a href="https://github.com/mikhan333/Open-FIAS" target="_blank" rel="noopener noreferrer">Open-FIAS</a> <br />
                                                 </p>
                                                 <p className={ classes.TextStyleBody }>
-                                                    Please contact us with<br /> information about any problems <br />
-                                                    or with your affiliate offers: <br />
-                                                    smth@mail.ru <br />
+                                                    <TranslatableText
+                                                        dictionary={{
+                                                            russian: "Для связи с нами",
+                                                            english: "Please contact us with"
+                                                        }}
+                                                    /><br />
+                                                    <TranslatableText
+                                                        dictionary={{
+                                                            russian: "по вопросу проблем на ресурсе",
+                                                            english: "information about any problems"
+                                                        }}
+                                                    /><br />
+                                                    <TranslatableText
+                                                        dictionary={{
+                                                            russian: "или партнерских предложений:",
+                                                            english: "or with your affiliate offers: "
+                                                        }}
+                                                    /><br />
+                                                    <a href="mailto:smth@mail.ru" target="_blank" rel="noopener noreferrer">smth@mail.ru</a><br />
                                                 </p>
                                                 
                                             </div>
                                         </Col>
                                         <Col sm={{ span: 3 }}>
                                             <div className={ classes.Section5 }>
-                                                <h4 className={ classes.TextStyleHead } style={{ marginBottom: '30px' }}>Information</h4>
+                                                <h4 className={ classes.TextStyleHead } style={{ marginBottom: '30px' }}>
+                                                    <TranslatableText
+                                                        dictionary={{
+                                                            russian: "Информация",
+                                                            english: "Information"
+                                                        }}
+                                                    />
+                                                </h4>
                                                 <p className={ classes.TextStyleBody }>
-                                                    This project was made<br /> as an institute project. <br />
-                                                    It did with the help of services: <br />
+                                                    <TranslatableText
+                                                        dictionary={{
+                                                            russian: "Данный проект был сделан",
+                                                            english: "This project was made"
+                                                        }}
+                                                    /><br />
+                                                    <TranslatableText
+                                                        dictionary={{
+                                                            russian: "как выпускной проект Технотрека",
+                                                            english: "as an institute project."
+                                                        }}
+                                                    /><br />
+                                                    <TranslatableText
+                                                        dictionary={{
+                                                            russian: "при поддержке таких сервисов как: ",
+                                                            english: "It made with the help of services: "
+                                                        }}
+                                                    /><br />
                                                     <a href="https://maps.me/" target="_blank" rel="noopener noreferrer">MAPS.ME</a> <br />
                                                     <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> <br />
                                                 </p>

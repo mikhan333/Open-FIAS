@@ -13,21 +13,21 @@ import { CSSTransition } from 'react-transition-group';
 
 class HelperSlider extends React.Component {
     render() {
-        var pictComp = this.props.pictures.map((picture) =>
+        const pictComp = this.props.pictures.map((picture) =>
             <div>
-                <img src={picture} className={classes.HelperImages} alt='' key={picture.id} />
+                <img src={ picture } className={ classes.HelperImages } alt='' key={ picture.id } />
             </div>
-        )
-        var settings = {
+        );
+        const settings = {
             dots: true,
             infinite: true,
             slidesToShow: 1,
             slidesToScroll: 1,
         };
         return (
-            <div className="container" id={this.props.id}>
-                <Slider {...settings} className={classes.Slider}>
-                    {pictComp}
+            <div className="container" id={ this.props.id }>
+                <Slider { ...settings } className={ classes.Slider }>
+                    { pictComp }
                 </Slider>
             </div>
         );
@@ -119,7 +119,7 @@ const HelperPage = (props) => {
                             </li>
                         </ul>
                     </div>
-                    <Button variant="success" onClick={() => this.props.link.push('/add_point')} style={{ marginRight: '5px', }}>
+                    <Button variant="success" onClick={() => props.link.push('/add_point')} style={{ marginRight: '5px', }}>
                         Попробовать
                     </Button>
                     {buttonBot}
@@ -131,7 +131,7 @@ const HelperPage = (props) => {
         </div>;
 
     let contentBot2, contentTop2;
-    var pictures;
+    let pictures;
     pictures = [HelperPicture13, HelperPicture13, HelperPicture13];
     contentTop2 =
         <div className={classes.Section2TopAddit}>
@@ -203,6 +203,6 @@ const HelperPage = (props) => {
             </CSSTransition>
         </div>
     );
-}
+};
 
 export default HelperPage;

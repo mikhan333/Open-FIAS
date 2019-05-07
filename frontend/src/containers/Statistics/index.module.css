@@ -1,27 +1,50 @@
-.Carousel {
-    height: 100%;
-    width: 100%;
-    background: #54595f;
+.Container {
+    height: calc(100vh - 56px);
+    overflow: hidden;
+}
+
+.ListsRow {
+    height: calc(50% - 10px);
+}
+
+.ListCard {
+    height: calc(100% - 10px);
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+.GraphRow {
+    height: 50%;
+    text-align: center;
+    padding-left: 15px;
+    padding-right: 15px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.List {
     overflow: auto;
 }
 
-.CarouselDiv {
-    height: 100%;
-    width: 100%;
+.GraphModal {
+    max-width: 80%;
 }
 
-.Item {
-    width: 70%;
-    margin: 2% 15% 2% 15%;
-    color: #fafafa;
-}
-
-.Graph {
-    text-align: center;
-}
-
-@media (max-width: 735px) {
-    .CarouselDiv {
+@media (max-width: 576px) {
+    .Container {
         height: calc(100vh - 56px);
+    }
+
+    .ListsRow {
+        height: calc(50% - 15px);
+    }
+
+    .List {
+        overflow: auto;
+        height: calc((100vh - 56px) * 0.25 - 52px - 15px);
+    }
+
+    .GraphModal {
+        max-width: 100%;
     }
 }

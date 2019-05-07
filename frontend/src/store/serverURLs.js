@@ -1,4 +1,4 @@
-const backendURL = 'http://localhost:8080';
+const backendURL = '';
 
 export const suggestServer = `/suggester`;
 export const geocoderServer = `/geocoder`;

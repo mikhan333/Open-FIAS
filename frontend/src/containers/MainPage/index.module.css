@@ -4,7 +4,7 @@
 }
 
 .Section3 {
-    height: 100vh;
+    height: 100%;
 }
 
 .Header {
@@ -13,7 +13,7 @@
 
 .TextStyleHead {
     font-family: fantasy;
-    font-weight: bold;
+    /*font-weight: bold;*/
 }
 
 .TextStyleBody {
@@ -37,7 +37,7 @@
 @media all and (min-width: 600px) {
     .Section1 > * { flex: 1 50%; }
     .Section1Left {
-        padding: 0% 0% 20% 20%;
+        padding: 0 0 20% 20%;
     }
 }
 
@@ -92,12 +92,11 @@
     .MAPSPicture {
         display: initial;
     }
-    .Section2Top, .Section2Bot {
+    .Section2Top, .Section2Bot,
+    .Section2BotAddit, .Section2TopAddit {
         overflow: initial;
     }
 }
-
-
 
 
 .Section5 {

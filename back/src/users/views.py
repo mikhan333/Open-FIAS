@@ -3,11 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from social_django.views import auth as auth_login, complete
 from django.views.decorators.csrf import csrf_exempt
-from django.core.serializers import serialize
 from django.contrib.sessions.backends.db import SessionStore
 from django.shortcuts import get_object_or_404
 from maps.models import Object, points_serializer
 from datetime import datetime, date, time
+from django.utils.timezone import make_aware
 
 
 @csrf_exempt

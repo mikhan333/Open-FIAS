@@ -12,3 +12,4 @@ pyyaml==5.1
 factory-boy==2.11.1
 djangorestframework==3.9.2
 cent==3.0.1
+python-memcached==1.59

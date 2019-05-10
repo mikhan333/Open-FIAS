@@ -15,16 +15,17 @@ class ObjectQuerySet(models.QuerySet):
 
 
 class ObjectManager(models.Manager):
-    def create_object(self, lat, lon, address_obj, user, changeset=None, note=None):
-        obj = self.create(
+    @staticmethod
+    def create_object(lat, lon, address_obj, user, changeset=None, note=None):
+        obj = Object(
             latitude=lat,
             longitude=lon,
             changeset_id=changeset,
             note_id=note,
+            fias_id=address_obj['id'],
         )
         if user.is_authenticated:
             obj.author = user
-        obj.fias_id = address_obj['id']
         if 'rank' in address_obj:
             obj.fias_level = address_obj['rank']
         if 'postalcode' in address_obj:
@@ -33,7 +34,7 @@ class ObjectManager(models.Manager):
             obj.name = address_obj['name']
         obj.address = address_obj['address_details']
         obj.save()
-        return obj.id
+        return obj
 
 
 class Object(models.Model):

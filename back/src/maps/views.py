@@ -1,4 +1,4 @@
-from .external_api.maps_api import suggester, rev_geocoder, geocoder, check_addr, nomination_geocoder
+from .external_api.maps_api import suggester, rev_geocoder, geocoder, check_addr
 from .external_api.osm_api import create_note, create_object
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse, HttpResponseNotAllowed
 from django.views.decorators.http import require_http_methods
@@ -6,13 +6,15 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from .models import Object, ObjectSerializer, points_serializer
+from django.utils import timezone
+from django.db.models.functions import TruncDay
 from users.models import User
 from django.db import models
 from cent import Client, CentException
 from django.conf import settings
+from django.views.decorators.cache import cache_page
 import json
 import math
-import datetime
 
 
 @csrf_exempt
@@ -47,7 +49,7 @@ def create_point(request):
         if not data['status_osm']:
             return HttpResponseBadRequest('Osm: can not create changeset')
         changeset_id = data['changeset_id']
-        point_db_id = Object.objects.create_object(lat, lon, address_obj, user, changeset=changeset_id)
+        new_point = Object.objects.create_object(lat, lon, address_obj, user, changeset=changeset_id)
     else:
         if 'points' not in session:
             return HttpResponseBadRequest('Wrong session')
@@ -58,21 +60,20 @@ def create_point(request):
         if not data['status_osm']:
             return HttpResponseBadRequest('Osm: can not create note')
         note_id = int(data['info']['id'])
-        point_db_id = Object.objects.create_object(lat, lon, address_obj, user, note=note_id)
-        session['points'].append(point_db_id)
+        new_point = Object.objects.create_object(lat, lon, address_obj, user, note=note_id)
+        session['points'].append(new_point.id)
         session.save()
 
-    data['status_cent'] = send_centrifuge(point_db_id)
+    data['status_cent'] = send_centrifuge(new_point)
     return JsonResponse(data)
 
 
-def send_centrifuge(point_id):
+def send_centrifuge(point):
     client = Client(
         getattr(settings, 'CENTRIFUGE_URL'),
         api_key=getattr(settings, 'CENTRIFUGE_APIKEY'),
         timeout=getattr(settings, 'CENTRIFUGE_TIMEOUT'),
     )
-    point = get_object_or_404(Object, id=point_id)
     dict_point = ObjectSerializer(point).data
     if point.author is not None:
         dict_point['author'] = point.author.username
@@ -135,6 +136,7 @@ def get_list_points(request):
 
 
 @csrf_exempt
+@cache_page(60 * 10, key_prefix='statistic')
 def get_statistic(request):
     objects_point = Object.objects.select_related('author')
     data = {'points_count': objects_point.count()}
@@ -146,13 +148,32 @@ def get_statistic(request):
     users = objects_user.annotate(count_points=models.Count('maps'))
     data['users_top'] = list(users.order_by('-count_points')[:20].values('username', 'count_points'))
 
+    points_count_days = []
+    time_now = timezone.now()
+    objects_dates = objects_point\
+        .annotate(date=TruncDay('created'))\
+        .values('date')\
+        .annotate(created_count=models.Count('id'))\
+        .order_by('-date')[:100]
+    for elem in objects_dates:
+        days = (time_now - elem['date']).days
+        count = elem['created_count']
+        points_count_days.append({'count': count, 'days': days})
+
+    # Fix massive of points_count_days
     data['points_count_days'] = []
-    time_now = datetime.datetime.now()
-    for i in range(100):
-        data['points_count_days'].append({
-            'count': objects_point.filter(created__lte=time_now - datetime.timedelta(days=i)).count(),
-            'days': i,
-        })
+    prev_days = 0
+    for elem in points_count_days:
+        days = elem['days']
+        if days >= 100:
+            break
+        for i in range(prev_days, days):
+            data['points_count_days'].append({'count': elem['count'], 'days': i})
+        data['points_count_days'].append(elem)
+        prev_days = days + 1
+    for i in range(len(data['points_count_days']), 100):
+        data['points_count_days'].append({'count': 0, 'days': i})
+
     return JsonResponse(data)
 
 

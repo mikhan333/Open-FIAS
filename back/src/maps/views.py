@@ -130,7 +130,7 @@ def add_points_from_cookie(request):
 @csrf_exempt
 def get_list_points(request):
     data = {'points': []}
-    points = Object.objects.all().filt_del(request.user)
+    points = Object.objects.all().filt_del(request.user)[:100]
     data['points'] = points_serializer(points)
     return JsonResponse(data)
 

@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from maps.models import Object, points_serializer
 from datetime import datetime, date, time
 from django.utils.timezone import make_aware
+from django.views.decorators.cache import cache_page
 
 
 @csrf_exempt
@@ -23,7 +24,8 @@ def logout(request):
 
 @csrf_exempt
 @login_required
-def get_user_detail(request):  # TODO get info about points from OSM
+@cache_page(60, key_prefix='user_detail')
+def get_user_detail(request):
     user = request.user
     data = {'username': user.username}
     extra_data = user.social_auth.get(provider='openstreetmap').extra_data
@@ -32,11 +34,12 @@ def get_user_detail(request):  # TODO get info about points from OSM
     if 'email' in extra_data:
         data['email'] = extra_data['email']
     user_obj = Object.objects.all().filter(author=user).order_by("-created")
-    data['points'] = points_serializer(user_obj)
+    data['points'] = points_serializer(user_obj, user=user.username)
     return JsonResponse(data)
 
 
 @csrf_exempt
+@cache_page(30, key_prefix='check_auth')
 def check_auth(request):
     response = JsonResponse({'authorization': False})
     if request.user.is_authenticated:

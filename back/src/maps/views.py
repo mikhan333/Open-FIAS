@@ -188,8 +188,7 @@ def get_suggest(request):
 @require_http_methods("GET")
 def get_geocoder(request):
     geo_data = geocoder(request.GET)
-    return JsonResponse(geo_data)
-    # return JsonResponse(get_mode(geo_data, request.user, True))
+    return JsonResponse(get_mode(geo_data, request.user, True))
 
 
 @csrf_exempt
@@ -238,7 +237,7 @@ def get_mode(geo_data, user, mode_geocoder):
 
     # Define state of DB
     fias_id = sug_result['id']
-    db_objects = Object.objects.filter(fias_id=fias_id)
+    db_objects = list(Object.objects.filter(fias_id=fias_id))
     db_object = None
     if len(db_objects) != 0:
         geo_data['status']['db'] = True
@@ -247,7 +246,7 @@ def get_mode(geo_data, user, mode_geocoder):
     # Define state of OSM
     geo_data['status']['osm'] = 'full'
     for name in sug_address:
-        if name not in geo_address:
+        if name not in geo_address:  # or geo_address[name] != sug_address[name]:
             geo_data['status']['osm'] = 'nfull'
             break
 

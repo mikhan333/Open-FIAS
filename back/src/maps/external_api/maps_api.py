@@ -18,6 +18,12 @@ def suggester(data):
     if 'address' in data:
         address = str(data['address'])
         address_parts = re.findall(r"[\w']+", address.lower())
+
+        # Separate characters, for example "с2" => "с 2"(строение 2)
+        address_building = re.match(r"([а-я])(?=\d+)(\d+)", address_parts[-1])
+        if address_building is not None:
+            address_parts.pop()
+            address_parts += address_building.groups()
     else:
         return {'error': 400}
 

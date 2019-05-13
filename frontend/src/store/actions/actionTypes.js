@@ -40,3 +40,6 @@ export const ADD_NEW_POINT_TO_STATS = 'ADD_NEW_POINT_TO_STATS';
 export const SET_MODE = 'SET_MODE';
 export const SET_ALLOW_ADDRESS_INPUT = 'SET_ALLOW_ADDRESS_INPUT';
 export const SET_ALLOW_MARKER_PUT = 'SET_ALLOW_MARKER_PUT';
+
+export const MERGING = 'MERGING';
+export const MERGED = 'MERGED';

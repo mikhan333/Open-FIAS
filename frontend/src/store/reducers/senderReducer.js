@@ -6,12 +6,17 @@ export const modeTypes = {
 };
 
 const initialState = {
-    mode: modeTypes.fias,
+    mode: modeTypes.map,
     loading: false,
     error: null,
     url: null,
     allowAddressInput: false,
-    allowMarkerPut: false
+    allowMarkerPut: false,
+    mergingData: {
+        isMerging: false,
+        fiasAddress: null,
+        osmAddress: null
+    }
 };
 
 const reducer = ( state = initialState, action ) => {
@@ -58,6 +63,31 @@ const reducer = ( state = initialState, action ) => {
         return {
             ...state,
             allowMarkerPut: action.allowMarkerPut
+        }
+    }
+
+    if (action.type === actionTypes.MERGING) {
+        return {
+            ...state,
+            mergingData: {
+                isMerging: true,
+                fiasAddress: action.fiasAddress,
+                osmAddress: action.osmAddress
+            }
+        }
+    }
+
+    if (action.type === actionTypes.MERGED) {
+        return {
+            ...state,
+            mergingData: initialState.mergingData
+        }
+    }
+
+    if (action.type === actionTypes.CLEAR_DATA) {
+        return {
+            ...initialState,
+            mode: state.mode
         }
     }
 

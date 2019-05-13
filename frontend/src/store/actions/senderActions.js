@@ -70,3 +70,18 @@ export const setMode = (mode) => {
         dispatch(clear())
     }
 };
+
+const merged = () => {
+    return {
+        type: actionTypes.MERGED
+    }
+};
+
+export const merge = (isMerged, address, coords) => {
+    return function (dispatch) {
+        if (isMerged) {
+            dispatch(sendLink(address, coords));
+        }
+        dispatch(merged())
+    }
+};

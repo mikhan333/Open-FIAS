@@ -14,10 +14,6 @@ class Statistics extends Component {
         super(props);
 
         this.state = {
-            pointLabels: {
-                russian: 'загеокодированно',
-                english: 'putted'
-            },
             xLabels: {
                 russian: 'дней назад',
                 english: 'days ago'
@@ -35,7 +31,7 @@ class Statistics extends Component {
             }
         };
 
-        this.handleOpen = this.handleOpen.bind(this)
+        this.handleOpen = this.handleOpen.bind(this);
         this.handleClose = this.handleClose.bind(this)
     }
 
@@ -102,16 +98,9 @@ class Statistics extends Component {
             labels: labels.reverse(),
             datasets: [
                 {
-                    label: this.state.pointLabels[ this.props.language ],
                     lineTension: 0.1,
                     borderColor: 'rgba(75,192,192,1)',
-                    borderCapStyle: 'butt',
-                    borderDash: [],
-                    borderDashOffset: 0.0,
-                    borderJoinStyle: 'miter',
                     pointBorderColor: 'rgba(75,192,192,1)',
-                    pointBackgroundColor: '#fff',
-                    pointBorderWidth: 1,
                     pointHoverRadius: 5,
                     pointHoverBackgroundColor: 'rgba(75,192,192,1)',
                     pointHoverBorderColor: 'rgba(220,220,220,1)',
@@ -140,6 +129,12 @@ class Statistics extends Component {
                         labelString: this.state.xLabels[ this.props.language ]
                     }
                 }],
+            },
+            tooltips : {
+                displayColors: false,
+                callbacks: {
+                    title: () => ''
+                }
             }
         };
 

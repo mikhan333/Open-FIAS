@@ -12,6 +12,7 @@ import { modeTypes } from "../../store/reducers/senderReducer";
 
 import { withRouter } from "react-router-dom";
 import * as senderActionCreators from "../../store/actions/senderActions";
+import MergingModal from "./MergingModal";
 
 class SuggestBar extends Component {
     constructor(props) {
@@ -153,9 +154,9 @@ class SuggestBar extends Component {
                 </OverlayTrigger>
         }
 
-        let modal;
+        let confirmModal;
         if (this.state.modalShow) {
-            modal =
+            confirmModal =
                 <ConfirmModal
                     onHide={ this.modalClose }
                 />
@@ -240,7 +241,8 @@ class SuggestBar extends Component {
                     </Button>
                 </div>
 
-                { modal }
+                { confirmModal }
+                <MergingModal/>
             </div>
         )
     }

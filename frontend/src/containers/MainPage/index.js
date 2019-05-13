@@ -63,11 +63,10 @@ class MainPage extends Component {
                     licenseKey={ fullpageLicenseKey }
                     debug
                     navigation
-                    navigationTooltips={tooltips}
+                    navigationTooltips={ tooltips }
 
                     sectionsColor={[ null, '#303438', '#eeeeee', 'whitesmoke', 'black' ]}
                     verticalCentered={ false }
-                    loopBottom
 
                     anchors={[ 'main', 'help', 'statistics', 'about', 'contacts' ]}
                     lockAnchors

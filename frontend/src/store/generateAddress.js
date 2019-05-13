@@ -2,28 +2,24 @@ const generateAddress = (addressDetails) => {
     if (!addressDetails) {
         return ''
     }
+    const keys = [
+        'region',
+        'subregion',
+        'locality',
+        'sublocality',
+        'district',
+        'street',
+        'building'
+    ];
 
-    let address = '';
-    if (addressDetails.region) {
-        address = `${ addressDetails.region }`
-    }
-    if (addressDetails.locality && addressDetails.region !== addressDetails.locality) {
-        address = `${ address }, ${ addressDetails.locality }`
-    }
-    if (addressDetails.district) {
-        address = `${ address }, ${ addressDetails.district }`
-    }
-    if (addressDetails.street && addressDetails.street !== 'Unnamed Road') {
-        address = `${ address }, ${ addressDetails.street }`
-    }
-    if (addressDetails.building) {
-        address = `${ address }, ${ addressDetails.building }`
-    }
+    let address = [];
+    keys.forEach((value) => {
+        if (addressDetails[value] && address.indexOf(addressDetails[value]) === -1 && addressDetails[value] !== 'Unnamed Road') {
+            address.push(addressDetails[value])
+        }
+    });
 
-    if(!addressDetails.region) {
-        return address.substring(2)
-    }
-    return address
+    return address.join(', ')
 };
 
 export default generateAddress;

@@ -36,6 +36,16 @@ class SideMap extends Component {
                 disabled: 'grey',
                 enabled: null
             },
+            popupOffset: {
+                'left': [10, 0],
+                'right': [-10, 0],
+                'top': [0, 10],
+                'top-left': [0, 10],
+                'top-right': [0, 10],
+                'bottom': [0, -10],
+                'bottom-left': [0, -10],
+                'bottom-right': [0, -10]
+            },
             intervals: []
         };
 
@@ -91,16 +101,11 @@ class SideMap extends Component {
         this.setState({
             markerControl
         });
-        if (this.state.markerPutEnable) {
-            markerControl.marker.style.background = this.state.markerColors.enabled;
-        } else {
-            markerControl.marker.style.background = this.state.markerColors.disabled;
-        }
 
         //adding 3d buildings
 
         let isShow = false;
-        let currentMode = this.props.mode;
+        let currentMode = null;
 
         if (this.props.mode === modeTypes.fias) {
             if (this.props.allowMarkerPut) {
@@ -154,10 +159,17 @@ class SideMap extends Component {
             }
 
             if (currentMode !== this.props.mode) {
-                this.setState({
-                    markerPutEnable: false
-                });
-                markerControl.marker.style.background = this.state.markerColors.disabled;
+                if (this.props.mode === modeTypes.fias) {
+                    this.setState({
+                        markerPutEnable: false
+                    });
+                    markerControl.marker.style.background = this.state.markerColors.disabled;
+                } else {
+                    this.setState({
+                        markerPutEnable: true
+                    });
+                    markerControl.marker.style.background = this.state.markerColors.enabled;
+                }
                 currentMode = this.props.mode
             }
         }, 200);
@@ -231,18 +243,8 @@ class SideMap extends Component {
             popup =
                 <Popup
                     coordinates={ this.props.markerCoords }
-                    offset={{
-                        'left': [10, 0],
-                        'right': [-10, 0],
-                        'top': [0, 10],
-                        'top-left': [0, 10],
-                        'top-right': [0, 10],
-                        'bottom': [0, -10],
-                        'bottom-left': [0, -10],
-                        'bottom-right': [0, -10]
-                    }}
+                    offset={ this.state.popupOffset }
                     { ...click }
-                    className={ classes.Popup }
                 >
                     { address || warning }
                 </Popup>;

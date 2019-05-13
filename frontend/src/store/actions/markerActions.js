@@ -33,6 +33,14 @@ function setAllowAddressInput(allowAddressInput) {
     }
 }
 
+function merging(fiasAddress, osmAddress) {
+    return {
+        type: actionTypes.MERGING,
+        fiasAddress,
+        osmAddress
+    }
+}
+
 export const getAddress = (coords) => {
     if (!coords || !coords.lat || !coords.lng ) {
         return {
@@ -64,6 +72,10 @@ export const getAddress = (coords) => {
                 coords.lat = coordinates[0];
                 coords.lng = coordinates[1];
                 allowAddressInput = false
+            }
+
+            if (resp.data.status.osm === 'nfull') {
+                dispatch(merging(resp.data.sug_address, resp.data.geo_address))
             }
 
             dispatch(getAddressSuccess(coords.lat, coords.lng, generateAddress(resp.data.results[0].address_details)));

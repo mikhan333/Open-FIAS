@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 
 class MainPageUpdated extends Component {
+    componentDidMount() {
+        // eslint-disable-next-line
+        $.ToldApp.init()
+    }
+
     render() {
         return (
             <>

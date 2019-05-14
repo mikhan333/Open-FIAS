@@ -6,7 +6,8 @@ import Statistics from "../Statistics";
 
 class MainPageUpdated extends Component {
     componentDidMount() {
-        this.props.getStats();
+        // eslint-disable-next-line
+        $.ToldApp.init();
     }
 
     render() {

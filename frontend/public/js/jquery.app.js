@@ -59,7 +59,7 @@
         $('#status').fadeOut();
         $('#preloader').delay(350).fadeOut('slow');
         $('body').delay(350).css({
-            'overflow': 'visible'
+        'overflow': 'visible'
         });
     },
 
@@ -164,5 +164,5 @@
 //initializing
 function($) {
     "use strict";
-    $(document).ready(() => $.ToldApp.init());
+    $.ToldApp.init();
 }(window.jQuery);

@@ -13,6 +13,8 @@ from django.db import models
 from cent import Client, CentException
 from django.conf import settings
 from django.views.decorators.cache import cache_page
+from django.contrib.auth.models import AnonymousUser
+import datetime
 import json
 import math
 
@@ -129,50 +131,66 @@ def add_points_from_cookie(request):
 
 @csrf_exempt
 def get_list_points(request):
+    try:
+        data = json.loads(request.body)
+        start = int(data['start'])
+    except (json.decoder.JSONDecodeError, KeyError, ValueError):
+        start = 0
     data = {'points': []}
-    points = Object.objects.all().filt_del(request.user)[:100]
+    points = Object.objects.filt_del(request.user).order_by('-created')[start:start+100]
     data['points'] = points_serializer(points)
     return JsonResponse(data)
 
 
 @csrf_exempt
-@cache_page(60 * 10, key_prefix='statistic')
-def get_statistic(request):
+def get_last_points(request):
     objects_point = Object.objects.select_related('author')
-    data = {'points_count': objects_point.count()}
-    points = objects_point.filt_del(request.user).order_by('-created')[:20]
-    data['latest_points'] = points_serializer(points)
+    points = objects_point.filt_statistic().order_by('-created')[:20]
+    data = {'latest_points': points_serializer(points)}
+    return JsonResponse(data)
+
+
+@csrf_exempt
+@cache_page(1, key_prefix='statistic')
+def get_statistic(request):
+    objects_point = Object.objects.filt_statistic()
+    data = {'points_count': objects_point.count(), 'latest_points': []}
 
     objects_user = User.objects
     data['users_count'] = objects_user.count()
     users = objects_user.annotate(count_points=models.Count('maps'))
     data['users_top'] = list(users.order_by('-count_points')[:20].values('username', 'count_points'))
 
-    points_count_days = []
+    points_for_days = []
+    length_points = 100
+    prev_days = 0
     time_now = timezone.now()
     objects_dates = objects_point\
         .annotate(date=TruncDay('created'))\
         .values('date')\
         .annotate(created_count=models.Count('id'))\
-        .order_by('-date')[:100]
+        .order_by('-date')[:length_points]
     for elem in objects_dates:
         days = (time_now - elem['date']).days
         count = elem['created_count']
-        points_count_days.append({'count': count, 'days': days})
-
-    # Fix massive of points_count_days
-    data['points_count_days'] = []
-    prev_days = 0
-    for elem in points_count_days:
-        days = elem['days']
-        if days >= 100:
+        if days >= length_points:
+            for i in range(prev_days, 100):
+                points_for_days.append({'count': 0, 'days': i})
             break
         for i in range(prev_days, days):
-            data['points_count_days'].append({'count': elem['count'], 'days': i})
-        data['points_count_days'].append(elem)
+            points_for_days.append({'count': 0, 'days': i})
+        points_for_days.append({'count': count, 'days': days})
         prev_days = days + 1
-    for i in range(len(data['points_count_days']), 100):
-        data['points_count_days'].append({'count': 0, 'days': i})
+
+    # Fix massive of points_count_days
+    prev_count_points = objects_point.filter(created__lte=time_now - datetime.timedelta(days=length_points)).count()
+    data['prev_count_points'] = prev_count_points
+    data['points_count_days'] = []
+    for elem in reversed(points_for_days):
+        prev_count_points += elem['count']
+        new_elem = {'count': prev_count_points, 'days': elem['days']}
+        data['points_count_days'].append(new_elem)
+    data['points_count_days'] = data['points_count_days'][::-1]
 
     return JsonResponse(data)
 
@@ -188,6 +206,7 @@ def get_suggest(request):
 @require_http_methods("GET")
 def get_geocoder(request):
     geo_data = geocoder(request.GET)
+    # return JsonResponse(geo_data)
     return JsonResponse(get_mode(geo_data, request.user, True))
 
 
@@ -234,6 +253,9 @@ def get_mode(geo_data, user, mode_geocoder):
 
     sug_result = suggester({'address': address})['results'][0]
     sug_address = sug_result['address_details']
+    if geo_address['building'] != sug_address.get('building'):
+        geo_data['status']['done'] = 'nothing#bad_suggest'
+        return geo_data
 
     # Define state of DB
     fias_id = sug_result['id']
@@ -250,6 +272,10 @@ def get_mode(geo_data, user, mode_geocoder):
             geo_data['status']['osm'] = 'nfull'
             break
 
+    # TODO delete, need For DEBUG
+    geo_data['sug_address'] = sug_address
+    geo_data['geo_address'] = geo_address
+
     # Return answer
     # If information in OSM NOT full
     if geo_data['status']['osm'] == 'nfull':
@@ -259,7 +285,7 @@ def get_mode(geo_data, user, mode_geocoder):
     else:
         # If there isn't in DB
         if not geo_data['status']['db']:
-            Object.objects.create_object(coordinates[0], coordinates[1], sug_result, user)
+            Object.objects.create_object(coordinates[0], coordinates[1], sug_result, AnonymousUser())
             geo_data['status']['done'] = 'add_db'
         # If there is in DВ
         else:

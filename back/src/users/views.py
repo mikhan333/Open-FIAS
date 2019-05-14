@@ -24,7 +24,6 @@ def logout(request):
 
 @csrf_exempt
 @login_required
-@cache_page(60, key_prefix='user_detail')
 def get_user_detail(request):
     user = request.user
     data = {'username': user.username}
@@ -33,13 +32,12 @@ def get_user_detail(request):
     data['avatar'] = extra_data['avatar']
     if 'email' in extra_data:
         data['email'] = extra_data['email']
-    user_obj = Object.objects.all().filter(author=user).order_by("-created")
+    user_obj = Object.objects.filter(author=user).order_by("-created")
     data['points'] = points_serializer(user_obj, user=user.username)
     return JsonResponse(data)
 
 
 @csrf_exempt
-@cache_page(30, key_prefix='check_auth')
 def check_auth(request):
     response = JsonResponse({'authorization': False})
     if request.user.is_authenticated:

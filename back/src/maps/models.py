@@ -6,6 +6,9 @@ from rest_framework import serializers
 
 class ObjectQuerySet(models.QuerySet):
     """Model for sorting objects of Map"""
+    def filt_statistic(self):
+        return self.exclude(author=None)
+
     def filt_del(self, user):
         if user.is_authenticated:
             return self.filter(
@@ -117,6 +120,8 @@ def points_serializer(points, have_id=False, user=None):
         dict_point = ObjectSerializer(point).data
         if user is not None:
             dict_point['author'] = user
+        elif point.author is not None:
+            dict_point['author'] = point.author.username
         if have_id:
             dict_point['id'] = point.id
         mas_points.append(dict_point)

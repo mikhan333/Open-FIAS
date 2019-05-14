@@ -174,7 +174,7 @@ class SuggestBar extends Component {
 
         return (
             <div className={ classes.SuggestBar }>
-                <Button variant="outline-success" className={ classes.toMain } onClick={ () => this.props.history.push('/') }>
+                <Button variant="outline-success" className={ classes.toMain } href="/">
                     <TranslatableText
                         dictionary={{
                             russian: "На главную",

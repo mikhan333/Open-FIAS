@@ -7,6 +7,7 @@ import LanguageHeader from "../LanguageProvider/LanguageHeader";
 import TranslatableText from '../LanguageProvider/LanguageTranslater';
 import { authServer } from "../../store/serverURLs";
 
+import './index.css';
 import classes from './index.module.css'
 
 class UserInfo extends Component {

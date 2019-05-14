@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
+import UserInfo from '../../components/Header/UserInfo';
+import * as actionCreators from "../../store/actions/statsActions";
+import { connect } from "react-redux";
+import Statistics from "../Statistics";
 
 class MainPageUpdated extends Component {
+    componentDidMount() {
+        this.props.getStats();
+    }
+
     render() {
         return (
             <>
@@ -16,8 +24,9 @@ class MainPageUpdated extends Component {
                     <div className="container">
                         {/* Logo container*/}
                         <div>
-                            <a href="index.html" className="logo text-uppercase">
-                                Told
+                            {/* <a href="index.html" className="logo text-uppercase"> */}
+                            <a href="/" className="logo text-uppercase">
+                                Open-FIAS
                             </a>
                         </div>
                         {/* End Logo container*/}
@@ -38,29 +47,24 @@ class MainPageUpdated extends Component {
                             {/* Navigation Menu*/}
                             <ul className="navigation-menu">
                                 <li className="active">
-                                    <a href="#home">Home</a>
+                                    <a href="#home">Домой</a>
+                                </li>
+                                
+                                <li className="">
+                                    <a href="#about">О проекте</a>
                                 </li>
                                 <li className="">
-                                    <a href="#about">About</a>
+                                    <a href="#help">Помощь</a>
                                 </li>
                                 <li className="">
-                                    <a href="#service">Services</a>
+                                    <a href="#statistic">Статистика</a>
                                 </li>
                                 <li className="">
-                                    <a href="#work">Work</a>
+                                    <a href="#contact">Контакты</a>
                                 </li>
-                                <li className="">
-                                    <a href="#client">Client</a>
-                                </li>
-                                <li className="">
-                                    <a href="#team">Team</a>
-                                </li>
-                                <li className="">
-                                    <a href="#blog">Blog</a>
-                                </li>
-                                <li className="">
-                                    <a href="#contact">Contact</a>
-                                </li>
+                                {/* <li className=""> */}
+                                    {/* <a href="#profile"><UserInfo withoutUsername={ true }/></a> */}
+                                {/* </li> */}
                             </ul>
                             {/* End navigation menu*/}
                         </div>
@@ -70,56 +74,18 @@ class MainPageUpdated extends Component {
                 <section className="home-section" id="home">
                     <div id="carouselExampleControls" className="carousel slide" data-ride="carousel">
                         <div className="carousel-inner">
-                            <div className="carousel-item active" style={{backgroundImage: 'url(\'images/img-1.jpg\')'}}>
+                            <div className="carousel-item active" style={{backgroundImage: 'url(\'images/Img-1_Main.jpg\')'}}>
                                 <div className="bg-overlay"></div>
                                 <div className="home-center">
                                     <div className="home-desc-center">
                                         <div className="container">
                                             <div className="row justify-content-center">
                                                 <div className="col-md-12 text-center">
-                                                    <p className="text-center home-title">We Are Digital Agency</p>
-                                                    <p className="text-center pt-3 home-sub-title mx-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                                    <div className="watch-video pt-4 mt-1">
-                                                        <a href="#" className="btn btn-outline-custom btn-rounded mt-2">Get Started</a>
-                                                        <a href="#" className="btn btn-custom btn-rounded mt-2">Learn More</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="carousel-item" style={{ backgroundImage: 'url(\'images/img-2.jpg\')'}}>
-                                <div className="bg-overlay"></div>
-                                <div className="home-center">
-                                    <div className="home-desc-center">
-                                        <div className="container">
-                                            <div className="row justify-content-center">
-                                                <div className="col-md-12 text-center">
-                                                    <p className="home-title">We Create Awesome Theme</p>
-                                                    <p className="pt-3 home-sub-title mx-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                                    <div className="watch-video pt-4 mt-1">
-                                                        <a href="#" className="btn btn-outline-custom btn-rounded mt-2">Get Started</a>
-                                                        <a href="#" className="btn btn-custom btn-rounded mt-2">Learn More</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="carousel-item" style={{ backgroundImage: 'url(\'images/img-3.jpg\')'}}>
-                                <div className="bg-overlay"></div>
-                                <div className="home-center">
-                                    <div className="home-desc-center">
-                                        <div className="container">
-                                            <div className="row justify-content-center">
-                                                <div className="col-md-12 text-center">
-                                                    <p className="home-title">Told Smart Design</p>
-                                                    <p className="pt-3 home-sub-title mx-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                                    <div className="watch-video pt-4 mt-1">
-                                                        <a href="#" className="btn btn-outline-custom btn-rounded mt-2">Get Started</a>
-                                                        <a href="#" className="btn btn-custom btn-rounded mt-2">Learn More</a>
+                                                    <p className="text-center home-title">Open-FIAS</p>
+                                                    <p className="text-center pt-3 home-sub-title mx-auto">Геокодирование это просто и легко</p>
+                                                    <div className="watch-video pt-4 mt-1 navigation-menu">
+                                                        <a href="add_point" className="btn btn-outline-custom btn-rounded mt-2">Начать</a>
+                                                        <a href="#about" className="btn btn-custom btn-rounded mt-2">Что делать?</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -128,57 +94,37 @@ class MainPageUpdated extends Component {
                                 </div>
                             </div>
                         </div>
-                        <a className="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                            <span className="mbri-arrow-prev" aria-hidden="true"></span>
-                            <span className="sr-only">Previous</span>
-                        </a>
-                        <a className="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                            <span className="mbri-arrow-next" aria-hidden="true"></span>
-                            <span className="sr-only">Next</span>
-                        </a>
                     </div>
                 </section>
-
 
                 <section className="section" id="about">
                     <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-md-8 text-center">
-                                <h3><b>About</b> Us</h3>
-                                <p className="text-muted pt-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+                                <h3><b>О нашем сайте</b></h3>
+                                <p className="text-muted pt-4">Этот сервис создан чтобы каждый мог внести свой вклад в развитие мировых карт.</p>
                             </div>
                         </div>
                         <div className="row pt-4 mt-4">
-                            <div className="col-lg-4 pt-2">
-                                <div className="about-boxed text-center p-2">
-                                    <div className="about-icons">
-                                        <i className="mdi mdi-database"></i>
-                                    </div>
-                                    <div className="about-content pt-4">
-                                        <h5 className="">Digital Design</h5>
-                                        <p className="pt-3 text-muted">Lorem dolor sit amet,tempor sed do eiusmod ut labore et dolore magna aliqua.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-4 pt-2">
+                            <div className="col-lg-6 pt-2">
                                 <div className="about-boxed text-center p-2">
                                     <div className="about-icons">
                                         <i className="mdi mdi-radio-tower"></i>
                                     </div>
                                     <div className="about-content pt-4">
-                                        <h5 className="">Unlimited Colors</h5>
-                                        <p className="pt-3 text-muted text-muted">Lorem dolor sit amet,tempor sed do eiusmod ut labore et dolore magna aliqua.</p>
+                                        <h5 className="">Геокодирование - просто!</h5>
+                                        <p className="pt-3 text-muted text-muted">Геокодирование ещё никогда не было таким простым!</p>
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-lg-4 pt-2">
+                            <div className="col-lg-6 pt-2">
                                 <div className="about-boxed text-center p-2">
                                     <div className="about-icons">
                                         <i className="mdi mdi-tune-vertical"></i>
                                     </div>
                                     <div className="about-content pt-4">
-                                        <h5 className="">Strategy Solutions</h5>
-                                        <p className="pt-3 text-muted">Lorem dolor sit amet,tempor sed do eiusmod ut labore et dolore magna aliqua.</p>
+                                        <h5 className="">Улучшайте карты.</h5>
+                                        <p className="pt-3 text-muted">Улучшайте картыми с миллионами других людей.</p>
                                     </div>
                                 </div>
                             </div>
@@ -186,145 +132,38 @@ class MainPageUpdated extends Component {
                         <div className="row mt-4 pt-4">
                             <div className="col-md-6">
                                 <div className="about-text">
-                                    <h3>We are a creative agency</h3>
+                                    <h3>Попытайтесь с нами!</h3>
                                     <div className="about-title-border mt-3"></div>
-                                    <p className="text-muted pt-3">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto laborum maiores nulla natus a. Aliquid enim dicta veniam eum harum repudiandae doloremque quaerat nobis necessitatibus similique, aut error blanditiis adipisci ab consequatur dolorem ducimus molestiae.</p>
-                                    <p className="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quis possimus accusantium dignissimos, sit reiciendis recusandae eaque et dolores vero minus, enim a dicta, fugiat cupiditate quasi corporis maiores omnis. Consectetur.</p>
-                                    <a href="#" className="btn btn-custom">Read More</a>
+                                    <p className="text-muted pt-3">Геокодирование это процесс назначения географических координат объектам карты и записям данных. Сегодня как никогда мы нуждаемся в улучшение мировых карт.</p>
+                                    <p className="text-muted">Вместе мы можем преодолеть все трудности и загеокодировать все известные места! Присоединяйся к огромному комьюнити волонтеров и давай улучшать карты вместе.</p>
+                                    <a href="add_point" className="btn btn-custom">Начать!</a>
                                 </div>
                             </div>
                             <div className="col-md-6">
                                 <div className="about-border">
-                                    <img src="images/about.jpg" alt="" className="img-fluid"/>
+                                    <img src="images/Img_About.jpg"  alt="" className="img-fluid"/>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
-
-
-                {/* FUN-FACTS */}
-                <section className="bg-custom pt-5 pb-5">
-                    <div className="container">
-                        <div className="row justify-content-center" id="counter">
-                            <div className="col-md-3 text-white text-center pt-3 pb-3">
-                                <h1><span className="counter-value" data-count="1200">10</span> k+</h1>
-                                <div className="funfact-border mx-auto mt-3 mb-3"></div>
-                                <h5 className="counter-name">Lines Coded</h5>
-                            </div>
-
-                            <div className="col-md-3 text-white text-center pt-3 pb-3">
-                                <h1><span className="counter-value" data-count="10">1</span> k+</h1>
-                                <div className="funfact-border mx-auto mt-3 mb-3"></div>
-                                <h5 className="counter-name">Working Hours</h5>
-                            </div>
-
-                            <div className="col-md-3 text-white text-center pt-3 pb-3">
-                                <h1 className="counter-value" data-count="608">1</h1>
-                                <div className="funfact-border mx-auto mt-3 mb-3"></div>
-                                <h5 className="counter-name">Completed Projects</h5>
-                            </div>
-
-                            <div className="col-md-3 text-white text-center pt-3 pb-3">
-                                <h1 className="counter-value" data-count="132">1</h1>
-                                <div className="funfact-border mx-auto mt-3 mb-3"></div>
-                                <h5 className="counter-name">No. of Clients</h5>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                {/* end FUN-FACTS */}
-
-
-
-                <section className="section bg-light" id="service">
-                    <div className="container">
-                        <div className="row justify-content-center">
-                            <div className="col-md-8 text-center">
-                                <h3>Our <b>Services</b></h3>
-                                <p className="text-muted pt-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-                            </div>
-                        </div>
-                        <div className="row pt-5">
-                            <div className="col-lg-4 mt-3">
-                                <div className="service-box clearfix p-4">
-                                    <div className="service-icon service-left text-custom"><i className="mbri-code"></i></div>
-                                    <div className="service-desc service-left">
-                                        <h4>Digital Design</h4>
-                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-4 mt-3">
-                                <div className="service-box clearfix p-4">
-                                    <div className="service-icon service-left text-custom"><i className="mbri-features"></i></div>
-                                    <div className="service-desc service-left">
-                                        <h4>Unlimited Colors</h4>
-                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-4 mt-3">
-                                <div className="service-box clearfix p-4">
-                                    <div className="service-icon service-left text-custom"><i className="mbri-growing-chart"></i></div>
-                                    <div className="service-desc service-left">
-                                        <h4>Strategy Solutions</h4>
-                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-lg-4 mt-3">
-                                <div className="service-box clearfix p-4">
-                                    <div className="service-icon service-left text-custom"><i className="mbri-photos"></i></div>
-                                    <div className="service-desc service-left">
-                                        <h4>Awesome Support</h4>
-                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-4 mt-3">
-                                <div className="service-box clearfix p-4">
-                                    <div className="service-icon service-left text-custom"><i className="mbri-responsive"></i></div>
-                                    <div className="service-desc service-left">
-                                        <h4>Truly Multipurpose</h4>
-                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-4 mt-3">
-                                <div className="service-box clearfix p-4">
-                                    <div className="service-icon service-left text-custom"><i className="mbri-download"></i></div>
-                                    <div className="service-desc service-left">
-                                        <h4>Easy to customize</h4>
-                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
 
 
                 {/*Start Work */}
-                <section className="section text-center" id="work">
+                <section className="section text-center" id="help">
                     <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-md-8 text-center">
-                                <h3>Our <b>Work</b></h3>
-                                <p className="text-muted pt-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+                                <h3>Помощь c управлением</h3>
+                                <p className="text-muted pt-4">Наш сервис предоставляет два варианта работы, которые очень похожи: <br/> 1) Сначало указываете точку на карте и затем вводите адрес; <br/> 2) Сначало вводите адрес и затем указываете точку на карте. </p>
                             </div>
                         </div>
                         {/* portfolio menu */}
                         <div className="row mt-1 pt-4">
                             <ul className="col list-unstyled list-inline filter-list mb-0 text-uppercase" id="filter">
-                                <li className="list-inline-item"><a className="active" data-filter="*">All</a></li>
-                                <li className="list-inline-item"><a className="" data-filter=".seo">Seo</a></li>
-                                <li className="list-inline-item"><a className="" data-filter=".webdesign">Webdesign</a></li>
-                                <li className="list-inline-item"><a className="" data-filter=".php">Php</a></li>
-                                <li className="list-inline-item"><a className="" data-filter=".wordpress">Wordpress</a></li>
+                                {/* <li className="list-inline-item"><a className="active" data-filter="*">All</a></li> */}
+                                <li className="list-inline-item"><a className="active" data-filter=".seo">Точка</a></li>
+                                <li className="list-inline-item"><a className="" data-filter=".webdesign">Адрес</a></li>
                             </ul>
                         </div>
                         {/* End portfolio  */}
@@ -400,9 +239,97 @@ class MainPageUpdated extends Component {
                 </section>
                 {/*End Work */}
 
+                <section className="section bg-light" id="statistic">
+                    <div className="container">
+                        <div className="row justify-content-center">
+                            <div className="col-md-8 text-center">
+                                <h3>Статистика</h3>
+                                <p className="text-muted pt-4">График загеокодированных точек.</p>
+                            </div>
+                        </div>
+                        <div className="row pt-5">
+                            <Statistics />
+                            {/* <div className="col-lg-4 mt-3">
+                                <div className="service-box clearfix p-4">
+                                    <div className="service-icon service-left text-custom"><i className="mbri-code"></i></div>
+                                    <div className="service-desc service-left">
+                                        <h4>Digital Design</h4>
+                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-lg-4 mt-3">
+                                <div className="service-box clearfix p-4">
+                                    <div className="service-icon service-left text-custom"><i className="mbri-features"></i></div>
+                                    <div className="service-desc service-left">
+                                        <h4>Unlimited Colors</h4>
+                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-lg-4 mt-3">
+                                <div className="service-box clearfix p-4">
+                                    <div className="service-icon service-left text-custom"><i className="mbri-growing-chart"></i></div>
+                                    <div className="service-desc service-left">
+                                        <h4>Strategy Solutions</h4>
+                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
+                                    </div>
+                                </div>
+                            </div> */}
+                        </div>
+                        {/* <div className="row">
+                            <div className="col-lg-4 mt-3">
+                                <div className="service-box clearfix p-4">
+                                    <div className="service-icon service-left text-custom"><i className="mbri-photos"></i></div>
+                                    <div className="service-desc service-left">
+                                        <h4>Awesome Support</h4>
+                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-lg-4 mt-3">
+                                <div className="service-box clearfix p-4">
+                                    <div className="service-icon service-left text-custom"><i className="mbri-responsive"></i></div>
+                                    <div className="service-desc service-left">
+                                        <h4>Truly Multipurpose</h4>
+                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-lg-4 mt-3">
+                                <div className="service-box clearfix p-4">
+                                    <div className="service-icon service-left text-custom"><i className="mbri-download"></i></div>
+                                    <div className="service-desc service-left">
+                                        <h4>Easy to customize</h4>
+                                        <p className="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor dolore mag na aliqua.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> */}
+                    </div>
+                </section>
+                {/* FUN-FACTS */}
+                <section className="bg-custom pt-5 pb-5">
+                    <div className="container">
+                        <div className="row justify-content-center" id="counter">
+                            <div className="col-md-6 text-white text-center pt-3 pb-3">
+                                <h1><span className="counter-value" data-count={ this.props.usersCount }>1</span></h1>
+                                <div className="funfact-border mx-auto mt-3 mb-3"></div>
+                                <h5 className="counter-name">Число Пользователей</h5>
+                            </div>
+
+                            <div className="col-md-6 text-white text-center pt-3 pb-3">
+                                <h1><span className="counter-value" data-count={ this.props.pointsCount }>1</span></h1>
+                                <div className="funfact-border mx-auto mt-3 mb-3"></div>
+                                <h5 className="counter-name">Число Точек</h5>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                {/* end FUN-FACTS */}
 
 
-                <section className="section testimonial bg-light" id="client">
+                {/* <section className="section testimonial bg-light" id="client">
                     <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-lg-8">
@@ -422,9 +349,9 @@ class MainPageUpdated extends Component {
                             </div>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
-                <section className="section" id="team">
+                {/* <section className="section" id="team">
                     <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-md-8 text-center">
@@ -489,11 +416,11 @@ class MainPageUpdated extends Component {
                             </div>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
 
 
-                <section className="section bg-light" id="blog">
+                {/* <section className="section bg-light" id="blog">
                     <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-md-8 text-center">
@@ -586,9 +513,9 @@ class MainPageUpdated extends Component {
                             </div>
                         </div>
                     </div>
-                </section>
-
-                <footer className="section footer bg-light">
+                </section> */}
+                
+                <footer className="section footer bg-light" id="contact">
                     <div className="container">
                         <div className="row">
                             <div className="col-md-3">
@@ -669,30 +596,6 @@ class MainPageUpdated extends Component {
                                 </ul>
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col-sm-6 pt-4">
-                        <span className="copyright-alt">&copy;
-                            2017 - 2018 Zoyothemes.</span>&nbsp;&nbsp;
-                                <a className="copyright-alt" href="#">Privacy Policy</a>&nbsp;&nbsp;
-                                <a className="copyright-alt" href="#">Legal</a>
-                            </div>
-                            <div className="col-sm-6 text-right text-left-sm pt-4">
-                                <ul className="social-icon list-unstyled list-inline mb-0">
-                                    <li className="list-inline-item">
-                                        <a href="#"><i className="mdi mdi-google icon icon--xs"></i></a>
-                                    </li>
-                                    <li className="list-inline-item">
-                                        <a href="#"><i className="mdi mdi-twitter icon icon--xs"></i></a>
-                                    </li>
-                                    <li className="list-inline-item">
-                                        <a href="#"><i className="mdi mdi-facebook icon icon--xs"></i></a>
-                                    </li>
-                                    <li className="list-inline-item">
-                                        <a href="#"><i className="mdi mdi-instagram icon icon--xs"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
                 </footer>
             </>
@@ -700,4 +603,21 @@ class MainPageUpdated extends Component {
     }
 }
 
-export default MainPageUpdated;
+const mapStateToProps = state => {
+    return {
+        latestPoints: state.stats.latestPoints,
+        usersTop: state.stats.usersTop,
+        pointsPerDay: state.stats.pointsPerDay,
+        usersCount: state.stats.usersCount,
+        pointsCount: state.stats.pointsCount,
+        language: state.auth.language
+    }
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        getStats: () => dispatch(actionCreators.getStatistics()),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainPageUpdated);

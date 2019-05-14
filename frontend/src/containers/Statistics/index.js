@@ -208,14 +208,14 @@ class Statistics extends Component {
         return (
             <>
                 <Container className={ classes.Container }>
-                    <Row className={ classes.ListsRow }>
+                    {/* <Row className={ classes.ListsRow }>
                         <Col className={ classes.ListCol }>
                             { pointsListCard }
                         </Col>
                         <Col className={ classes.ListCol }>
                             { usersTopCard }
                         </Col>
-                    </Row>
+                    </Row> */}
                     <Row className={ classes.GraphRow }>
                         { graphCard }
                     </Row>

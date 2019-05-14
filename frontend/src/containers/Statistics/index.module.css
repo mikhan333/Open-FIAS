@@ -1,5 +1,5 @@
 .Container {
-    height: calc(100vh - 56px);
+    /* height: calc(100vh - 56px); */
     overflow: hidden;
 }
 
@@ -14,7 +14,7 @@
 }
 
 .GraphRow {
-    height: 50%;
+    /* height: 50%; */
     text-align: center;
     padding-left: 15px;
     padding-right: 15px;

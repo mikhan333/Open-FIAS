@@ -54,7 +54,7 @@ class MergingModal extends Component {
                 subregion: (
                     <TranslatableText
                         dictionary={{
-                            russian: "Район",
+                            russian: "Округ",
                             english: "Subregion"
                         }}
                     />
@@ -64,6 +64,14 @@ class MergingModal extends Component {
                         dictionary={{
                             russian: "Местность",
                             english: "Sublocality"
+                        }}
+                    />
+                ),
+                district: (
+                    <TranslatableText
+                        dictionary={{
+                            russian: "Район",
+                            english: "District"
                         }}
                     />
                 )
@@ -86,7 +94,7 @@ class MergingModal extends Component {
 
             const rows = keys.map((value, index) => (
                 <tr key={ index }>
-                    <td>{ this.state.keys[value] || value }</td>
+                    <td>{ this.state.keys[value] || value.charAt(0).toUpperCase() + value.slice(1) }</td>
                     <td>{ this.props.fiasAddress[value] || '-'}</td>
                     <td>{ this.props.osmAddress[value] || '-'}</td>
                 </tr>

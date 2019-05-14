@@ -11,6 +11,7 @@ import LanguageProvider from './components/LanguageProvider'
 import * as actionCreators from "./store/actions/auth";
 import './App.css';
 import MainPage from "./containers/MainPage";
+import MainPageUpdated from "./containers/MainPageUpdated";
 
 class App extends Component {
     componentDidMount() {
@@ -23,9 +24,9 @@ class App extends Component {
                 <div className="App">
                     <Router>
                         <Switch>
+                            <Route exact path='/' component={MainPageUpdated} />
                             <Route exact path='/add_point' component={CreateLink} />
                             <Layout>
-                                <Route exact path='/' component={MainPage} />
                                 <Route exact path='/profile' component={Profile} />
                                 <Route exact path='/about' component={InfoProject} />
                                 <Route exact path='/statistics' component={Statistics} />

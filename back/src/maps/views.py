@@ -151,10 +151,18 @@ def get_last_points(request):
 
 
 @csrf_exempt
-@cache_page(1, key_prefix='statistic')
+@cache_page(60 * 60, key_prefix='statistic')
 def get_statistic(request):
+    time_now = timezone.now()
     objects_point = Object.objects.filt_statistic()
-    data = {'points_count': objects_point.count(), 'latest_points': []}
+    data = {
+        'points_count': objects_point.count(),
+        'points_count_total': Object.objects.count(),
+        'latest_points': [],
+        'points_count_for_year': objects_point.filter(created__gte=time_now - datetime.timedelta(days=365)).count(),
+        'points_count_for_month': objects_point.filter(created__gte=time_now - datetime.timedelta(days=30)).count(),
+        'points_count_for_week': objects_point.filter(created__gte=time_now - datetime.timedelta(days=7)).count(),
+    }
 
     objects_user = User.objects
     data['users_count'] = objects_user.count()
@@ -164,7 +172,6 @@ def get_statistic(request):
     points_for_days = []
     length_points = 100
     prev_days = 0
-    time_now = timezone.now()
     objects_dates = objects_point\
         .annotate(date=TruncDay('created'))\
         .values('date')\
@@ -184,7 +191,6 @@ def get_statistic(request):
 
     # Fix massive of points_count_days
     prev_count_points = objects_point.filter(created__lte=time_now - datetime.timedelta(days=length_points)).count()
-    data['prev_count_points'] = prev_count_points
     data['points_count_days'] = []
     for elem in reversed(points_for_days):
         prev_count_points += elem['count']

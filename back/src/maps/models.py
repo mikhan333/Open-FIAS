@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.postgres.fields import jsonb, JSONField
+from django.contrib.postgres.fields import JSONField
 from rest_framework import serializers
 
 
@@ -74,11 +74,22 @@ class Object(models.Model):
     changeset_id = models.IntegerField(null=True)
 
     """Coordinates"""
-    latitude = models.FloatField(verbose_name=u'широта')
-    longitude = models.FloatField(verbose_name=u'долгота')
+    latitude = models.DecimalField(
+        max_digits=10,
+        decimal_places=8,
+        verbose_name=u'широта',
+    )
+    longitude = models.DecimalField(
+        max_digits=11,
+        decimal_places=8,
+        verbose_name=u'долгота',
+    )
 
     """Information about object"""
-    address = JSONField(verbose_name=u'адрес', null=True)
+    address = JSONField(
+        verbose_name=u'адрес',
+        null=True,
+    )
 
     """Additional information"""
     fias_level = models.CharField(
@@ -86,7 +97,8 @@ class Object(models.Model):
         verbose_name=u'уровень адресного объекта',
         blank=True,
     )
-    postalcode = models.TextField(
+    postalcode = models.CharField(
+        max_length=10,
         verbose_name=u'почтовый индекс',
         blank=True,
     )

@@ -95,9 +95,8 @@ class MainPageUpdated extends Component {
                 
                 <footer className="section footer bg-light" id="contact">
                     <div className="container">
-                        <div className="row">
-                            <div className="col-md-4"></div>
-                            <div className="col-md-3">
+                        <div className="row justify-content-center">
+                            <div className="col-md-4">
                                 <h6 className="text-uppercase footer-title">Контакты</h6>
                                 <ul className="list-unstyled mt-4 footer-list">
                                     <li>
@@ -111,7 +110,7 @@ class MainPageUpdated extends Component {
                                     </li>
                                 </ul>
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <h6 className="text-uppercase footer-title">Информация</h6>
                                 <ul className="list-unstyled mt-4 footer-list">
                                     <li>

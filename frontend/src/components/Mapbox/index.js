@@ -233,27 +233,31 @@ class SideMap extends Component {
                         />
                 }
             }
-            let click = {};
+            let popupProps = {}, markerProps = {}, additionalWarning = '';
             if (address && this.props.mode === modeTypes.map && this.props.allowAddressInput) {
-                click = {
+                popupProps = {
                     onClick: () => this.props.setAddress(address),
                     style: { cursor: 'pointer' }
-                }
+                };
+                markerProps = {
+                    style: { background: 'green' }
+                };
+                additionalWarning = 'Возможный адрес: '
             }
             popup =
                 <Popup
                     coordinates={ this.props.markerCoords }
                     offset={ this.state.popupOffset }
-                    { ...click }
+                    { ...popupProps }
                 >
-                    { address || warning }
+                    { address ? additionalWarning + address : warning }
                 </Popup>;
             marker =
                 <Marker
                     coordinates={ this.props.markerCoords }
                     anchor='bottom'
                 >
-                    <div className={ classes.Marker } />
+                    <div className={ classes.Marker } { ...markerProps }/>
                 </Marker>
         }
 

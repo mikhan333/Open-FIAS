@@ -26,20 +26,20 @@ const getAddressFailed = (error) => {
 };
 
 
-function setAllowAddressInput(allowAddressInput) {
+const setAllowAddressInput = (allowAddressInput) => {
     return {
         type: actionTypes.SET_ALLOW_ADDRESS_INPUT,
         allowAddressInput
     }
-}
+};
 
-function merging(fiasAddress, osmAddress) {
+const merging = (fiasAddress, osmAddress) => {
     return {
         type: actionTypes.MERGING,
         fiasAddress,
         osmAddress
     }
-}
+};
 
 export const getAddress = (coords) => {
     if (!coords || !coords.lat || !coords.lng ) {
@@ -71,7 +71,7 @@ export const getAddress = (coords) => {
                 const coordinates = resp.data.results[0].related[0].coordinates;
                 coords.lat = coordinates[0];
                 coords.lng = coordinates[1];
-                allowAddressInput = false
+                allowAddressInput = false;
             }
 
             if (resp.data.status.osm === 'nfull') {

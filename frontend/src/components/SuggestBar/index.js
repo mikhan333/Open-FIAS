@@ -13,6 +13,7 @@ import { modeTypes } from "../../store/reducers/senderReducer";
 import { withRouter } from "react-router-dom";
 import * as senderActionCreators from "../../store/actions/senderActions";
 import MergingModal from "./MergingModal";
+import './index.css'
 
 class SuggestBar extends Component {
     constructor(props) {
@@ -174,7 +175,7 @@ class SuggestBar extends Component {
 
         return (
             <div className={ classes.SuggestBar }>
-                <Button variant="" className={ [classes.toMain, "btn", "btn-custom"].join(' ') } onClick={ () => this.props.history.push('/') }>
+                <Button variant="" className={ `btn btn-outline-success ${ classes.toMain }` } onClick={ () => this.props.history.push('/') }>
                     <TranslatableText
                         dictionary={{
                             russian: "На главную",
@@ -184,7 +185,8 @@ class SuggestBar extends Component {
                 </Button>
                 <Nav variant="pills" fill activeKey={ this.props.mode } onSelect={ this.handleSelect } className={ classes.ModeSelector }>
                     <Nav.Item>
-                        <Nav.Link eventKey={ modeTypes.fias }>
+                        <Nav.Link eventKey={ modeTypes.fias } className="btn btn-custom">
+                            { this.props.mode === modeTypes.fias ? <>&#10004;</> : ''}
                             <TranslatableText
                                 dictionary={{
                                     russian: "Адрес из ФИАС",
@@ -194,7 +196,8 @@ class SuggestBar extends Component {
                         </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                        <Nav.Link eventKey={ modeTypes.map }>
+                        <Nav.Link eventKey={ modeTypes.map } className="btn btn-custom">
+                            { this.props.mode === modeTypes.map ? <>&#10004;</> : ''}
                             <TranslatableText
                                 dictionary={{
                                     russian: "Точку на карте",

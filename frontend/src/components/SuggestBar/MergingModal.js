@@ -95,8 +95,24 @@ class MergingModal extends Component {
             const rows = keys.map((value, index) => (
                 <tr key={ index }>
                     <td>{ this.state.keys[value] || value.charAt(0).toUpperCase() + value.slice(1) }</td>
-                    <td>{ this.props.fiasAddress[value] || '-'}</td>
-                    <td>{ this.props.osmAddress[value] || '-'}</td>
+                    <td>
+                        { this.props.osmAddress[value] || '-'}
+                        {/*<Form.Check*/}
+                        {/*    type="radio"*/}
+                        {/*    name={ value }*/}
+                        {/*    id={ value }*/}
+                        {/*    inline*/}
+                        {/*/>*/}
+                    </td>
+                    <td>
+                        { this.props.fiasAddress[value] || '-'}
+                        {/*<Form.Check*/}
+                        {/*    type="radio"*/}
+                        {/*    name={ value }*/}
+                        {/*    id={ value }*/}
+                        {/*    inline*/}
+                        {/*/>*/}
+                    </td>
                 </tr>
             ));
 
@@ -115,16 +131,16 @@ class MergingModal extends Component {
                         <th>
                             <TranslatableText
                                 dictionary={{
-                                    russian: "Данные из ФИАС",
-                                    english: "FIAS data"
+                                    russian: "Сейчас в OSM",
+                                    english: "Current OSM data"
                                 }}
                             />
                         </th>
                         <th>
                             <TranslatableText
                                 dictionary={{
-                                    russian: "Данные из OSM",
-                                    english: "OSM data"
+                                    russian: "Изменения из ФИАС",
+                                    english: "FIAS suggestions"
                                 }}
                             />
                         </th>

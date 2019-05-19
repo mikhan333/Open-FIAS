@@ -74,8 +74,7 @@ class UserInfo extends Component {
                 <NavDropdown title={ name } id="basic-nav-dropdown" expanded="true" alignRight>
                     { user_nav }
                     <NavDropdown.Divider/>
-                    {/* <NavDropdown.Item onClick={ () => this.props.history.push('/about') }> */}
-                    <NavDropdown.Item href="/#about">
+                     <NavDropdown.Item onClick={ () => this.props.history.push('/') } href='#about'>
                         <TranslatableText
                             dictionary={{
                                 russian: "О проекте",

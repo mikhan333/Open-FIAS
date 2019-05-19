@@ -21,9 +21,9 @@ const HelpList = (props) => (
         <div className="row mt-4 pt-4 projects-wrapper">
             <div className="col-md-4 point">
                 <div className="item-img">
-                    <img src="images/portfolio/portfolio-1.jpg" alt="image" className="img-fluid" />
+                    <img src="images/portfolio/point1.png" alt="image" className="img-fluid" />
                     <div className="item-img-overlay">
-                        <a href="images/portfolio/portfolio-1.jpg" className="mfp-image">
+                        <a href="images/portfolio/point1.png" className="mfp-image">
                             <span><i className="mdi mdi-magnify"></i></span>
                         </a>
                     </div>
@@ -32,9 +32,9 @@ const HelpList = (props) => (
 
             <div className="col-md-4 point">
                 <div className="item-img">
-                    <img src="images/portfolio/portfolio-2.jpg" alt="image" className="img-fluid" />
+                    <img src="images/portfolio/point2.png" alt="image" className="img-fluid" />
                     <div className="item-img-overlay">
-                        <a href="images/portfolio/portfolio-2.jpg" className="mfp-image">
+                        <a href="images/portfolio/point2.png" className="mfp-image">
                             <span><i className="mdi mdi-magnify"></i></span>
                         </a>
                     </div>
@@ -43,9 +43,9 @@ const HelpList = (props) => (
 
             <div className="col-md-4 point">
                 <div className="item-img">
-                    <img src="images/portfolio/portfolio-3.jpg" alt="image" className="img-fluid" />
+                    <img src="images/portfolio/point3.png" alt="image" className="img-fluid" />
                     <div className="item-img-overlay">
-                        <a href="images/portfolio/portfolio-3.jpg" className="mfp-image">
+                        <a href="images/portfolio/point3.png" className="mfp-image">
                             <span><i className="mdi mdi-magnify"></i></span>
                         </a>
                     </div>
@@ -54,9 +54,9 @@ const HelpList = (props) => (
 
             <div className="col-md-4 address">
                 <div className="item-img">
-                    <img src="images/portfolio/portfolio-4.jpg" alt="image" className="img-fluid" />
+                    <img src="images/portfolio/address1.png" alt="image" className="img-fluid" />
                     <div className="item-img-overlay">
-                        <a href="images/portfolio/portfolio-4.jpg" className="mfp-image">
+                        <a href="images/portfolio/address1.png" className="mfp-image">
                             <span><i className="mdi mdi-magnify"></i></span>
                         </a>
                     </div>
@@ -65,9 +65,9 @@ const HelpList = (props) => (
 
             <div className="col-md-4 address">
                 <div className="item-img">
-                    <img src="images/portfolio/portfolio-5.jpg" alt="image" className="img-fluid" />
+                    <img src="images/portfolio/address2.png" alt="image" className="img-fluid" />
                     <div className="item-img-overlay">
-                        <a href="images/portfolio/portfolio-5.jpg" className="mfp-image">
+                        <a href="images/portfolio/address2.png" className="mfp-image">
                             <span><i className="mdi mdi-magnify"></i></span>
                         </a>
                     </div>
@@ -76,9 +76,9 @@ const HelpList = (props) => (
 
             <div className="col-md-4 address">
                 <div className="item-img">
-                    <img src="images/portfolio/portfolio-6.jpg" alt="image" className="img-fluid" />
+                    <img src="images/portfolio/address3.png" alt="image" className="img-fluid" />
                     <div className="item-img-overlay">
-                        <a href="images/portfolio/portfolio-6.jpg" className="mfp-image">
+                        <a href="images/portfolio/address3.png" className="mfp-image">
                             <span><i className="mdi mdi-magnify"></i></span>
                         </a>
                     </div>

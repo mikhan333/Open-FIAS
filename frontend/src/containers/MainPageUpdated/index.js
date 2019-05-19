@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import UserInfo from '../../components/Header/UserInfo';
 import * as actionCreators from "../../store/actions/statsActions";
 import { connect } from "react-redux";
 import Statistics from "../Statistics";
+import AddAnonimPointsModal from "../MainPage/AddAnonimPointsModal";
 
 class MainPageUpdated extends Component {
     componentDidMount() {
@@ -25,8 +25,7 @@ class MainPageUpdated extends Component {
                     <div className="container">
                         {/* Logo container*/}
                         <div>
-                            {/* <a href="index.html" className="logo text-uppercase"> */}
-                            <a href="/" className="logo text-uppercase">
+                            <a href="#" className="logo text-uppercase">
                                 Open-FIAS
                             </a>
                         </div>
@@ -85,7 +84,7 @@ class MainPageUpdated extends Component {
                                                     <p className="text-center home-title">Open-FIAS</p>
                                                     <p className="text-center pt-3 home-sub-title mx-auto">Геокодирование это просто и легко</p>
                                                     <div className="watch-video pt-4 mt-1 navigation-menu">
-                                                        <a href="add_point" className="btn btn-outline-custom btn-rounded mt-2">Начать</a>
+                                                        <a href="/add_point" className="btn btn-outline-custom btn-rounded mt-2">Начать</a>
                                                         <a href="#about" className="btn btn-custom btn-rounded mt-2">Что делать?</a>
                                                     </div>
                                                 </div>
@@ -156,7 +155,11 @@ class MainPageUpdated extends Component {
                         <div className="row justify-content-center">
                             <div className="col-md-8 text-center">
                                 <h3>Помощь c управлением</h3>
-                                <p className="text-muted pt-4">Наш сервис предоставляет два варианта работы, которые очень похожи: <br/> 1) Сначало указываете точку на карте и затем вводите адрес; <br/> 2) Сначало вводите адрес и затем указываете точку на карте. </p>
+                                <p className="text-muted pt-4">
+                                    Наш сервис предоставляет два варианта работы, которые очень похожи: <br/>
+                                    1) Сначало указываете точку на карте и затем вводите адрес; <br/>
+                                    2) Сначало вводите адрес и затем указываете точку на карте.
+                                </p>
                             </div>
                         </div>
                         {/* portfolio menu */}
@@ -172,7 +175,7 @@ class MainPageUpdated extends Component {
                         <div className="row mt-4 pt-4 projects-wrapper">
                             <div className="col-md-4 webdesign wordpress">
                                 <div className="item-img">
-                                    <img src="images/portfolio/portfolio-1.jpg" alt="image" className="img-fluid"/>
+                                    <img src="images/portfolio/portfolio-1.jpg" alt="" className="img-fluid"/>
                                         <div className="item-img-overlay">
                                             <a href="images/portfolio/portfolio-1.jpg" className="mfp-image">
                                                 <span><i className="mdi mdi-magnify"></i></span>
@@ -240,12 +243,33 @@ class MainPageUpdated extends Component {
                 </section>
                 {/*End Work */}
 
+
+                {/* FUN-FACTS */}
+                <section className="bg-custom pt-5 pb-5">
+                    <div className="container">
+                        <div className="row justify-content-center" id="counter">
+                            <div className="col-md-6 text-white text-center pt-3 pb-3">
+                                <h1><span className="counter-value" data-count={ this.props.usersCount }>0</span></h1>
+                                <div className="funfact-border mx-auto mt-3 mb-3"></div>
+                                <h5 className="counter-name">Число пользователей</h5>
+                            </div>
+
+                            <div className="col-md-6 text-white text-center pt-3 pb-3">
+                                <h1><span className="counter-value" data-count={ this.props.pointsCount }>0</span></h1>
+                                <div className="funfact-border mx-auto mt-3 mb-3"></div>
+                                <h5 className="counter-name">Число точек</h5>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                {/* end FUN-FACTS */}
+
                 <section className="section bg-light" id="statistic">
                     <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-md-8 text-center">
                                 <h3>Статистика</h3>
-                                <p className="text-muted pt-4">График загеокодированных точек.</p>
+                                <p className="text-muted pt-4">Как быстро улучшаются карты</p>
                             </div>
                         </div>
                         <div className="row pt-5">
@@ -309,25 +333,6 @@ class MainPageUpdated extends Component {
                         </div> */}
                     </div>
                 </section>
-                {/* FUN-FACTS */}
-                <section className="bg-custom pt-5 pb-5">
-                    <div className="container">
-                        <div className="row justify-content-center" id="counter">
-                            <div className="col-md-6 text-white text-center pt-3 pb-3">
-                                <h1><span className="counter-value" data-count={ this.props.usersCount }>1</span></h1>
-                                <div className="funfact-border mx-auto mt-3 mb-3"></div>
-                                <h5 className="counter-name">Число Пользователей</h5>
-                            </div>
-
-                            <div className="col-md-6 text-white text-center pt-3 pb-3">
-                                <h1><span className="counter-value" data-count={ this.props.pointsCount }>1</span></h1>
-                                <div className="funfact-border mx-auto mt-3 mb-3"></div>
-                                <h5 className="counter-name">Число Точек</h5>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                {/* end FUN-FACTS */}
 
 
                 {/* <section className="section testimonial bg-light" id="client">
@@ -520,30 +525,30 @@ class MainPageUpdated extends Component {
                     <div className="container">
                         <div className="row">
                             <div className="col-md-3">
-                                <h6 className="text-uppercase footer-title">Told</h6>
+                                <h6 className="text-uppercase footer-title">MAPS.ME</h6>
                                 <ul className="list-unstyled mt-4 footer-list">
                                     <li>
-                                        <a href="#">About Company</a>
+                                        <a href="https://ru.maps.me/">Сайт</a>
                                     </li>
                                     <li>
-                                        <a href="#">Our Team</a>
+                                        <a href="https://ru.maps.me/download/">Мобильное приложение</a>
                                     </li>
                                     <li>
-                                        <a href="#">Locations</a>
+                                        <a href="https://blog.maps.me/ru/">Блог</a>
                                     </li>
                                     <li>
-                                        <a href="#">History</a>
+                                        <a href="https://ru.maps.me/api/">API</a>
                                     </li>
                                     <li>
-                                        <a href="#">Work With Us</a>
+                                        <a href="https://github.com/mapsme/omim">Github</a>
                                     </li>
                                 </ul>
                             </div>
                             <div className="col-md-3">
-                                <h6 className="text-uppercase footer-title">Developers</h6>
+                                <h6 className="text-uppercase footer-title">Для разработчиков</h6>
                                 <ul className="list-unstyled mt-4 footer-list">
                                     <li>
-                                        <a href="#">Developer Center</a>
+                                        <a href="https://github.com/mikhan333/Open-FIAS/">Github</a>
                                     </li>
                                     <li>
                                         <a href="#">API Reference</a>
@@ -556,9 +561,6 @@ class MainPageUpdated extends Component {
                                     </li>
                                     <li>
                                         <a href="#">Developer Blog</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Developer Forums</a>
                                     </li>
                                 </ul>
                             </div>
@@ -599,6 +601,8 @@ class MainPageUpdated extends Component {
                         </div>
                     </div>
                 </footer>
+
+                <AddAnonimPointsModal />
             </>
         )
     }

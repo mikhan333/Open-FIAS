@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import {Card, Col, Container, Modal, Row} from "react-bootstrap";
+// import {Card, Col, Container, Modal, Row} from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import { connect } from "react-redux";
 import { Line } from 'react-chartjs-2';
 import * as actionCreators from "../../store/actions/statsActions";
 import CentrifugeClass from "../../components/Centrifuge/Centrifuge";
-import generateAddress from "../../store/generateAddress"
+// import generateAddress from "../../store/generateAddress"
 
 import classes from './index.module.css'
 import TranslatableText from "../../components/LanguageProvider/LanguageTranslater";
@@ -59,32 +60,32 @@ class Statistics extends Component {
     }
 
     render() {
-        const unauthorized = (
-            <TranslatableText
-                dictionary={{
-                    russian: "Неавторизованный",
-                    english: "Unauthorized"
-                }}
-            />
-        );
-
-        const latestPoints = this.props.latestPoints.map( (point, index) =>
-            <li key={ index }>
-                { point.author || unauthorized } : { generateAddress(point.address) }
-            </li>
-        );
-
-        const usersTop = this.props.usersTop.map((user, index) =>
-            <li key={ index }>
-                { user.username } (
-                <TranslatableText
-                    dictionary={{
-                        russian: "загеокодировал точек: ",
-                        english: "put points: "
-                    }}
-                /> { user.count_points })
-            </li>
-        );
+        // const unauthorized = (
+        //     <TranslatableText
+        //         dictionary={{
+        //             russian: "Неавторизованный",
+        //             english: "Unauthorized"
+        //         }}
+        //     />
+        // );
+        //
+        // const latestPoints = this.props.latestPoints.map( (point, index) =>
+        //     <li key={ index }>
+        //         { point.author || unauthorized } : { generateAddress(point.address) }
+        //     </li>
+        // );
+        //
+        // const usersTop = this.props.usersTop.map((user, index) =>
+        //     <li key={ index }>
+        //         { user.username } (
+        //         <TranslatableText
+        //             dictionary={{
+        //                 russian: "загеокодировал точек: ",
+        //                 english: "put points: "
+        //             }}
+        //         /> { user.count_points })
+        //     </li>
+        // );
 
         let graphData = [];
         let labels = [];
@@ -138,27 +139,27 @@ class Statistics extends Component {
             }
         };
 
-        const pointsListHeader = (
-            <>
-                <TranslatableText
-                    dictionary={{
-                        russian: "Всего точек загеокодированно: ",
-                        english: "Total points were putted:"
-                    }}
-                /> { this.props.pointsCount }
-            </>
-        );
-
-        const pointsListCard = (
-            <Card className={ classes.ListCard } onClick={ () => this.handleOpen('pointsList') }>
-                <Card.Header><h6>{ pointsListHeader }</h6></Card.Header>
-                <Card.Body className={ classes.List }>
-                    <ol>
-                        { latestPoints.slice(0, this.state.pointsLimit) }
-                    </ol>
-                </Card.Body>
-            </Card>
-        );
+        // const pointsListHeader = (
+        //     <>
+        //         <TranslatableText
+        //             dictionary={{
+        //                 russian: "Всего точек загеокодированно: ",
+        //                 english: "Total points were putted:"
+        //             }}
+        //         /> { this.props.pointsCount }
+        //     </>
+        // );
+        //
+        // const pointsListCard = (
+        //     <Card className={ classes.ListCard } onClick={ () => this.handleOpen('pointsList') }>
+        //         <Card.Header><h6>{ pointsListHeader }</h6></Card.Header>
+        //         <Card.Body className={ classes.List }>
+        //             <ol>
+        //                 { latestPoints.slice(0, this.state.pointsLimit) }
+        //             </ol>
+        //         </Card.Body>
+        //     </Card>
+        // );
 
         const graphHeader = (
             <TranslatableText
@@ -168,92 +169,96 @@ class Statistics extends Component {
                 }}
             />
         );
-
-        const graphCard = (
-            <Card className={ classes.GraphCard } onClick={ () => this.handleOpen('graph') }>
-                <Card.Header><h6>{ graphHeader }</h6></Card.Header>
-                <Card.Body>
-                    <Line
-                        data={ data }
-                        options={ options }
-                        width={ window.innerWidth }
-                        height={ (window.innerHeight - 56) / 2 - 49 }
-                    />
-                </Card.Body>
-            </Card>
-        );
-
-        const usersTopHeader = (
-            <>
-                <TranslatableText
-                    dictionary={{
-                        russian: "Всего зарегистрированно пользователей: ",
-                        english: "Total registered users: "
-                    }}
-                /> { this.props.usersCount }
-            </>
-        );
-
-        const usersTopCard = (
-            <Card className={ classes.ListCard } onClick={ () => this.handleOpen('usersTop') }>
-                <Card.Header><h6>{ usersTopHeader }</h6></Card.Header>
-                <Card.Body className={ classes.List }>
-                    <ol>
-                        { usersTop.slice(0, this.state.usersLimit) }
-                    </ol>
-                </Card.Body>
-            </Card>
-        );
+        //
+        // const graphCard = (
+        //     <Card className={ classes.GraphCard } onClick={ () => this.handleOpen('graph') }>
+        //         <Card.Header><h6>{ graphHeader }</h6></Card.Header>
+        //         <Card.Body>
+        //             <Line
+        //                 data={ data }
+        //                 options={ options }
+        //                 width={ window.innerWidth }
+        //                 height={ (window.innerHeight - 56) / 2 - 49 }
+        //             />
+        //         </Card.Body>
+        //     </Card>
+        // );
+        //
+        // const usersTopHeader = (
+        //     <>
+        //         <TranslatableText
+        //             dictionary={{
+        //                 russian: "Всего зарегистрированно пользователей: ",
+        //                 english: "Total registered users: "
+        //             }}
+        //         /> { this.props.usersCount }
+        //     </>
+        // );
+        //
+        // const usersTopCard = (
+        //     <Card className={ classes.ListCard } onClick={ () => this.handleOpen('usersTop') }>
+        //         <Card.Header><h6>{ usersTopHeader }</h6></Card.Header>
+        //         <Card.Body className={ classes.List }>
+        //             <ol>
+        //                 { usersTop.slice(0, this.state.usersLimit) }
+        //             </ol>
+        //         </Card.Body>
+        //     </Card>
+        // );
 
         return (
             <>
-                <Container className={ classes.Container }>
-                    {/* <Row className={ classes.ListsRow }>
-                        <Col className={ classes.ListCol }>
-                            { pointsListCard }
-                        </Col>
-                        <Col className={ classes.ListCol }>
-                            { usersTopCard }
-                        </Col>
-                    </Row> */}
-                    <Row className={ classes.GraphRow }>
-                        { graphCard }
-                    </Row>
-                </Container>
+                {/*<Container className={ classes.Container }>*/}
+                {/*    /!* <Row className={ classes.ListsRow }>*/}
+                {/*        <Col className={ classes.ListCol }>*/}
+                {/*            { pointsListCard }*/}
+                {/*        </Col>*/}
+                {/*        <Col className={ classes.ListCol }>*/}
+                {/*            { usersTopCard }*/}
+                {/*        </Col>*/}
+                {/*    </Row> *!/*/}
+                {/*    <Row className={ classes.GraphRow }>*/}
+                {/*        { graphCard }*/}
+                {/*    </Row>*/}
+                {/*</Container>*/}
+                <Line
+                    data={ data }
+                    options={ options }
+                />
 
-                <Modal
-                    size="lg"
-                    show={ this.state.modalsShow.pointsList }
-                    onHide={ this.handleClose }
-                >
-                    <Modal.Header closeButton>
-                        <h3>
-                            { pointsListHeader }
-                        </h3>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <ol className={ classes.List }>
-                            { latestPoints }
-                        </ol>
-                    </Modal.Body>
-                </Modal>
+                {/*<Modal*/}
+                {/*    size="lg"*/}
+                {/*    show={ this.state.modalsShow.pointsList }*/}
+                {/*    onHide={ this.handleClose }*/}
+                {/*>*/}
+                {/*    <Modal.Header closeButton>*/}
+                {/*        <h3>*/}
+                {/*            { pointsListHeader }*/}
+                {/*        </h3>*/}
+                {/*    </Modal.Header>*/}
+                {/*    <Modal.Body>*/}
+                {/*        <ol className={ classes.List }>*/}
+                {/*            { latestPoints }*/}
+                {/*        </ol>*/}
+                {/*    </Modal.Body>*/}
+                {/*</Modal>*/}
 
-                <Modal
-                    size="lg"
-                    show={ this.state.modalsShow.usersTop }
-                    onHide={ this.handleClose }
-                >
-                    <Modal.Header closeButton>
-                        <h3>
-                            { usersTopHeader }
-                        </h3>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <ol className={ classes.List }>
-                            { usersTop }
-                        </ol>
-                    </Modal.Body>
-                </Modal>
+                {/*<Modal*/}
+                {/*    size="lg"*/}
+                {/*    show={ this.state.modalsShow.usersTop }*/}
+                {/*    onHide={ this.handleClose }*/}
+                {/*>*/}
+                {/*    <Modal.Header closeButton>*/}
+                {/*        <h3>*/}
+                {/*            { usersTopHeader }*/}
+                {/*        </h3>*/}
+                {/*    </Modal.Header>*/}
+                {/*    <Modal.Body>*/}
+                {/*        <ol className={ classes.List }>*/}
+                {/*            { usersTop }*/}
+                {/*        </ol>*/}
+                {/*    </Modal.Body>*/}
+                {/*</Modal>*/}
 
                 <Modal
                     show={ this.state.modalsShow.graph }

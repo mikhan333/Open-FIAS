@@ -10,7 +10,6 @@ import Statistics from './containers/Statistics'
 import LanguageProvider from './components/LanguageProvider'
 import * as actionCreators from "./store/actions/auth";
 import './App.css';
-import MainPage from "./containers/MainPage";
 import MainPageUpdated from "./containers/MainPageUpdated";
 
 class App extends Component {

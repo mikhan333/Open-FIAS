@@ -4,10 +4,10 @@ const generateAddress = (addressDetails) => {
     }
     const keys = [
         'region',
-        'subregion',
+        // 'subregion',
         'locality',
-        'sublocality',
-        'district',
+        // 'sublocality',
+        // 'district',
         'street',
         'building'
     ];

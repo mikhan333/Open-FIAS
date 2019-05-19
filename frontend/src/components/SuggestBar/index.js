@@ -174,7 +174,7 @@ class SuggestBar extends Component {
 
         return (
             <div className={ classes.SuggestBar }>
-                <Button variant="outline-success" className={ classes.toMain } href="/">
+                <Button variant="" className={ [classes.toMain, "btn", "btn-custom"].join(' ') } href="/">
                     <TranslatableText
                         dictionary={{
                             russian: "На главную",

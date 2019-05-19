@@ -5,6 +5,9 @@
    File Description: Main JS file of the template
 */
 
+/* eslint no-unused-expressions: 0*/
+/* eslint strict : 0*/
+
 ! function($) {
     "use strict";
 
@@ -82,13 +85,32 @@
     },
 
     ToldApp.prototype.initPortfolioFilter = function() {
-        $(window).scroll(function() {
-            var scroll = $(window).scrollTop();
-            if (scroll >= 50) {
-                $(".sticky").addClass("darkheader");
-            } else {
-                $(".sticky").removeClass("darkheader");
+        //PORTFOLIO FILTER 
+        var $container = $('.projects-wrapper');
+        var $filter = $('#filter');
+        // Initialize isotope 
+        $container.isotope({
+            filter: '*',
+            layoutMode: 'masonry',
+            animationOptions: {
+                duration: 750,
+                easing: 'linear'
             }
+        });
+        // Filter items when filter link is clicked
+        $filter.find('a').click(function() {
+            var selector = $(this).attr('data-filter');
+            $filter.find('a').removeClass('active');
+            $(this).addClass('active');
+            $container.isotope({
+                filter: selector,
+                animationOptions: {
+                    animationDuration: 750,
+                    easing: 'linear',
+                    queue: false,
+                }
+            });
+            return false;
         });
     },
 
@@ -161,8 +183,51 @@
     $.ToldApp = new ToldApp, $.ToldApp.Constructor = ToldApp
 }(window.jQuery),
 
+! function($) {
+    "use strict";
+
+    var AddApp = function() {};
+
+    AddApp.prototype.initPortfolioFilter = function() {
+        //PORTFOLIO FILTER 
+        var $container = $('.projects-wrapper');
+        var $filter = $('#filter');
+        // Initialize isotope 
+        $container.isotope({
+            filter: '*',
+            layoutMode: 'masonry',
+            animationOptions: {
+                duration: 750,
+                easing: 'linear'
+            }
+        });
+        // Filter items when filter link is clicked
+        $filter.find('a').click(function() {
+            var selector = $(this).attr('data-filter');
+            $filter.find('a').removeClass('active');
+            $(this).addClass('active');
+            $container.isotope({
+                filter: selector,
+                animationOptions: {
+                    animationDuration: 750,
+                    easing: 'linear',
+                    queue: false,
+                }
+            });
+            return false;
+        });
+    },
+
+    AddApp.prototype.init = function() {
+        this.initPortfolioFilter();
+    },
+    //init
+    $.AddApp = new AddApp, $.AddApp.Constructor = AddApp
+}(window.jQuery),
+
 //initializing
 function($) {
     "use strict";
+    $.AddApp.init();
     $.ToldApp.init();
 }(window.jQuery);

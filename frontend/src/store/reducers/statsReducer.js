@@ -14,12 +14,18 @@ const reducer = ( state = initialState, action ) => {
 
     if (action.type === actionTypes.GET_STATS_SUCCESS) {
         return {
-            ...initialState,
-            latestPoints: action.latestPoints,
+            ...state,
             pointsCount: action.pointsCount,
             pointsPerDay: action.pointsPerDay,
             usersCount: action.usersCount,
             usersTop: action.usersTop
+        }
+    }
+
+    if (action.type === actionTypes.GET_LAST_POINTS_SUCCESS) {
+        return {
+            ...state,
+            latestPoints: action.latestPoints,
         }
     }
 

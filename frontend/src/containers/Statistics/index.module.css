@@ -19,7 +19,7 @@
     padding-left: 15px;
     padding-right: 15px;
     cursor: pointer;
-    margin-top: 5px;
+    /* margin-top: 5px; */
 }
 
 .List {
@@ -32,7 +32,7 @@
 
 @media (max-width: 576px) {
     .Container {
-        height: calc(100vh - 56px);
+        /* height: calc(100vh - 56px); */
     }
 
     .ListsRow {

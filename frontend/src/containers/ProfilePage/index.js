@@ -88,7 +88,7 @@ class Profile extends Component {
                         <td>{ point.address.street || '-' }</td>
                         <td>{ point.address.building || '-' }</td>
                         <td>
-                            { point.latitude.toFixed(6) }; { point.longitude.toFixed(6) }
+                            { parseFloat(point.latitude).toFixed(6) }; { parseFloat(point.longitude).toFixed(6) }
                         </td>
                     </tr>
                 )});

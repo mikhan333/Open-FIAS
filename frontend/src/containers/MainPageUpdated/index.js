@@ -58,7 +58,7 @@ class MainPageUpdated extends Component {
                                     <span className="name font-weight-bold">
                                     Козьма Прутков
                                 <span className="company">
-                                    Apple, Inc.
+                                    Русский Писатель
                                 </span>
                             </span>
                                 </div>

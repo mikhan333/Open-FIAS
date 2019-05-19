@@ -37,7 +37,8 @@ class Header extends Component {
                                 }}
                             />
                         </Nav.Link>
-                        <Nav.Link onClick={ () => this.props.history.push('/statistics') }>
+                        {/* <Nav.Link onClick={ () => this.props.history.push('/#statistic') }> */}
+                        <Nav.Link href="/#statistic">
                             <TranslatableText
                                 dictionary={{
                                     russian: "Статистика",

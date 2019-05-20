@@ -12,8 +12,7 @@ const HelpList = (props) => (
         </div>
         <div className="row mt-1 pt-4">
             <ul className="col list-unstyled list-inline filter-list mb-0 text-uppercase" id="filter">
-                <li className="list-inline-item"><a className="active" data-filter="*">Оба</a></li>
-                <li className="list-inline-item"><a className="" data-filter=".point">Точка</a></li>
+                <li className="list-inline-item"><a className="active" data-filter=".point">Точка</a></li>
                 <li className="list-inline-item"><a className="" data-filter=".address">Адрес</a></li>
             </ul>
         </div>

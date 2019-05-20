@@ -194,7 +194,7 @@
         var $filter = $('#filter');
         // Initialize isotope 
         $container.isotope({
-            filter: '*',
+            filter: '.point',
             layoutMode: 'masonry',
             animationOptions: {
                 duration: 750,

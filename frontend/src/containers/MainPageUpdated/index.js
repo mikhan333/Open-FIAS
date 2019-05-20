@@ -38,7 +38,7 @@ class MainPageUpdated extends Component {
 
 
                 <section className="section bg-light" id="about">
-                    <AboutList />
+                    <AboutList history={ this.props.history }/>
                 </section>
 
                 <section className="section text-center" id="help">

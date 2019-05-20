@@ -1,3 +1,4 @@
+/* eslint jsx-a11y/anchor-is-valid : 0 */
 import React from 'react';
 
 const AboutList = (props) => (
@@ -50,7 +51,7 @@ const AboutList = (props) => (
                     <div className="about-title-border mt-3"></div>
                     <p className="text-muted pt-3">Геокодирование это процесс назначения географических координат объектам карты и записям данных. Сегодня как никогда мы нуждаемся в улучшение мировых карт.</p>
                     <p className="text-muted">Вместе мы можем преодолеть все трудности и загеокодировать все известные места! Присоединяйся к огромному комьюнити волонтеров и давай улучшать карты вместе.</p>
-                    <a href="add_point" className="btn btn-custom">Начать!</a>
+                    <a onClick={ () => props.history.push('/add_point') } className="btn btn-custom">Начать!</a>
                 </div>
             </div>
             <div className="col-md-6">

@@ -2,12 +2,12 @@ import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
     address: '',
-    lat: 55.75222,
-    lng: 37.61556,
-    zoom: 9,
+    lat: null,
+    lng: null,
+    zoom: null,
     loading: false,
     error: null,
-    new: true,
+    new: false,
     isFocused: true
 };
 

@@ -55,7 +55,6 @@ export const getCoords = (address) => {
                     const zoom = rank < 11 ? rank + 6 : 17;
                     dispatch(getCoordsSuccess(coords[0], coords[1], address, zoom));
                     if (resp.data.features[0].properties.address.building) {
-                        console.log('lol');
                         dispatch(setAllowMarkerPut(false));
                         dispatch(setMarkerCoords({ lat: coords[0], lng: coords[1] }));
                     } else {

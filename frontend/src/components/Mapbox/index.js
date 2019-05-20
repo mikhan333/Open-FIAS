@@ -25,7 +25,13 @@ class SideMap extends Component {
 
         this.state = {
             map: null,
-            default: this.props.place,
+            default: {
+                center: {
+                    lat: 55.75222,
+                    lng: 37.61556
+                },
+                zoom: [ 9 ]
+            },
             currentMarkerCoords: {
                 lat: null,
                 lng: null
@@ -56,7 +62,7 @@ class SideMap extends Component {
 
     componentDidMount() {
         const interval = setInterval(() => {
-            if (JSON.stringify(this.props.markerCoords) !== JSON.stringify( this.state.currentMarkerCoords)) {
+            if (JSON.stringify(this.props.markerCoords) !== JSON.stringify(this.state.currentMarkerCoords)) {
                 this.setState({
                     currentMarkerCoords: this.props.markerCoords
                 });

@@ -7,7 +7,7 @@ const NavigationBar = (props) => (
             <div>
                 <a href="/" className="logo text-uppercase">
                     Open-FIAS
-                    </a>
+                </a>
             </div>
             <div className="menu-extras">
                 <div className="menu-item">
@@ -44,6 +44,6 @@ const NavigationBar = (props) => (
             </div> */}
         </div>
     </header>
-)
+);
 
 export default NavigationBar;

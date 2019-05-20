@@ -75,13 +75,13 @@ class MainPageUpdated extends Component {
                     <div className="container">
                         <div className="row justify-content-center" id="counter">
                             <div className="col-md-6 text-white text-center pt-3 pb-3">
-                                <h1><span className="counter-value" data-count={ this.props.usersCount }>1</span></h1>
+                                <h1><span className="counter-value" data-count={ this.props.usersCount }>0</span></h1>
                                 <div className="funfact-border mx-auto mt-3 mb-3"></div>
                                 <h5 className="counter-name">Число Пользователей</h5>
                             </div>
 
                             <div className="col-md-6 text-white text-center pt-3 pb-3">
-                                <h1><span className="counter-value" data-count={ this.props.pointsCount }>1</span></h1>
+                                <h1><span className="counter-value" data-count={ this.props.pointsCount }>0</span></h1>
                                 <div className="funfact-border mx-auto mt-3 mb-3"></div>
                                 <h5 className="counter-name">Число Точек</h5>
                             </div>

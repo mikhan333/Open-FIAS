@@ -61,32 +61,39 @@ class Statistics extends Component {
     }
 
     render() {
-        const latestPoints = this.props.latestPoints.map((point, index) =>
-            <li key={index}>
-                {/* {point.author || unauthorized} : {generateAddress(point.address)} */}
-                {generateAddress(point.address)}
-            </li>
-        );
+        let latestPoints = [];
+        if (this.props.latestPoints) {
+            latestPoints = this.props.latestPoints.map((point, index) =>
+                <li key={index}>
+                    { generateAddress(point.address) }
+                </li>
+            );
+        }
 
-        const usersTop = this.props.usersTop.map((user, index) =>
-            <li key={index}>
-                {user.username} (
-                <TranslatableText
-                    dictionary={{
-                        russian: "точек: ",
-                        english: "put points: "
-                    }}
-                /> {user.count_points})
-            </li>
-        );
+        let usersTop = [];
+        if (this.props.usersTop) {
+            usersTop = this.props.usersTop.map((user, index) =>
+                <li key={index}>
+                    {user.username} (
+                    <TranslatableText
+                        dictionary={{
+                            russian: "точек: ",
+                            english: "put points: "
+                        }}
+                    /> {user.count_points})
+                </li>
+            );
+        }
 
         let graphData = [];
         let labels = [];
 
-        this.props.pointsPerDay.forEach((day) => {
-            graphData.push(day.count);
-            labels.push(day.days)
-        });
+        if (this.props.pointsPerDay) {
+            this.props.pointsPerDay.forEach((day) => {
+                graphData.push(day.count);
+                labels.push(day.days)
+            });
+        }
 
         const data = {
             labels: labels.reverse(),
@@ -211,20 +218,6 @@ class Statistics extends Component {
                         </div>
                     </div>
                 </div>
-
-                {/* <Container className={classes.Container}>
-                    <Row className={ classes.ListsRow }>
-                        <Col className={ classes.ListCol }>
-                            { pointsListCard }
-                        </Col>
-                        <Col className={ classes.ListCol }>
-                            { usersTopCard }
-                        </Col>
-                    </Row>
-                    <Row className={classes.GraphRow}>
-                        {graphCard}
-                    </Row>
-                </Container> */}
 
                 <Modal
                     size="lg"

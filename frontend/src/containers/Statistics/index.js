@@ -198,7 +198,14 @@ class Statistics extends Component {
                         <div className="service-box clearfix p-4">
                             <div className="service-icon service-left text-custom"><i className="mbri-growing-chart"></i></div>
                             <div className="service-desc service-left">
-                                <h4>Users</h4>
+                                <h4>
+                                    <TranslatableText
+                                        dictionary={{
+                                            russian: "Топ пользователей",
+                                            english: "Users top"
+                                        }}
+                                    />
+                                </h4>
                                 <p className="text-muted mb-0">
                                     {usersTop.slice(0, this.state.usersLimit)}
                                 </p>
@@ -209,8 +216,14 @@ class Statistics extends Component {
                         <div className="service-box clearfix p-4">
                             <div className="service-icon service-left text-custom"><i className="mbri-responsive"></i></div>
                             <div className="service-desc service-left">
-                                <h4>Points</h4>
-                                {/* <p className="text-muted mb-0">lol</p> */}
+                                <h4>
+                                    <TranslatableText
+                                        dictionary={{
+                                            russian: "Последние точки",
+                                            english: "Latest points"
+                                        }}
+                                    />
+                                </h4>
                                 <p className="text-muted mb-0">
                                     {latestPoints.slice(0, this.state.pointsLimit)}
                                 </p>

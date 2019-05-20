@@ -1,5 +1,5 @@
 import React from 'react';
-// import UserInfo from '../../../components/Header/UserInfo';
+import TranslatableText from "../../../components/LanguageProvider/LanguageTranslater";
 
 const NavigationBar = (props) => (
     <header id="topnav" className="defaultscroll fixed-top sticky">
@@ -23,25 +23,57 @@ const NavigationBar = (props) => (
             <div id="navigation">
                 <ul className="navigation-menu">
                     <li className="active">
-                        <a href="#home">Домой</a>
+                        <a href="#home">
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Домой",
+                                    english: "Home"
+                                }}
+                            />
+                        </a>
                     </li>
                     <li className="">
-                        <a href="#about">О проекте</a>
+                        <a href="#about">
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "О проекте",
+                                    english: "About"
+                                }}
+                            />
+                        </a>
                     </li>
                     <li className="">
-                        <a href="#help">Помощь</a>
+                        <a href="#help">
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Помощь",
+                                    english: "Help"
+                                }}
+                            />
+                        </a>
                     </li>
                     <li className="">
-                        <a href="#statistic">Статистика</a>
+                        <a href="#statistic">
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Статистика",
+                                    english: "Statistics"
+                                }}
+                            />
+                        </a>
                     </li>
                     <li className="">
-                        <a href="#contact">Контакты</a>
+                        <a href="#contact">
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Контакты",
+                                    english: "Contacts"
+                                }}
+                            />
+                        </a>
                     </li>
                 </ul>
             </div>
-            {/* <div> 
-                <UserInfo />
-            </div> */}
         </div>
     </header>
 );

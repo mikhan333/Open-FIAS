@@ -7,6 +7,7 @@ const initialState = {
     newPoints: [],
     error: null,
     loading: false,
+    language: "russian",
 };
 
 const reducer = ( state = initialState, action ) => {
@@ -16,7 +17,8 @@ const reducer = ( state = initialState, action ) => {
             username: action.username,
             avatar: action.avatar,
             loading: true,
-            newPoints: state.newPoints
+            newPoints: state.newPoints,
+            language: state.language
         };
     }
 
@@ -26,20 +28,23 @@ const reducer = ( state = initialState, action ) => {
             username: action.username,
             avatar: action.avatar,
             points: action.points,
-            newPoints: state.newPoints
+            newPoints: state.newPoints,
+            language: state.language
         }
     }
 
     if (action.type === actionTypes.AUTH_FAILED) {
         return {
             ...initialState,
-            error: action.error
+            error: action.error,
+            language: state.language
         }
     }
 
     if (action.type === actionTypes.USER_LOGOUT) {
         return {
-            ...initialState
+            ...initialState,
+            language: state.language
         }
     }
 
@@ -47,6 +52,13 @@ const reducer = ( state = initialState, action ) => {
         return {
             ...state,
             newPoints: action.newPoints
+        }
+    }
+
+    if (action.type === actionTypes.SET_LANGUAGE) {
+        return {
+            ...state,
+            language: action.language
         }
     }
 

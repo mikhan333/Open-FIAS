@@ -3,8 +3,9 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { connect } from "react-redux";
 
 import * as actionCreators from "../../store/actions/auth";
-import classes from "./index.module.css";
+import classes from "../LoginPage/index.module.css";
 import generateAddress from "../../store/generateAddress";
+import TranslatableText from "../../components/LanguageProvider/LanguageTranslater";
 
 class AddAnonimPointsModal extends Component {
     constructor(props) {
@@ -73,11 +74,23 @@ class AddAnonimPointsModal extends Component {
             >
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Сохранение
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Сохранение",
+                                english: "Saving"
+                            }}
+                        />
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <h4>Хотите сохранить поставленные ранее метки в вашем профиле?</h4>
+                    <h4>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Хотите сохранить поставленные ранее метки в вашем профиле?",
+                                english: "Do you want to keep the previously created points in your profile?"
+                            }}
+                        />
+                    </h4>
                     <Form>
                         { newPoints }
                     </Form>
@@ -89,14 +102,24 @@ class AddAnonimPointsModal extends Component {
                             onClick={ this.handleClose }
                             className={ classes.ModelButtons }
                         >
-                            Нет, спасибо
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Нет, спасибо",
+                                    english: "No, thanks"
+                                }}
+                            />
                         </Button>
                         <Button
                             variant="success"
                             onClick={ this.handleConfirm }
                             className={ classes.ModelButtons }
                         >
-                            Да, давай
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Да, давай",
+                                    english: "Yeah"
+                                }}
+                            />
                         </Button>
                     </div>
                 </Modal.Footer>

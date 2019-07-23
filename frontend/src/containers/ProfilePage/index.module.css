@@ -1,12 +1,40 @@
-.Profile {
-    margin: 10px 20px 0 20px;
+.Username {
+    margin-left: 20px;
 }
 
-.Username {
-    text-align: center;
-    font-size: 15mm;
+.Avatar {
+    height: 40px;
+    width: auto;
+    margin: 5px;
+    border: #3C4044 solid 1px;
+}
+
+.ProfileCard {
+    min-height: calc(100vh - 76px);
+    margin: 10px;
+    padding: 2%;
+}
+
+@media all and (max-width: 500px) {
+    .ProfileCard {
+        background: transparent;
+        border: 0;
+        margin: 5px 0;
+        padding: 1%;
+    }
 }
 
 .AddressRow {
     cursor: pointer;
+    text-align: center;
+}
+
+.Pagination {
+    align-self: center;
+    position: absolute;
+    bottom: 0;
+}
+
+.Table {
+    margin-bottom: 60px;
 }

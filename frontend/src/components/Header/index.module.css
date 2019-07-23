@@ -1,20 +1,25 @@
-.Header, .UserInfo {
-    cursor: pointer;
-}
-
-.UserInfo {
-    display: flex;
-    height: 100%;
-    align-items: center;
-}
-
-.Name {
-    white-space: nowrap;
+.Header {
+    padding: .5rem 1%;
+    background: #31b164;
 }
 
 .Avatar {
     height: 30px;
     width: auto;
-    margin: 5px;
+    margin: -5px 5px;
+    border: black solid 1px;
     border-radius: 10%;
+}
+
+.Logo {
+    height: 39px;
+    margin: -6px;
+    padding-bottom: 3px;
+    cursor: pointer;
+}
+
+@media (max-width: 991px) {
+    .Header {
+        padding: .5rem 1rem;
+    }
 }

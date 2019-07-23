@@ -1,0 +1,54 @@
+.ActionCards {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+}
+
+.SuccessCard, .LogoutCard, .AnonCard {
+    cursor: pointer;
+    margin: 10px;
+    flex: 1;
+    border-radius: 10px;
+}
+
+@media (max-width: 600px) {
+    .ActionCards {
+        flex-direction: column;
+    }
+
+    .SuccessCard {
+        margin: 5px 10px 0 10px;
+    }
+
+    .LogoutCard, .AnonCard {
+        margin: 5px 10px 5px 10px;
+    }
+}
+
+.SuccessCard {
+    background: rgba(0, 255, 0, 0.5);
+}
+
+.LogoutCard {
+    background: rgba(255, 79, 84, 0.5);
+}
+
+.AnonCard {
+    background: rgba(255, 243, 65, 0.5);
+}
+
+.InfoCard {
+    text-align: justify;
+    background: #9bffd7;
+    margin: 0 10px 10px 10px;
+    border-radius: 10px;
+}
+
+.Image {
+    width: 40%;
+    margin: 10px;
+}
+
+.ModelButtons {
+    margin: 0 3px 0 3px;
+}

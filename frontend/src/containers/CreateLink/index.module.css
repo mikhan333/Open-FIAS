@@ -1,0 +1,34 @@
+.CreateLinkContainer {
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+}
+
+.SuggestBar {
+    overflow: hidden;
+    flex: 1;
+}
+
+.Map {
+    flex: 3;
+}
+
+.UserInfo {
+    position: absolute;
+    right: 0;
+}
+
+@media (max-width: 735px) {
+    .CreateLinkContainer {
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .SuggestBar {
+        height: 50vh;
+    }
+
+    .Map {
+        height: 70vh;
+    }
+}

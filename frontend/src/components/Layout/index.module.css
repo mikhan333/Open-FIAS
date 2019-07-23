@@ -1,0 +1,21 @@
+.Layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.Header {
+    width: 100%;
+}
+
+.Content {
+    flex: 1;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 735px) {
+    .Layout {
+        height: 100%;
+    }
+}

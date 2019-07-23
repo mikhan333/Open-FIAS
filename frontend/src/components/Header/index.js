@@ -10,6 +10,10 @@ import mapsMeLogo from '../../static/icon.png'
 import * as senderActionCreators from "../../store/actions/senderActions";
 
 class Header extends Component {
+    static authRedirect () {
+        window.location.href = authServer;
+    }
+
     render() {
         return (
             <Navbar collapseOnSelect variant='light' expand="lg" className={ classes.Header }>

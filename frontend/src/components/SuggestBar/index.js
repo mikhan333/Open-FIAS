@@ -106,7 +106,7 @@ class SuggestBar extends Component {
     handleSelect(mode) {
         this.props.setMode(mode);
     }
-
+	
     render() {
         let confirmButton;
         if (this.props.address !== ''

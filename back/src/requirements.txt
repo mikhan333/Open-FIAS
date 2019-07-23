@@ -1,4 +1,4 @@
-django==2.1.7
+django==2.1.10
 pip-chill==0.1.8
 gunicorn==19.9.0
 gevent==1.4.0

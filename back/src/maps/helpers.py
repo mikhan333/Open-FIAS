@@ -42,6 +42,9 @@ def build_xml_tree(data, root):
                         root.append(child)
                     # Create new elements because we have array of tags
                     child = Element(key)
+                # It is necessary to end the recursion, because
+                # all 'child' are already attached to the 'root'
+                # and the following function and conditions should not be made (in our task)
                 break
             else:
                 build_xml_tags(child, tags)

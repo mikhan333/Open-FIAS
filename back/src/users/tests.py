@@ -36,7 +36,7 @@ class TestUserAuth(TestCase):
         data = json.loads(response.content)
         self.assertEqual(data['uid'], '222')
         self.assertEqual(data['avatar'], None)
-        points = yaml.load(data['points'], Loader=yaml.Loader)
+        points = data['points']
         self.assertEqual(len(points), 0)
 
         points_factory = {}
@@ -45,7 +45,7 @@ class TestUserAuth(TestCase):
         response = self.client.get(self.get_user_detail)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        points = yaml.load(data['points'], Loader=yaml.Loader)
+        points = data['points']
         self.assertEqual(len(points), 5)
 
     def test_check_auth_anonym(self):
@@ -80,14 +80,14 @@ class TestUserAuth(TestCase):
         response = self.client.get(self.check_auth)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        points = yaml.load(data['points'], Loader=yaml.Loader)
+        points = data['points']
         self.assertEqual(data['authorization'], True)
         self.assertEqual(len(points), 1)
         point = points[0]
-        self.assertEqual(point['fields']['region'], 'Город Москва')
-        self.assertEqual(point['fields']['author'], None)
+        self.assertEqual(point['address']['region'], 'Город Москва')
+        self.assertNotIn('author', point)
 
-        data = {'points': [point['pk'], ]}
+        data = {'points': [point['id'], ]}
         response = self.client.post(
             self.add_points_from_cookie, data=json.dumps(data), content_type="application/json")
         self.assertEqual(bool(response.content), True)

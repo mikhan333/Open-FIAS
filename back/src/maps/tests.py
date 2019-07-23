@@ -60,7 +60,7 @@ class TestSuggestApi(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             json.loads(response.content)['features'][0]['properties']['address']['locality'],
-            'Московская'  # TODO should be "Химки"
+            'Химки'
         )
 
         response = self.client.get(self.geocoder, {'address': 'область химки'})
@@ -86,6 +86,8 @@ class TestCreatePoint(TestCase):
         self.client = Client()
 
         self.create_point = reverse('create_point')
+        self.check_auth = reverse('check_auth')
+        self.client.get(self.check_auth)
 
     def test_errors(self):
         response = self.client.get(self.create_point)
@@ -136,11 +138,10 @@ class TestCreatePoint(TestCase):
         self.assertEqual(response.status_code, 200)
 
         '''Check DB'''
-        self.assertEqual(data['status_db'], True)
         obj = Object.objects.all().get(id=1)
         self.assertAlmostEqual(obj.latitude, lat)
         self.assertAlmostEqual(obj.longitude, lon)
-        self.assertEqual(obj.locality, 'Город Воронеж')
+        self.assertEqual(obj.address['locality'], 'Город Воронеж')
 
     def test_auth(self):
         log = self.client.login(username='user1', password='test_password')
@@ -162,11 +163,10 @@ class TestCreatePoint(TestCase):
         self.assertEqual(data['status_osm'], True)
 
         '''Check DB'''
-        self.assertEqual(data['status_db'], True)
-        obj = Object.objects.all().get(id=1)
+        obj = Object.objects.all().get(id=2)
         self.assertAlmostEqual(obj.latitude, lat)
         self.assertAlmostEqual(obj.longitude, lon)
-        self.assertEqual(obj.locality, 'Город Химки')
+        self.assertEqual(obj.address['locality'], 'Город Химки')
         self.assertEqual(obj.author, self.user)
 
 
@@ -183,7 +183,7 @@ class TestGetListPoints(TestCase):
         log = self.client.login(username='user1', password='test_password')
         self.assertEqual(log, True)
 
-        self.get_list_last_points = reverse('get_list_last_points')
+        self.get_statistic = reverse('get_statistic')
         self.get_list_points = reverse('get_list_points')
 
     def test_list_points(self):
@@ -192,8 +192,8 @@ class TestGetListPoints(TestCase):
         points = json.loads(response.content)['points']
         self.assertEqual(len(points), 20)
 
-    def test_list_last_points(self):
-        response = self.client.get(self.get_list_last_points)
+    def test_get_statistic(self):
+        response = self.client.get(self.get_statistic)
         self.assertEqual(response.status_code, 200)
-        points = json.loads(response.content)['points']
+        points = json.loads(response.content)['latest_points']
         self.assertEqual(len(points), 20)

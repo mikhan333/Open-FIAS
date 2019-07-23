@@ -1,8 +1,8 @@
 import re
 import requests
-
 from ..helpers import build_url
 from django.conf import settings
+from ..models import Object
 
 
 def check_addr(data):
@@ -15,10 +15,17 @@ def check_addr(data):
 
 
 def suggester(data):
-    address = 'россия москва'
     if 'address' in data:
-        address = data['address']
-    address_parts = re.findall(r"[\w']+", address.lower())
+        address = str(data['address'])
+        address_parts = re.findall(r"[\w']+", address.lower())
+
+        # Separate characters, for example "с2" => "с 2"(строение 2)
+        address_building = re.match(r"([а-я])(?=\d+)(\d+)", address_parts[-1])
+        if address_building is not None:
+            address_parts.pop()
+            address_parts += address_building.groups()
+    else:
+        return {'error': 400}
 
     url = build_url(
         getattr(settings, 'FIAS_URL'),
@@ -27,6 +34,7 @@ def suggester(data):
             'api_key': getattr(settings, 'FIAS_API_KEY'),
             'format': 'json',
             'q': ' '.join(address_parts),
+            'extra': '1',
         }
     )
     response = requests.get(url, timeout=2000)
@@ -36,20 +44,13 @@ def suggester(data):
 
 
 def geocoder(data):
-    address = 'россия москва'
     if 'address' in data:
-        address = data['address']
-    if isinstance(data, list):
+        address = str(data['address'])
+        address_parts = re.findall(r"[\w']+", address.lower())
+    elif isinstance(data, list):
         address_parts = data
     else:
-        address_parts = re.findall(r"[\w']+", address)
-
-    # If we have word 'Область' there are some problems in geocoder, so delete it
-    # if 'Область' in address_parts:
-    #     index = address_parts.index('Область')
-    #     if len(address_parts) > index + 2:
-    #         address_parts.pop(index)
-    #         address_parts.pop(index)
+        return {'error': 400}
 
     url = build_url(
         getattr(settings, 'FIAS_URL'),
@@ -64,18 +65,6 @@ def geocoder(data):
         return {'error': response.status_code}
     data_json = response.json()
 
-    # Return points with smaller rank firstly
-    # def sort(obj):
-    #     value = obj.get('properties')
-    #     if value is None or 'geometry' not in obj or obj.get('weight') != 1:
-    #         return 15
-    #     value = value.get('rank')
-    #     if value is None:
-    #         return 15
-    #     return obj.get('properties').get('rank')
-
-    # data_json['features'] = sorted(data_json['features'], key=sort)
-
     # If we do not have coordinates for point, we call recursive with smaller address
     try:
         elem = data_json['features'][0]
@@ -88,21 +77,59 @@ def geocoder(data):
 
 
 def rev_geocoder(data):
-    lat = '55'
-    lon = '37'
     if 'lat' in data and 'lon' in data:
         lat = data['lat']
         lon = data['lon']
+    else:
+        return {'error': 400}
 
     url = build_url(
         getattr(settings, 'FIAS_URL'),
         getattr(settings, 'FIAS_URL_REV_GEOCODER'),
         {
             'api_key': getattr(settings, 'FIAS_API_KEY'),
+            'fields': 'related,address_details,weight,address',
             'q': f'{lat},{lon}',
+            'extra': '1',
         }
     )
     response = requests.get(url, timeout=2000)
     if not response.ok:
         return {'error': response.status_code}
     return response.json()
+
+
+def nomination_geocoder(data):
+    if 'address' in data:
+        address = str(data['address'])
+        address_parts = re.findall(r"[\w']+", address.lower())
+    elif isinstance(data, list):
+        address_parts = data
+    else:
+        return {'error': 400}
+
+    try:
+        index = address_parts.index('улица')
+        address_parts.remove('улица')
+    except ValueError:
+        pass
+
+    url = build_url(
+        getattr(settings, 'NOMINATION_URL'),
+        'search',
+        {
+            'q': ' '.join(address_parts),
+            'format': 'json',
+            'addressdetails': 1,
+            'accept-language': 'ru',
+            'limit': 1,
+        }
+    )
+    response = requests.get(url, timeout=2000)
+    if not response.ok:
+        return {'error': response.status_code}
+    data_json = response.json()
+    if len(data_json) == 0:
+        address_parts.pop()
+        return nomination_geocoder(address_parts)
+    return data_json[0]

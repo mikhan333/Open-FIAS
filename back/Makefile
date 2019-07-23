@@ -23,3 +23,10 @@ run: migrate
 
 test: up
 	docker-compose exec fias-python python manage.py test
+
+clearsessions: up
+	docker-compose exec fias-python python manage.py clearsessions
+
+restart: 
+	make down
+	make up

@@ -14,4 +14,6 @@ down:
 up:
 	(cd back && make up)
 	(cd frontend && make up)
-
+restart:
+	make down
+	make up

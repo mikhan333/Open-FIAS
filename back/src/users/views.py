@@ -8,7 +8,6 @@ from django.shortcuts import get_object_or_404
 from maps.models import Object, points_serializer
 from datetime import datetime, date, time
 from django.utils.timezone import make_aware
-from django.views.decorators.cache import cache_page
 
 
 @csrf_exempt

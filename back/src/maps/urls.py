@@ -10,4 +10,5 @@ urlpatterns = [
     path('get_list_points', views.get_list_points, name='get_list_points'),
     path('add_points_from_cookie', views.add_points_from_cookie, name='add_points_from_cookie'),
     path('get_statistic', views.get_statistic, name='get_statistic'),
+    path('get_last_points', views.get_last_points, name='get_last_points'),
 ]

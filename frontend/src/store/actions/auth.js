@@ -39,10 +39,22 @@ export const logoutSuccess = () => {
     }
 };
 
+
+export const setLanguage = (language) => {
+    localStorage.setItem('language', language);
+    return {
+        type: actionTypes.SET_LANGUAGE,
+        language
+    }
+};
+
 export const checkAuth = () => {
     return dispatch => {
         if (localStorage.getItem('username')) {
             dispatch(authSuccess(localStorage.getItem('username'), localStorage.getItem('avatar') || null));
+        }
+        if (localStorage.getItem('language')) {
+            dispatch(setLanguage(localStorage.getItem('language')));
         }
         axios.get(checkAuthServer, { withCredentials: true })
             .then(resp => {
@@ -91,7 +103,8 @@ export const logout = () => {
     return dispatch => {
         axios.get(logoutServer, { withCredentials: true })
             .then(() => {
-                localStorage.clear();
+                localStorage.removeItem('username');
+                localStorage.removeItem('avatar');
                 dispatch(logoutSuccess());
                 dispatch(checkAuth());
             })
@@ -100,3 +113,4 @@ export const logout = () => {
             });
     }
 };
+

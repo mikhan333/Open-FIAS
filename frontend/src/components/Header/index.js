@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Navbar, OverlayTrigger, Tooltip, Nav } from "react-bootstrap";
+import { Navbar, Nav } from "react-bootstrap";
 import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom'
+import TranslatableText from '../LanguageProvider/LanguageTranslater';
+import UserInfo from "./UserInfo"
 
 import classes from './index.module.css'
-import { authServer } from "../../store/serverURLs";
+import mapsMeLogo from '../../static/icon.png'
+import * as senderActionCreators from "../../store/actions/senderActions";
 
 class Header extends Component {
     static authRedirect () {
@@ -12,77 +15,53 @@ class Header extends Component {
     }
 
     render() {
-        let avatar;
-        if(this.props.avatar) {
-            avatar = <img className={ classes.Avatar } src={ this.props.avatar } alt=''/>
-        }
-        let name;
-        if (this.props.username) {
-            name =
-                <OverlayTrigger
-                    placement='bottom'
-                    overlay={
-                        <Tooltip>
-                            Профиль
-                        </Tooltip>
-                    }
-                >
-                    <div
-                        className={ classes.UserInfo }
-                        onClick={ () => this.props.history.push('/profile') }
-                    >
-                        <Navbar.Text className={ classes.Name }>
-                            Вы вошли как: { this.props.username }
-                        </Navbar.Text>
-                        { avatar }
-                    </div>
-                </OverlayTrigger>
-
-        } else {
-            name =
-                <OverlayTrigger
-                    placement='bottom'
-                    overlay={
-                        <Tooltip>
-                            Войти
-                        </Tooltip>
-                    }
-                >
-                    <Navbar.Text
-                        onClick={ Header.authRedirect }
-                        className={ classes.UserInfo }
-                    >
-                        Вы не вошли
-                    </Navbar.Text>
-                </OverlayTrigger>
-        }
-
         return (
-            <Navbar variant='dark' expand="lg">
+            <Navbar collapseOnSelect variant='light' expand="lg" className={ classes.Header }>
                 <Navbar.Brand
                     onClick={ () => this.props.history.push('/') }
-                    className={ classes.Header }
                 >
-                    Ручное геокодирование данных
+                    <img src={ mapsMeLogo } alt="" className={ classes.Logo }/>
                 </Navbar.Brand>
-                <Navbar.Toggle />
+                <Navbar.Toggle/>
                 <Navbar.Collapse>
-                <Nav className="mr-auto">
-                    <Nav.Link onClick={ () => this.props.history.push('/add_point') }>Поставить точку</Nav.Link>
-                    <Nav.Link onClick={ () => this.props.history.push('/statistics') }>Статистика</Nav.Link>
-                </Nav>
-                    { name }
+                    <Nav className="mr-auto">
+                        <Nav.Link onClick={ () => this.props.history.push('/') }>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Главная",
+                                    english: "Main"
+                                }}
+                            />
+                        </Nav.Link>
+                        <Nav.Link onClick={ () => this.props.history.push(`/add_point`) }>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Поставить точку",
+                                    english: "Create point"
+                                }}
+                            />
+                        </Nav.Link>
+                         <Nav.Link onClick={ () => this.props.history.push('/') } href="#statistic">
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Статистика",
+                                    english: "Statistics"
+                                }}
+                            />
+                        </Nav.Link>
+                    </Nav>
+                    
+                    <UserInfo />
                 </Navbar.Collapse>
             </Navbar>
         );
     }
 }
 
-const mapStateToProps = state => {
+const mapDispatchToProps = dispatch => {
     return {
-        username: state.auth.username,
-        avatar: state.auth.avatar
+        setMode: (mode) => dispatch(senderActionCreators.setMode(mode)),
     }
 };
 
-export default connect(mapStateToProps)(withRouter(Header));
+export default connect(null, mapDispatchToProps)(withRouter(Header));

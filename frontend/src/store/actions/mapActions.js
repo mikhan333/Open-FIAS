@@ -1,10 +1,10 @@
 import * as actionTypes from './actionTypes';
 import axios from "axios";
-import { notesServer, geocoderServer } from "../serverURLs";
+import { geocoderServer } from "../serverURLs";
 
-const saveData = (actionType, latitude, longitude, address, zoom) => {
+const getCoordsSuccess = (latitude, longitude, address, zoom) => {
     return {
-        type: actionType,
+        type: actionTypes.GET_COORDS_SUCCESS,
         address,
         lat: latitude,
         lng: longitude,
@@ -12,29 +12,38 @@ const saveData = (actionType, latitude, longitude, address, zoom) => {
     }
 };
 
-const start = (actionType) => {
+const getCoordsFailed = (error) => {
     return {
-        type: actionType
-    }
-};
-
-const failed = (actionType, error) => {
-    return {
-        type: actionType,
+        type: actionTypes.GET_COORDS_FAILED,
         error
     }
 };
 
-const getStart = (address) => {
+const getCoordsStart = (address) => {
     return {
         type: actionTypes.GET_COORDS_START,
         address
     }
 };
 
+function setAllowMarkerPut(allowMarkerPut, address = null) {
+    return {
+        type: actionTypes.SET_ALLOW_MARKER_PUT,
+        allowMarkerPut,
+        address
+    }
+}
+
+export const setMarkerCoords = (coords) => {
+    return {
+        type: actionTypes.SET_MARKER_COORDS,
+        coords
+    }
+};
+
 export const getCoords = (address) => {
     return function (dispatch) {
-        dispatch(getStart(address));
+        dispatch(getCoordsStart(address));
         return axios.get(geocoderServer, {
                 params: {
                     address
@@ -42,43 +51,24 @@ export const getCoords = (address) => {
             }).then( resp => {
                 if (resp.data.features && resp.data.features[0].geometry) {
                     const coords = resp.data.features[0].geometry.coordinates;
-                    let zoom = resp.data.features[0].rank || resp.data.features[0].properties.rank;
-                    console.log(zoom);
-                    dispatch(saveData(actionTypes.GET_COORDS_SUCCESS, coords[0], coords[1], address, zoom))
+                    const rank = resp.data.features[0].rank || resp.data.features[0].properties.rank;
+                    const zoom = rank < 11 ? rank + 6 : 17;
+                    dispatch(getCoordsSuccess(coords[0], coords[1], address, zoom));
+                    if (resp.data.features[0].properties.address.building) {
+                        dispatch(setAllowMarkerPut(false));
+                        dispatch(setMarkerCoords({ lat: coords[0], lng: coords[1] }));
+                    } else {
+                        dispatch(setAllowMarkerPut(true));
+                    }
                 } else {
-                    dispatch(failed(actionTypes.GET_COORDS_FAILED, 'места не найдены'))
+                    dispatch(getCoordsFailed('места не найдены'));
+                    dispatch(setAllowMarkerPut(true));
                 }
             }).catch(error => {
-                dispatch(failed(actionTypes.GET_COORDS_FAILED, error))
+                dispatch(getCoordsFailed(error))
             });
     }
 };
-
-export const sendLink = (address, coords) => {
-    return function (dispatch) {
-        dispatch(start(actionTypes.SENDING_LINK_START));
-        return axios.post(notesServer, {
-            address,
-            lat: coords.lat,
-            lon: coords.lng
-        }, { withCredentials: true }).then( resp => {
-            dispatch(start(actionTypes.SENDING_LINK_SUCCESS));
-            localStorage.setItem('hasAddedPoints', 'true');
-        }).catch(error => {
-            if (error.response && error.response.status === 400) {
-                if (error.response.data === 'You done too many points') {
-                    dispatch(failed(actionTypes.SENDING_LINK_FAILED, { message: 'превышен лимит точек' }))
-                } else {
-                    dispatch(failed(actionTypes.SENDING_LINK_FAILED, { message: 'некорректный адрес' }))
-                }
-            } else {
-                dispatch(failed(actionTypes.SENDING_LINK_FAILED, error))
-            }
-        });
-    }
-};
-
-
 
 export const setAddress = (address) => {
     return {
@@ -104,5 +94,11 @@ export const unfocusInput = () => {
 export const clearData = () => {
     return {
         type: actionTypes.CLEAR_DATA
+    }
+};
+
+export const putCoords = () => {
+    return {
+        type: actionTypes.NEW_COORDS_PUTTED
     }
 };

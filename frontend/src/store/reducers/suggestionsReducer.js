@@ -13,7 +13,7 @@ const reducer = ( state = initialState, action ) => {
         return {
             ...initialState,
             address: action.address,
-            suggestions: action.suggestions,
+            suggestions: action.suggestions
         }
     }
 
@@ -30,6 +30,10 @@ const reducer = ( state = initialState, action ) => {
             loading: false,
             error: action.error
         }
+    }
+
+    if (action.type === actionTypes.CLEAR_DATA) {
+        return initialState
     }
 
     return state;

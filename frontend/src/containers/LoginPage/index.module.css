@@ -11,16 +11,30 @@
     border-radius: 10px;
 }
 
+@media (max-width: 600px) {
+    .ActionCards {
+        flex-direction: column;
+    }
+
+    .SuccessCard {
+        margin: 5px 10px 0 10px;
+    }
+
+    .LogoutCard, .AnonCard {
+        margin: 5px 10px 5px 10px;
+    }
+}
+
 .SuccessCard {
-    background: #64ff64;
+    background: rgba(0, 255, 0, 0.5);
 }
 
 .LogoutCard {
-    background: #ff6464;
+    background: rgba(255, 79, 84, 0.5);
 }
 
 .AnonCard {
-    background: #ffff64;
+    background: rgba(255, 243, 65, 0.5);
 }
 
 .InfoCard {

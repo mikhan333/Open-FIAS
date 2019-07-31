@@ -1,0 +1,561 @@
+/* Theme Name: Told - Onepage Multipurpose Template
+   Author: ZoyoThemes
+   Version: 1.0.0
+   Created: December 2017
+   File Description: Main JS file of the template
+*/
+
+/*===================
+*   1.Pre-Loader    *
+*   2.Helper        *
+*   3.Home          *
+*   4.About         *
+*   5.Funfacts      *
+*   6.Services      *
+*   7.Work          *
+*   8.Testimonial   *
+*   9.Team          *
+*   10.Blog         *
+*   11.Contact Us   *
+*   12.Footer       *
+*   12.Responsive   *
+*===================*/
+
+body {
+    font-family: 'Lato', sans-serif;
+    color: #252525;
+}
+
+a,
+button {
+    text-decoration: none !important;
+    outline: none !important;
+    /*background: none !important;*/
+    background: none;
+}
+
+
+/*====================
+   1. Pre Loader
+===================== */
+
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #fff;
+    z-index: 9999999;
+}
+
+#status {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -20px 0 0 -20px;
+}
+
+.spinner {
+    margin: 0 auto;
+    font-size: 10px;
+    position: relative;
+    text-indent: -9999em;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation: load8 1.1s infinite linear;
+    animation: load8 1.1s infinite linear;
+}
+
+.spinner,
+.spinner:after {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+@-webkit-keyframes load8 {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes load8 {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+
+/*======================
+    2.HELPER
+========================*/
+
+.section {
+    padding-top: 80px;
+    padding-bottom: 80px;
+    position: relative;
+    background-color: #fff;
+}
+
+.text-muted {
+    color: #808080 !important;
+}
+
+.bg-overlay {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.vertical-content {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    align-items: center;
+    -webkit-align-items: center;
+    justify-content: center;
+    -webkit-justify-content: center;
+    flex-direction: row;
+    -webkit-flex-direction: row;
+}
+
+.btn {
+    padding: 12px 25px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.btn-rounded {
+    border-radius: 30px;
+}
+
+.btn-white {
+    background-color: #fff !important;
+    border: 2px solid #fff !important;
+    transition: all 0.4s;
+    color: #000 !important;
+}
+
+.btn-white:hover,
+.btn-white:focus,
+.btn-white:active,
+.btn-white.active,
+.btn-white.focus,
+.btn-white:active,
+.btn-white:focus,
+.btn-white:hover,
+.open > .dropdown-toggle.btn-white {
+    background-color: #f3f3f3 !important;
+    border: 2px solid #f3f3f3 !important;
+    box-shadow: none !important;
+}
+
+.btn-custom {
+    transition: all 0.4s;
+    color: #fff !important;
+}
+
+.btn-custom:hover,
+.btn-custom:focus,
+.btn-custom:active,
+.btn-custom.active,
+.btn-custom.focus,
+.btn-custom:active,
+.btn-custom:focus,
+.btn-custom:hover,
+.open > .dropdown-toggle.btn-custom {
+    box-shadow: none !important;
+}
+
+.btn-outline-custom {
+    background-color: transparent;
+    border: 2px solid #fff !important;
+    transition: all 0.4s;
+    color: #fff;
+}
+
+.btn-outline-custom:hover,
+.btn-outline-custom:focus,
+.btn-outline-custom:active,
+.btn-outline-custom.active,
+.btn-outline-custom.focus,
+.btn-outline-custom:active,
+.btn-outline-custom:focus,
+.btn-outline-custom:hover,
+.open > .dropdown-toggle.btn-outline-custom {
+    background-color: #fff !important;
+    border: 2px solid #fff !important;
+    box-shadow: none !important;
+    color: #000;
+}
+
+
+/*==========================
+    3.HOME
+============================*/
+
+.home-section .carousel-item {
+    height: 100vh;
+    background-size: cover;
+    background-position: center center;
+}
+
+.carousel-control-next,
+.carousel-control-prev {
+    width: 3%;
+}
+
+.home-center {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.home-desc-center {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.home-title {
+    color: #fff;
+    font-size: 68px;
+    line-height: 100px;
+    font-weight: 700;
+}
+
+.home-sub-title {
+    color: #C2C2C3;
+    font-weight: 500;
+    max-width: 640px;
+    line-height: 28px;
+    font-size: 18px;
+}
+
+.watch-video a {
+    margin-left: 7px;
+}
+
+
+/*============================
+    4.ABOUT
+==============================*/
+
+.about-border {
+    border: 10px solid #eaeaea;
+}
+
+.about-title-border {
+    height: 3px;
+    width: 60px;
+}
+
+.about-text p {
+    line-height: 26px;
+}
+
+.about-boxed {
+    transition: all 0.5s;
+}
+
+.about-boxed .about-icons i {
+    font-size: 30px;
+    border: 5px solid #ffffff;
+    height: 90px;
+    box-shadow: 3px 3px 3px 3px #f5f5f5;
+    background-color: #f5f5f5;
+    width: 90px;
+    border-radius: 50%;
+    display: inline-block;
+    line-height: 80px;
+    transition: all 0.5s;
+}
+
+.about-boxed .about-content h5 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.about-boxed .about-content p {
+    font-size: 15px;
+}
+
+
+/*============================
+    5.FUNFACTS
+==============================*/
+
+.funfact-border {
+    background-color: #fff;
+    height: 2px;
+    width: 50px;
+}
+
+
+/*============================
+    6.SERVICES
+==============================*/
+
+.service-box {
+    border: 1px dotted #dddddd;
+    border-radius: 3px;
+    position: relative;
+}
+
+.service-left {
+    float: left;
+}
+
+.service-box .service-icon {
+    font-size: 38px;
+    position: absolute;
+    top: 30%;
+    transform: translateY(-50%);
+}
+
+.service-box .service-desc {
+    margin-left: 12%;
+}
+
+.service-box .service-desc h4 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.service-box .service-desc p {
+    font-size: 14px;
+}
+
+
+/*===============================
+      7.WORK
+=================================*/
+
+.portfolio {
+    overflow: hidden
+}
+
+.filter-list li a {
+    padding: 6px 12px;
+    cursor: pointer;
+    display: block;
+    border: 1px solid transparent;
+    border-radius: 3px;
+}
+
+.filter-list a {
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    transition: all 0.5s;
+}
+
+.item-img {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.item-img:hover .item-img-overlay span {
+    opacity: 2;
+}
+
+.item-img-overlay span i{
+    font-size: 35px;
+    color: #fff !important;
+    transform: translateY(-50%);
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: 10;
+    right: 0;
+}
+
+.item-img:hover .item-img-overlay:before {
+    border: 2px solid #fff;
+    content: "";
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    top: 30px;
+    z-index: 1;
+}
+
+.item-img-overlay span {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+    opacity: 0;
+    transition: opacity 250ms linear;
+}
+
+
+/*============================
+    8.TESTIMONIAL
+==============================*/
+
+.testimonial .quote {
+    font-size: 22px;
+    position: relative;
+    line-height: 40px;
+}
+
+.testimonial .quote .quote-mark {
+    font-size: 59px;
+    position: absolute;
+    top: 9px;
+    left: -25px;
+}
+
+.testimonial .author .name {
+    display: inline-block;
+    margin-left: 15px;
+    font-size: 16px;
+    color: #555;
+    position: relative;
+    top: 12px;
+}
+
+.testimonial .author .name .company {
+    display: block;
+    text-align: left;
+    font-size: 13px;
+    margin-top: 3px;
+    color: #777;
+}
+
+
+/*============================
+    9.TEAM
+==============================*/
+
+.team-box .team-work {
+    font-size: 13px;
+}
+
+.team-social li a {
+    color: #cecece;
+    transition: all 0.52s;
+}
+
+.team-social li a:hover {
+    color: #202020;
+}
+
+
+/*============================
+      10.BLOG
+==============================*/
+
+.blog-box .blog-image {
+    display: block;
+    height: 170px;
+    position: relative;
+    overflow: hidden;
+}
+
+.blog-desc {
+    font-size: 15px;
+}
+
+
+/*============================
+    11.CONTACT US
+==============================*/
+
+.form-custom .form-control {
+    background-color: transparent;
+    border-width: 0 0 1px 0;
+    font-weight: 500;
+    padding: 15px 20px;
+    border: 1px solid #e6e6e6;
+    box-shadow: inset 0 2px 1px rgba(0, 0, 0, 0.02);
+    text-transform: none;
+    font-size: 13px;
+    height: 52px;
+    letter-spacing: 0;
+    border-radius: 3px;
+}
+
+textarea.form-control {
+    height: auto !important;
+}
+
+.contact-shadow {
+    border: 5px solid #f9f9f9;
+}
+
+/*============================
+    12.FOOTER
+==============================*/
+
+.footer-title {
+    font-weight: 700;
+}
+
+.footer-list li a {
+    font-size: 13px;
+    color: #909090;
+    padding-top: 7px;
+    display: inline-block;
+    transition: all 0.5s;
+}
+
+.footer-list li a:hover {
+    color: #000;
+}
+
+.copyright-alt {
+    opacity: 0.5;
+    color: #000 !important;
+    font-size: 12px;
+}
+
+.social-icon li a {
+    color: #a2a2a2;
+    transition: all 0.5s;
+}
+
+.social-icon li a:hover {
+    color: #666;
+}
+
+/*========================
+    13.Responsive
+==========================*/
+
+@media (min-width: 200px) and (max-width: 767px) {
+    .vertical-content {
+        display: inherit;
+    }
+    .home-title {
+        font-size: 32px;
+        line-height: 40px;
+    }
+    .home-bg {
+        padding: 110px 0px 0px 0px;
+    }
+}

@@ -1,9 +1,10 @@
 import React, { Component } from "react"
 import { Modal, Button, Alert } from "react-bootstrap";
 import { connect } from "react-redux";
-
-import * as mapActionCreators from "../../store/actions/mapActions";
+import { authServer } from '../../store/serverURLs'
+import * as actionCreators from "../../store/actions/senderActions";
 import classes from "./index.module.css";
+import TranslatableText from "../LanguageProvider/LanguageTranslater";
 
 class ConfirmModal extends Component {
     constructor(props) {
@@ -26,23 +27,92 @@ class ConfirmModal extends Component {
     }
 
     render() {
+        let suggestedAddress;
+        if (this.props.suggestedAddress && this.props.suggestedAddress !== this.props.address) {
+            suggestedAddress =
+                <div>
+                    <TranslatableText
+                        dictionary={{
+                            russian: `Будет сохранено как: `,
+                            english: `Will save as: `
+                        }}
+                    /> { this.props.suggestedAddress } <br/>
+                </div>
+        }
+
         let warning;
         if (this.state.isSent) {
             if (this.props.loading) {
                 warning =
                     <Alert variant='primary' className={ classes.Warning }>
-                        Загрузка...
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Загрузка",
+                                english: "Loading"
+                            }}
+                        />
                     </Alert>
             } else if (this.props.error) {
-                warning =
-                    <Alert variant='danger'  className={ classes.Warning }>
-                        Ошибка: { this.props.error.message }
-                    </Alert>
+                if (this.props.error.message === 'Too many points') {
+                    warning =
+                        <Alert variant='danger'  className={ classes.Warning }>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Ошибка: превышен лимит точек для анонимного пользователя (3).",
+                                    english: "Error: points limit is exceeded for anonymous user (3)."
+                                }}
+                            />
+                            <br/>
+                            <a href={ authServer }>
+                                <TranslatableText
+                                    dictionary={{
+                                        russian: "Войдите",
+                                        english: "Login"
+                                    }}
+                                />
+                            </a>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: ", чтобы добавить больше.",
+                                    english: " if you want to add more"
+                                }}
+                            />
+                        </Alert>
+                } else {
+                    warning =
+                        <Alert variant='danger' className={classes.Warning}>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Ошибка: ",
+                                    english: "Error: "
+                                }}
+                            /> { this.props.error.message }
+                        </Alert>
+                }
             } else {
-                warning =
-                    <Alert variant='success' className={ classes.Warning }>
-                        Отправлено
-                    </Alert>
+                if (this.props.url) {
+                    warning =
+                        <Alert variant='success' className={ classes.Warning }>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Отправлено",
+                                    english: "Sent"
+                                }}
+                            />
+                            <br/>
+                            <a href={ this.props.url } target="_blank" rel="noopener noreferrer">{ this.props.url }</a>
+                        </Alert>
+                } else {
+                    warning =
+                        <Alert variant='success' className={ classes.Warning }>
+                            <TranslatableText
+                                dictionary={{
+                                    russian: "Отправлено",
+                                    english: "Sent"
+                                }}
+                            />
+                        </Alert>
+                }
             }
         }
 
@@ -55,14 +125,24 @@ class ConfirmModal extends Component {
                         onClick={ this.props.onHide }
                         className={ classes.ModelButtons }
                     >
-                        Отменить
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Отменить",
+                                english: "Cancel"
+                            }}
+                        />
                     </Button>
                     <Button
                         variant="success"
                         onClick={ this.handleConfirm }
                         className={ classes.ModelButtons }
                     >
-                        Подтвердить
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Подтвердить",
+                                english: "Confirm"
+                            }}
+                        />
                     </Button>
                 </div>
         } else {
@@ -73,7 +153,12 @@ class ConfirmModal extends Component {
                         onClick={ this.props.onHide }
                         className={ classes.ModelButtons }
                     >
-                        Закрыть
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Закрыть",
+                                english: "Close"
+                            }}
+                        />
                     </Button>
                 </div>
         }
@@ -89,15 +174,39 @@ class ConfirmModal extends Component {
             >
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Подтверждение отправки данных
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Подтверждение отправки данных",
+                                english: "Confirmation of sending data"
+                            }}
+                        />
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <h5>Вы уверены, что хотите отправить эти данные?</h5>
-                    <p>
-                        Адрес: { this.props.address } <br/>
-                        Координаты: { this.props.markerCoords.lat.toFixed(3) }, { this.props.markerCoords.lng.toFixed(3) }
-                    </p>
+                    <h5>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Вы уверены, что хотите отправить эти данные?",
+                                english: "Are you sure about sending data?"
+                            }}
+                        />
+                    </h5>
+                    <div>
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Адрес: ",
+                                english: "Address: "
+                            }}
+                        /> { this.props.address } <br/>
+                        { suggestedAddress }
+                        <TranslatableText
+                            dictionary={{
+                                russian: "Координаты: ",
+                                english: "Coordinates: "
+                            }}
+                        />
+                        { this.props.markerCoords.lat.toFixed(6) }, { this.props.markerCoords.lng.toFixed(6) }
+                    </div>
                     { warning }
                 </Modal.Body>
                 <Modal.Footer>
@@ -111,15 +220,17 @@ class ConfirmModal extends Component {
 const mapStateToProps = state => {
     return {
         markerCoords: state.marker,
-        address: state.map.data.address,
-        loading: state.map.loading,
-        error: state.map.error
+        address: state.map.address,
+        loading: state.sender.loading,
+        error: state.sender.error,
+        url: state.sender.url,
+        suggestedAddress: state.suggest.suggestions[0]
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        sendLink: (address, coords) => dispatch(mapActionCreators.sendLink(address, coords)),
+        sendLink: (address, coords) => dispatch(actionCreators.sendLink(address, coords)),
     }
 };
 

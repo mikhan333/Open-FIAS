@@ -1,0 +1,22 @@
+#bot-slider .slick-prev:before, #bot-slider .slick-next:before {
+    color: black !important;
+}
+
+#fp-nav ul li a span, .fp-slidesNav ul li a span {
+    background-color: black;
+}
+
+.anim-enter {
+    opacity: 0;
+}
+.anim-enter-active {
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+.anim-exit {
+    opacity: 1;
+}
+.anim-exit-active {
+    opacity: 0;
+    transition: opacity 0.3s;
+}

@@ -1,8 +1,5 @@
 {
-  "secret": "ee7ac6df-a0fc-4bfc-a122-9918c4ce9cdd",
-  "admin_password": "password",
-  "admin_secret": "6cbe3f65-518b-45ce-a0bf-21189a9175f4",
-  "api_key": "1erj444h-9fhj-pasd-oas4-988f33d33d21",
   "port": 9000,
-  "api_insecure": true
+  "api_insecure": true,
+  "anonymous": true
 }

@@ -26,14 +26,28 @@
 }
 
 .Buttons {
-    width: 100%;
+    width: calc(100% - 2px);
+    display: flex;
+    flex-direction: row;
+    margin: 1px;
 }
 
 .Button {
-    width: calc(100% + 28px);
+    width: calc(100% - 6px);
     margin: 1px;
 }
 
 .Warning, .ModelButtons {
     margin: 0 3px 0 3px;
+}
+
+.toMain, .ModeSelector {
+    width: calc(100% - 6px);
+    margin: 3px 3px 0 3px;
+}
+
+@media (max-width: 735px) {
+    .toMain {
+        width: calc(50% - 6px);
+    }
 }

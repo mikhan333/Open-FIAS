@@ -1,0 +1,13 @@
+.Picture {
+    height: 17px;
+    width: 30px;
+    border-radius: 10%;
+    border-color: black;
+}
+
+.ButtonGroup {
+    cursor: pointer;
+    outline: 0 !important;
+    box-shadow: none !important;
+}
+

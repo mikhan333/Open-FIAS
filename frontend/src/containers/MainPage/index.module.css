@@ -1,0 +1,113 @@
+.Container {
+    overflow: hidden;
+    height: calc(100vh - 56px);
+}
+
+.Section3 {
+    height: 100%;
+}
+
+.Header {
+    width: 100%;
+}
+
+.TextStyleHead {
+    font-family: fantasy;
+    /*font-weight: bold;*/
+}
+
+.TextStyleBody {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.Section1 {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 56px);
+    text-align: center;
+    flex-flow: row wrap;
+    align-items: center;
+}
+
+.Section1 > * {
+    flex: 1 100%;
+    padding: 3%;
+}
+
+@media all and (min-width: 600px) {
+    .Section1 > * { flex: 1 50%; }
+    .Section1Left {
+        padding: 0 0 20% 20%;
+    }
+}
+
+.OSMLogo {
+    max-width: calc(100% - 20px);
+    max-height: calc(100% - 20px);
+    margin: 10px;
+}
+
+
+
+
+.Section2 {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 56px);
+    flex-flow: row wrap;
+}
+
+.Section2Bot, .Section2Top,
+.Section2BotAddit, .Section2TopAddit{
+    flex: 1 100%;
+    padding: 3%;
+    height: 50%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.Section2Bot, .Section2TopAddit {
+    color: white;
+    background-color: #303438;
+}
+.Section2Top, .Section2BotAddit {
+    color: black;
+    background-color: #eeeeee;
+}
+
+.HelperImages {
+    max-width: 90%;
+    margin: auto;
+}
+
+.Slider {
+    max-width: 80vw;
+}
+
+.MAPSPicture {
+    display: none;
+}
+
+@media all and (min-width: 600px) {
+    .MAPSPicture {
+        display: initial;
+    }
+    .Section2Top, .Section2Bot,
+    .Section2BotAddit, .Section2TopAddit {
+        overflow: initial;
+    }
+}
+
+
+.Section5 {
+    padding: 20px 5px;
+    text-align: center;
+    color: white;
+}
+
+@media all and (min-width: 600px) {
+    .Section5 {
+        padding: 20vh 0;
+        text-align: left;
+    }
+}

@@ -3,7 +3,8 @@ import { Navbar, Nav } from "react-bootstrap";
 import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom'
 import TranslatableText from '../LanguageProvider/LanguageTranslater';
-import UserInfo from "./UserInfo"
+import UserInfo from "./UserInfo";
+import { authServer } from "../../store/serverURLs";
 
 import classes from './index.module.css'
 import mapsMeLogo from '../../static/icon.png'

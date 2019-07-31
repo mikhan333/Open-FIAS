@@ -39,5 +39,5 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "proxy": "http://89.208.86.148/api"
+  "proxy": "http://172.17.0.1:8081/api"
 }

@@ -7,7 +7,10 @@ from rest_framework import serializers
 class ObjectQuerySet(models.QuerySet):
     """Model for sorting objects of Map"""
     def filt_statistic(self):
-        return self.exclude(author=None)
+        return self.filter(
+                ~models.Q(note_id=None) | ~models.Q(changeset_id=None)
+            )
+        # return self.exclude(author=None)
 
     def filt_del(self, user):
         if user.is_authenticated:
@@ -58,10 +61,12 @@ class Object(models.Model):
     is_archive = models.BooleanField(
         default=False,
         verbose_name=u'объект в архиве',
+        db_index=True,
     )
     created = models.DateTimeField(
         auto_now_add=True,
         verbose_name=u'время создания',
+        db_index=True,
     )
     updated = models.DateTimeField(
         auto_now=True,
@@ -69,7 +74,7 @@ class Object(models.Model):
     )
     fias_guid = models.UUIDField(null=True)
 
-    fias_id = models.BigIntegerField(null=True)
+    fias_id = models.BigIntegerField(null=True, db_index=True)
     note_id = models.IntegerField(null=True)
     changeset_id = models.IntegerField(null=True)
 
@@ -105,6 +110,7 @@ class Object(models.Model):
     objects = ObjectManager.from_queryset(ObjectQuerySet)()
 
     class Meta:
+        index_together = [['note_id', 'changeset_id']]
         verbose_name = u'Объект'
         verbose_name_plural = u'Объекты'
         ordering = [

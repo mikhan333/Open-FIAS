@@ -13,7 +13,7 @@ services:
         expose:
             - 8080
         ports:
-            - 2001:8080
+            - 80:8080
         volumes:
             - ./src/static:/srv/www/fias_front/static
             - ./src/media:/srv/www/fias_front/media

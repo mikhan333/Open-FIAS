@@ -92,9 +92,9 @@ services:
             - memcached
             - -m 64
 
-networks:                                
-  default:                               
-    driver: bridge                       
-    driver_opts:                         
-      com.docker.network.driver.mtu: 1450
+# networks:                                
+#   default:                               
+#     driver: bridge                       
+#     driver_opts:                         
+#       com.docker.network.driver.mtu: 1450
 

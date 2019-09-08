@@ -254,7 +254,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Settings for FIAS
 
-FIAS_API_KEY = 'e842751abe2fee8763767038d90a94bef0f8bdabe99dc4aeeb94b36e9536b3e7'
+FIAS_API_KEY = 'None'
 FIAS_URL_SUGGEST = 'v2/suggest/fias'
 FIAS_URL_GEOCODER = 'v1/search'
 FIAS_URL_REV_GEOCODER = 'v1/address'
